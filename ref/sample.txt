@@ -1,0 +1,29 @@
+[
+  {
+    "id": "custom_1",  /* unique daily id */
+    "name": "Custom",  /* Name of Daily */
+    "category": "Custom", /* Category of Daily */
+    "clipboard": "clipboard",  /* Clipboard text */
+    "waypoint": "waypoint",  /* Waypoint text - copies to clipboard */
+    "wiki": "https://wiki.guildwars2.com",  /* Wiki URL */
+    "timer": "https://wiki.guildwars2.com/wiki/et",  /* Timers URL */
+    "achievement": "",  /* achievement id */
+    "api": "",   /* achievements, dungeons, mapchests, raids, worldbosses, dailycrafting */
+    "icon": "42684.png",   /* Icon name.  Can be in blm/ref/icons, or in My Documents/Guild Wars 2/addons/blishhud/dailies */
+    "note": "Note"  /* Note text */
+  },
+  {
+    "id": "custom_2",
+    "name": "Custom 2",
+    "category": "Custom",
+    "clipboard": "clipboard",
+    "waypoint": "waypoint",
+    "wiki": "https://wiki.guildwars2.com",
+    "timer": "https://wiki.guildwars2.com/wiki/et",
+    "achievement": "", 
+    "api": "",   
+    "icon": "42684.png",
+    "note": "Note"
+  }
+]
+

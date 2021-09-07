@@ -1,0 +1,30 @@
+{
+    "name": "Dailies",
+    "version": "0.1.0",
+    "namespace": "Manlaan.Dailies",
+    "package": "Dailies.dll",
+    "manifest_version": 1,
+
+    "description": "Description of your module. Visit https://github.com/blish-hud/manifest.json/blob/master/manifest-v1.md for details about the manifest format.",
+    "dependencies": {
+        "bh.blishhud": ">=0.5.2"
+    },
+    "url": "https://github.com/manlaan/Blishhud-Dailies",
+    "contributors": [
+        {
+            "name": "Manlaan",
+            "username": "manlaan.8921"
+        }
+    ],
+    "api_permissions": {
+        "account": {
+            "optional": true,
+            "details": "Necessary to keep track of achievement based markers states."
+        },
+        "progression": {
+            "optional": true,
+            "details": "Necessary to keep track of achievement based markers states."
+        }
+    },
+    "directories": [ "dailies" ]
+}

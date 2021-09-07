@@ -1,0 +1,194 @@
+[
+    {
+        "id": "strike_5194",
+        "name": "Daily: Boneskinner",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Boneskinner",
+        "timer": "",
+        "achievement": "5194",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_5233",
+        "name": "Daily: Fraenir of Jormag",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Fraenir_of_Jormag",
+        "timer": "",
+        "achievement": "5233",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_5239",
+        "name": "Daily: Shiverpeaks Pass",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Shiverpeaks_Pass",
+        "timer": "",
+        "achievement": "5239",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_5207",
+        "name": "Daily: Voice and Claw of the Fallen",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Voice_of_the_Fallen_and_Claw_of_the_Fallen",
+        "timer": "",
+        "achievement": "5207",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_5210",
+        "name": "Daily: Whisper of Jormag",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Whisper_of_Jormag",
+        "timer": "",
+        "achievement": "5210",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_5328",
+        "name": "Daily: Daily: Cold War",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Cold_War",
+        "timer": "",
+        "achievement": "5328",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+
+
+    /* Weekly Strike Missions */
+    /*   Doesn't Reset Correctly.
+        {
+            "id": "strike_weekly_boneskinner",
+            "name": "Strike: Weekly: Boneskinner",
+            "category": "Strike Missions","clipboard": "","waypoint": "[&BAkMAAA=]",
+            "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Boneskinner",
+            "timer":"","achievement": "strike_bone",
+            "api": "strikes",
+            "note": ""
+            "icon": "2271016.png","note":""
+        },
+        {
+            "id": "strike_weekly_voice",
+            "name": "Strike: Weekly: Voice and Claw of the Fallen",
+            "category": "Strike Missions","clipboard": "","waypoint": "[&BAkMAAA=]",
+            "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Voice_of_the_Fallen_and_Claw_of_the_Fallen",
+            "timer":"","achievement": "strike_voiceclaw",
+            "api": "strikes"
+            "icon": "2271016.png","note":""
+        },
+        {
+            "id": "strike_weekly_fraenir",
+            "name": "Strike: Fraenir of Jormag",
+            "category": "Strike Missions","clipboard": "","waypoint": "[&BAkMAAA=]",
+            "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Fraenir_of_Jormag",
+            "timer":"","achievement": "strike_fraenir",
+            "api": "strikes"
+            "icon": "2271016.png","note":""
+        },
+        */
+
+
+    /* All Strike Missions */
+    {
+        "id": "strike_Boneskinner",
+        "name": "Boneskinner",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Boneskinner",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_Fraenir",
+        "name": "Fraenir of Jormag",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Fraenir_of_Jormag",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_Shiverpeaks",
+        "name": "Shiverpeaks Pass",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Shiverpeaks_Pass",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_VoiceClaw",
+        "name": "Voice and Claw of the Fallen",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Weekly_Strike_Mission:_Voice_of_the_Fallen_and_Claw_of_the_Fallen",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_Whisper",
+        "name": "Whisper of Jormag",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Whisper_of_Jormag",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    },
+    {
+        "id": "strike_ColdWar",
+        "name": "Cold War",
+        "category": "Strike Missions",
+        "clipboard": "",
+        "waypoint": "[&BAkMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Strike_Mission:_Cold_War",
+        "timer": "",
+        "achievement": "",
+        "api": "achievements",
+        "icon": "2271016.png",
+        "note": ""
+    }
+]
