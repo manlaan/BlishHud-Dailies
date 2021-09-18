@@ -15,10 +15,12 @@ namespace Manlaan.Dailies.Models
     {
         public GlowButton CompleteButton { get; set; }
         public GlowButton TrackedButton { get; set; }
+        public Label TimeButton { get; set; }
 
         public DailyDetailsButton() {
             CompleteButton = new GlowButton();
             TrackedButton = new GlowButton();
+            TimeButton = new Label();
         }
     }
 }

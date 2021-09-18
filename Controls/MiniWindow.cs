@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
+using Blish_HUD.Graphics.UI;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -18,13 +19,14 @@ namespace Manlaan.Dailies.Controls
         #region Load Static
 
         private static Texture2D _wndBackground, _btnBackground, _pageIcon, _defaulticon;
-        private static Texture2D _noteIcon, _wikiIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon;
+        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon;
 
         static MiniWindow() {
-            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("502049.png");
+            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("155985.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
             _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
+            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("102367.png");
             _noteIcon = Module.ModuleInstance.ContentsManager.GetTexture("440023.png");
             _copyIcon = Module.ModuleInstance.ContentsManager.GetTexture("563464.png");
             _complete1Icon = Module.ModuleInstance.ContentsManager.GetTexture("784259.png");
@@ -34,7 +36,6 @@ namespace Manlaan.Dailies.Controls
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
             _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("42684bw.png");
-
         }
         #endregion
 
@@ -58,7 +59,6 @@ namespace Manlaan.Dailies.Controls
                 Thickness.Zero,
                 45, false);
             this.ContentRegion = new Rectangle(0, 0, WinSize.X, WinSize.Y);
-
             _parentPanel = new Panel() {
                 CanScroll = false,
                 Size = new Point(this.ContentRegion.Size.X, this.ContentRegion.Size.Y - 10),
@@ -71,12 +71,12 @@ namespace Manlaan.Dailies.Controls
                 Parent = _parentPanel,
             };
             Image headimage = new Image(_pageIcon) {
-                Location = new Point(20, 21),
-                Size = new Point(23,23),
+                Location = new Point(10, 11),
+                Size = new Point(23, 23),
                 Parent = _parentPanel,
             };
             Label header = new Label() {
-                Location = new Point(50, 21),
+                Location = new Point(40, 11),
                 Width = _parentPanel.Width - 80,
                 AutoSizeHeight = false,
                 WrapText = false,
@@ -87,21 +87,31 @@ namespace Manlaan.Dailies.Controls
             };
 
             _selectCategory = new Dropdown() {
-                Location = new Point(20, 45),
-                Width = _parentPanel.Width - 60,
+                Location = new Point(10, 35),
+                Width = _parentPanel.Width - 30,
                 Parent = _parentPanel,
+            };
+            _selectCategory.ValueChanged += delegate {
+                _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
+                UpdateDailyPanel();
             };
 
             _dailyPanel = new FlowPanel() {
                 FlowDirection = ControlFlowDirection.LeftToRight,
                 ControlPadding = new Vector2(8, 8),
-                Location = new Point(20, _selectCategory.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 35),
+                Location = new Point(10, _selectCategory.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectCategory.Bottom - 25),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
             };
 
+            foreach (Daily d in Module._dailies) {
+                d.MiniButton = CreateDailyButton(d);
+            }
+
+            _dailyCategory = "";
+            UpdateDailyPanel();
         }
 
         public DailyDetailsButton CreateDailyButton(Daily d) {
@@ -189,6 +199,22 @@ namespace Manlaan.Dailies.Controls
                 };
                 xloc = WikiBtn.Right + 5;
             }
+            if (!string.IsNullOrEmpty(d.Timer)) {
+                GlowButton TimeBtn = new GlowButton {
+                    Icon = _timerIcon,
+                    BasicTooltipText = "See timer on Wiki",
+                    Parent = dailyButton,
+                    GlowColor = Color.White * 0.1f,
+                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
+                    Size = iconSize,
+                };
+                TimeBtn.Click += delegate {
+                    if (Module.UrlIsValid(d.Timer)) {
+                        Process.Start(d.Timer);
+                    }
+                };
+                xloc = TimeBtn.Right + 5;
+            }
             if (!string.IsNullOrEmpty(d.Waypoint)) {
                 GlowButton WaypointBtn = new GlowButton {
                     Icon = _wpIcon,
@@ -211,6 +237,18 @@ namespace Manlaan.Dailies.Controls
                 };
                 xloc = WaypointBtn.Right + 5;
             }
+            if (d.Times != null && d.Times.Length > 0) {
+                dailyButton.TimeButton = new Label() {
+                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2 + 3),
+                    Width = 75,
+                    AutoSizeHeight = false,
+                    WrapText = false,
+                    Parent = dailyButton,
+                    Text = "",
+                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
+                };
+                xloc = dailyButton.TimeButton.Right + 5;
+            }
             if (!string.IsNullOrEmpty(d.Clipboard)) {
                 GlowButton CopyBtn = new GlowButton {
                     Icon = _copyIcon,
@@ -232,22 +270,6 @@ namespace Manlaan.Dailies.Controls
                                     });
                 };
                 xloc = CopyBtn.Right + 5;
-            }
-            if (!string.IsNullOrEmpty(d.Timer)) {
-                GlowButton TimeBtn = new GlowButton {
-                    Icon = _clockIcon,
-                    BasicTooltipText = "See timer on Wiki",
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                TimeBtn.Click += delegate {
-                    if (Module.UrlIsValid(d.Timer)) {
-                        Process.Start(d.Timer);
-                    }
-                };
-                xloc = TimeBtn.Right + 5;
             }
 
             bool setAutoComplete = false;
@@ -321,22 +343,13 @@ namespace Manlaan.Dailies.Controls
             }
             _dailyPanel.RecalculateLayout();
 
-            _selectCategory.Dispose();
-            _selectCategory = new Dropdown() {
-                Location = new Point(20, 45),
-                Width = _parentPanel.Width - 60,
-                Parent = _parentPanel,
-            };
+            _selectCategory.Items.Clear();
             _selectCategory.Items.Add("All");
             foreach (Category cat in categories) {
                 if (cat.IsActive)
                     _selectCategory.Items.Add(cat.Name);
             }
             _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
-            _selectCategory.ValueChanged += delegate {
-                _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
-                UpdateDailyPanel();
-            };
         }
 
 

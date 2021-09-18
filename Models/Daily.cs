@@ -30,6 +30,8 @@ namespace Manlaan.Dailies.Models
         public string Note { get; set; }
         [JsonPropertyName("category")]
         public string Category { get; set; }
+        [JsonPropertyName("times")]
+        public string[] Times { get; set; }
         [JsonIgnore]
         public bool IsTracked { get; set; }
         [JsonIgnore]
@@ -40,6 +42,8 @@ namespace Manlaan.Dailies.Models
         public DailyDetailsButton Button { get; set; }
         [JsonIgnore]
         public DailyDetailsButton MiniButton { get; set; }
+        [JsonIgnore]
+        public DailyDetailsButton MiniButton2 { get; set; }
 
         public Daily() {
             Id = "";
@@ -53,14 +57,16 @@ namespace Manlaan.Dailies.Models
             Icon = "";
             Note = "";
             Category = "";
+            Times = new string[] {};
             IsTracked = false;
             IsComplete = false;
             IsDaily = false;
             Button = new DailyDetailsButton();
             MiniButton = new DailyDetailsButton();
-    }
+            MiniButton2 = new DailyDetailsButton();
+        }
 
-    public override string ToString() {
+        public override string ToString() {
             return "ID: " + Id + "   Name: " + Name;
         }
         public override bool Equals(object obj) {

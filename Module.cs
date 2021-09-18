@@ -13,8 +13,10 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
+using Manlaan.Dailies.Views;
 
 namespace Manlaan.Dailies
 {
@@ -29,16 +31,21 @@ namespace Manlaan.Dailies
         public static List<Daily> _newdailies = new List<Daily>();
         public static List<Category> _categories = new List<Category>();
         public static SettingEntry<DateTime> _settingLastReset;
-        //private SettingEntry<string> _settingFestivalStart;
+        private SettingEntry<string> _settingFestivalStart;
         private SettingEntry<Point> _settingMiniLocation;
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
-        private Stopwatch Timer = new Stopwatch();
+        private SettingEntry<bool> _setting24HrTime;
+        private Stopwatch Timer_AchieveUpdate = new Stopwatch();
+        private Stopwatch Timer_TimesUpdate = new Stopwatch();
         public static DailySettings _dailySettings;
         private Texture2D _pageIcon;
 
         private MainWindow _mainWindow;
         private MiniWindow _miniWindow;
         private CornerIcon _cornerIcon;
+        private MiniWindow2 _miniWindow2;
+        private MiniWindowView _miniWindow2View;
+        private CornerIcon _cornerIcon2;
 
         private WindowTab _moduleTab;
 
@@ -55,19 +62,21 @@ namespace Manlaan.Dailies
         public Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { ModuleInstance = this; }
 
         protected override void DefineSettings(SettingCollection settings) {
-            //_settingFestivalStart = settings.DefineSetting("DailyFestivalStart", @"01/01/2000", "Festival Start Date", "");
+            _settingFestivalStart = settings.DefineSetting("DailyFestivalStart", @"01/01/2000", "Festival Start Date", "");
+            _setting24HrTime = settings.DefineSetting("Daily24HrTime", false, "24 Hour Time", "");
             _settingLastReset = settings.DefineSetting("DailyLastUpdate", new DateTime());
             _settingMiniLocation = settings.DefineSetting("DailyMiniLoc", new Point(100, 100));
             _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"280", "Mini Window Width", "");
             _settingMiniSizeH = settings.DefineSetting("DailyMiniSizeW", @"450", "Mini Window Height", "");
-            _settingMiniSizeH.SettingChanged += UpdateSettings;
-            _settingMiniSizeW.SettingChanged += UpdateSettings;
+            _setting24HrTime.SettingChanged += UpdateSettings_bool;
+            _settingMiniSizeH.SettingChanged += UpdateSettings_string;
+            _settingMiniSizeW.SettingChanged += UpdateSettings_string;
 
             //_dailiesTracked = settings.AddSubCollection("Tracked");
             //_dailiesComplete = settings.AddSubCollection("Complete");
             //var selfManagedSettings = settings.AddSubCollection("Managed Settings");
         }
-        private void UpdateSettings(object sender = null, ValueChangedEventArgs<string> e = null) {
+        private void UpdateSettings_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             if (int.Parse(_settingMiniSizeH.Value) < 0)
                 _settingMiniSizeH.Value = "0";
             if (int.Parse(_settingMiniSizeW.Value) < 0)
@@ -76,22 +85,43 @@ namespace Manlaan.Dailies
             _miniWindow.Dispose();
             _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
                 Location = _settingMiniLocation.Value,
-                Parent = GameService.Graphics.SpriteScreen
+                Parent = GameService.Graphics.SpriteScreen,
             };
-            foreach (Daily d in _dailies) {
-                d.MiniButton = _miniWindow.CreateDailyButton(d);
-            }
+            //foreach (Daily d in _dailies) {
+            //    d.MiniButton = _miniWindow.CreateDailyButton(d);
+                //d.MiniButton2 = _miniWindow2View.CreateDailyButton(d);
+            //}
             UpdateDailyPanel();
+        }
+        private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
+            UpdateTimes();
         }
 
         protected override void Initialize() {
+            _dailies = new List<Daily>();
+            _newdailies = new List<Daily>();
+            _categories = new List<Category>();
+
             _pageIcon = ContentsManager.GetTexture("42684bw.png");
+
+        }
+        protected override async Task LoadAsync() {
+            var sw = Stopwatch.StartNew();
+
+            _cornerIcon = new CornerIcon() {
+                IconName = "Dailies",
+                Icon = _pageIcon,
+                HoverIcon = _pageIcon,
+                Priority = 10
+            };
+            _cornerIcon.LoadingMessage = "Loading Settings...";
 
             _dailySettings = new DailySettings(DirectoriesManager.GetFullDirectoryPath("dailies"));
             _dailySettings.LoadSettings();
             if (_dailySettings._dailySettings.Count == 0)
                 _dailySettings.SetTracked("gather_home", true);
 
+            _cornerIcon.LoadingMessage = "Extracting Sample...";
             ExtractFile("sample.txt");
 
             string[] jsonfiles = {
@@ -122,14 +152,14 @@ namespace Manlaan.Dailies
             };
 
             foreach (string file in jsonfiles) {
-                //Logger.Info("Loading Daily File: " + file);
+                _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
                 _dailies.AddRange(readJson(ContentsManager.GetFileStream(file), file));
             }
             string dailiesDirectory = DirectoriesManager.GetFullDirectoryPath("dailies");
             foreach (string file in Directory.GetFiles(dailiesDirectory, ".")) {
                 if (file.ToLower().Contains(".json") && !file.ToLower().Contains("settings.json")) {
-                    //Logger.Info("Loading Daily File: " + file);
                     if (file.ToLower().Contains("new.json")) {
+                        _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
                         List<Daily> newdaily = readJson(new FileStream(file, FileMode.Open, FileAccess.Read), file);
                         foreach (Daily d in newdaily) {
                             if (_dailies.Find(x => x.Achievement.Equals(d.Achievement)) == null) {
@@ -139,6 +169,7 @@ namespace Manlaan.Dailies
                         }
                     }
                     else {
+                        _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
                         _dailies.AddRange(readJson(new FileStream(file, FileMode.Open, FileAccess.Read), file));
                     }
                 }
@@ -147,6 +178,7 @@ namespace Manlaan.Dailies
             FileStream createStream = File.Create(DirectoriesManager.GetFullDirectoryPath("dailies") + "\\new.json");
             JsonSerializer.SerializeAsync(createStream, _newdailies, options);
 
+            _cornerIcon.LoadingMessage = "Loading Categories...";
             foreach (Daily d in _dailies) {
                 DailySettingEntry daySetting = _dailySettings.Get(d.Id);
                 d.IsComplete = daySetting.IsComplete;
@@ -168,43 +200,67 @@ namespace Manlaan.Dailies
                 else return x.Name.CompareTo(y.Name);
             });
 
+
+            _cornerIcon.LoadingMessage = "Creating Main Window Buttons...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
+            _cornerIcon.LoadingMessage = "Creating Mini Window Buttons...";
             _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
                 Location = _settingMiniLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
-            foreach (Daily d in _dailies) {
-                d.Button = _mainWindow.CreateDailyButton(d);
-                d.MiniButton = _miniWindow.CreateDailyButton(d);
-            }
+            _miniWindow2 = new MiniWindow2(ContentsManager.GetTexture("155985.png"), new Rectangle(0, 0, 100, 100), new Rectangle(10, 20, 80, 80)) {
+                Parent = Graphics.SpriteScreen,
+                Title = "Dailies",
+                Emblem = ContentsManager.GetTexture("icons\\42684.png"),
+                SavesPosition = true,
+                //SavesSize = true,
+                Id = "Manlaan_Dailies_MiniWindow",
+                CanClose = true,
+                CanResize = true,
+            };
+            _miniWindow2View = new MiniWindowView();
 
-            _cornerIcon = new CornerIcon() {
-                IconName = "Dailies",
+            _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
+
+            _cornerIcon2 = new CornerIcon() {
+                IconName = "Dailies 2",
                 Icon = _pageIcon,
                 HoverIcon = _pageIcon,
                 Priority = 10
             };
-            _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
-        }
-        protected override async Task LoadAsync() {
+            _cornerIcon2.Click += delegate {
+                _miniWindow2.ToggleWindow(_miniWindow2View);
+            };
+
+
+            sw.Stop();
+            Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
+            _cornerIcon.LoadingMessage = "";
+
+            //Loading Icon Off
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
-            Timer.Start();
+            Timer_AchieveUpdate.Start();
+            Timer_TimesUpdate.Start();
             _moduleTab = Overlay.BlishHudWindow.AddTab("Dailies", _pageIcon, _mainWindow._parentPanel);
+
             UpdateAchievements();
+            UpdateTimes();
 
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
 
+
         internal void UpdateDailyPanel() {
             _dailySettings.SaveSettings();
             _miniWindow.UpdateDailyPanel();
             _mainWindow.UpdateDailyPanel();
+            //_miniWindow2View.UpdateDailyPanel();
         }
         internal async void UpdateAchievements() {
-            Timer.Restart();
+            Timer_AchieveUpdate.Restart();
             List<string> TodayAchieve = new List<string>();
             List<Achievement> AllAchieves = new List<Achievement>();
             bool newDaily = false;
@@ -212,9 +268,8 @@ namespace Manlaan.Dailies
             try {
                 var apiAchieveDay = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Daily.GetAsync();
                 foreach (var a in apiAchieveDay.Fractals)
-                    if (a.Level.Max == 80) {
+                    if (a.Level.Max == 80) 
                         TodayAchieve.Add(a.Id.ToString());
-                    }
                 foreach (var a in apiAchieveDay.Pve)
                     if (a.Level.Max == 80)
                         TodayAchieve.Add(a.Id.ToString());
@@ -230,7 +285,7 @@ namespace Manlaan.Dailies
 
                 var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
-                    if (grp != 97) {
+                    if (grp != 9) { //dailies - retrieved from apiAchieveDay
                         var apidata = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Categories.GetAsync(grp);
                         foreach (var data in apidata.Achievements) {
                             TodayAchieve.Add(data.ToString());
@@ -250,6 +305,7 @@ namespace Manlaan.Dailies
                         daily = _dailies.Find(x => x.Achievement.Equals(ach));
                         daily.Button = _mainWindow.CreateDailyButton(daily);
                         daily.MiniButton = _miniWindow.CreateDailyButton(daily);
+                        //daily.MiniButton2 = _miniWindow2View.CreateDailyButton(daily);
 
                         if (!_categories.Exists(x => x.Name.Equals("New")))
                             _categories.Add(new Category() { Name = "New", IsActive = false });
@@ -261,9 +317,9 @@ namespace Manlaan.Dailies
 
             TodayAchieve.AddRange(DailyList.Activity.Dailies());
             TodayAchieve.AddRange(DailyList.Merchants.Dailies());
-            //TodayAchieve.AddRange(DailyList.StrikeMissions.Dailies());  //For Weekly - Broken due to daily reset
+            //TodayAchieve.AddRange(DailyList.FourWinds.Dailies(_settingFestivalStart.Value));  //Not needed. Part of Daily API  -- API very slow at updating this, so using manual method instead
+            //TodayAchieve.AddRange(DailyList.StrikeMissions.Dailies());  //For Weekly - Broken due to daily reset and completion not sent
             //TodayAchieve.AddRange(DailyList.DragonBash.Dailies(_settingFestivalStart.Value)); //Maybe part of daily api 
-            //TodayAchieve.AddRange(DailyList.FourWinds.Dailies(_settingFestivalStart.Value));  //Not needed. Part of Daily API
             //TodayAchieve.AddRange(DailyList.Halloween.Dailies(_settingFestivalStart.Value));  //Maybe part of daily api
             //TodayAchieve.AddRange(DailyList.LunarNewYear.Dailies(_settingFestivalStart.Value));  //Maybe part of daily api
             //TodayAchieve.AddRange(DailyList.Wintersday.Dailies(_settingFestivalStart.Value));  //Maybe part of daily api
@@ -302,6 +358,7 @@ namespace Manlaan.Dailies
                             daily = _dailies.Find(x => x.Achievement.Equals(ach.Id));
                             daily.Button = _mainWindow.CreateDailyButton(daily);
                             daily.MiniButton = _miniWindow.CreateDailyButton(daily);
+                            //daily.MiniButton2 = _miniWindow2View.CreateDailyButton(daily);
 
                             if (!_categories.Exists(x => x.Name.Equals("New")))
                                 _categories.Add(new Category() { Name = "New", IsActive = false });
@@ -315,7 +372,10 @@ namespace Manlaan.Dailies
                 if (!string.IsNullOrEmpty(btn.Achievement) && !string.IsNullOrEmpty(btn.API)) {
                     switch (btn.API) {
                         default:
-                            btn.IsDaily = TodayAchieve.Contains(btn.Achievement) ? true : false;
+                            if (btn.Achievement.Equals("4283")) {
+                                var a = btn;
+                            }
+                            btn.IsDaily = string.IsNullOrEmpty(TodayAchieve.Find(x => x.Equals(btn.Achievement))) ? false : true;
                             break;
                         //Autocompletes
                         case "dungeons":
@@ -346,10 +406,41 @@ namespace Manlaan.Dailies
             }
             UpdateDailyPanel();
         }
+        private void UpdateTimes() {
+            Timer_TimesUpdate.Restart();
+            string timeformat = "h:mm tt";
+            if (_setting24HrTime.Value) timeformat = "H:mm";
+            foreach (Daily day in _dailies) {
+                if (day.Times.Length > 0) {
+                    if (day.Times != null && day.Times.Length > 0) {
+                        List<DateTime> times = new List<DateTime>();
+                        foreach (string s in day.Times) {
+                            times.Add(DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).ToLocalTime());
+                        }
+                        List<string> timestring_start = new List<string>();
+                        List<string> timestring_end = new List<string>();
+                        foreach (DateTime t in times) {
+                            if (t > DateTime.Now)
+                                timestring_start.Add(t.ToString(timeformat));
+                            else
+                                timestring_end.Add(t.ToString(timeformat));
+                        }
+                        timestring_start = timestring_start.Concat(timestring_end).ToList();
+                        day.Button.TimeButton.Text = timestring_start.First();
+                        day.MiniButton.TimeButton.Text = timestring_start.First();
+                        day.Button.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
+                        day.MiniButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
+                    }
+                }
+            }
+        }
 
         protected override void Update(GameTime gameTime) {
-            if (Timer.ElapsedMilliseconds > 120000) {   //2 minutes  (2min * 60sec * 1000ms)
+            if (Timer_AchieveUpdate.ElapsedMilliseconds > 120000) {   //2 minutes  (2min * 60sec * 1000ms)
                 UpdateAchievements();
+            }
+            if (Timer_TimesUpdate.ElapsedMilliseconds > 60000) {   //1 minutes  (1min * 60sec * 1000ms)
+                UpdateTimes();
             }
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
                 _settingLastReset.Value = DateTime.UtcNow.Date;
@@ -364,13 +455,22 @@ namespace Manlaan.Dailies
         protected override void Unload() {
             // Unload here
             Overlay.BlishHudWindow.RemoveTab(_moduleTab);
-            _settingMiniSizeH.SettingChanged -= UpdateSettings;
-            _settingMiniSizeW.SettingChanged -= UpdateSettings;
+            _setting24HrTime.SettingChanged -= UpdateSettings_bool;
+            _settingMiniSizeH.SettingChanged -= UpdateSettings_string;
+            _settingMiniSizeW.SettingChanged -= UpdateSettings_string;
 
             _mainWindow?.Dispose();
             _miniWindow?.Dispose();
+            //_miniWindow2?.Dispose();
             _cornerIcon?.Dispose();
+            //_cornerIcon2?.Dispose();
             // All static members must be manually unset
+
+            _dailies = null;
+            _newdailies = null;
+            _categories = null;
+            _settingLastReset = null;
+            _dailySettings = null;
             ModuleInstance = null;
         }
 

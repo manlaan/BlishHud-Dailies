@@ -9,18 +9,20 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
+using Blish_HUD.Graphics.UI;
 
-namespace Manlaan.Dailies.Controls
+
+namespace Manlaan.Dailies.Views
 {
-    public class MainWindow : WindowBase
+    public class MiniWindowView : View
     {
-
         #region Load Static
 
-        private static Texture2D _btnBackground, _defaulticon, _resetIcon, _updateIcon;
-        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon, _fav1Icon, _fav0Icon;
+        private static Texture2D _wndBackground, _btnBackground, _pageIcon, _defaulticon;
+        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon;
 
-        static MainWindow() {
+        static MiniWindowView() {
+            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("155985.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
             _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
@@ -33,153 +35,63 @@ namespace Manlaan.Dailies.Controls
             _clockIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
-            _resetIcon = Module.ModuleInstance.ContentsManager.GetTexture("2256687.png");
-            _updateIcon = Module.ModuleInstance.ContentsManager.GetTexture("2208348.png");
-            _fav1Icon = Module.ModuleInstance.ContentsManager.GetTexture("605019.png");
-            _fav0Icon = Module.ModuleInstance.ContentsManager.GetTexture("605021.png");
+            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("42684bw.png");
         }
         #endregion
 
-
-        private Point WinSize = new Point();
+        private Dropdown _selectCategory;
         private FlowPanel _dailyPanel;
-        public Panel _parentPanel;
+        private string _dailyCategory = "";
+        private Panel _parentPanel;
 
-        private Menu _categoriesMenu;
-        public string _dailySearch = "", _dailyShow = "", _dailyCategory = "";
-        private Label _dailyCount;
-
-        public MainWindow(Point size) : base() {
-            WinSize = size;
-            BuildWindow();
+        public MiniWindowView() {
+            _parentPanel = new Panel();
+            _dailyPanel = new FlowPanel();
+            _selectCategory = new Dropdown();
         }
 
-        private void BuildWindow() {
+        protected override void Build(Container buildPanel) {
+
             _parentPanel = new Panel() {
                 CanScroll = false,
-                Size = WinSize,
+                Size = buildPanel.ContentRegion.Size,
+                Location = new Point(0, 0),
+                Parent = buildPanel,
             };
-            TextBox searchBox = new TextBox() {
-                PlaceholderText = "Search",
-                Width = 150,
-                Location = new Point(Dropdown.Standard.ControlOffset.X, 10),
-                Parent = _parentPanel
-            };
-            searchBox.TextChanged += delegate (object sender, EventArgs args) {
-                _dailySearch = searchBox.Text;
-               UpdateDailyPanel();
-            };
-            Dropdown ShowItems = new Dropdown() {
-                Location = new Point(searchBox.Right + 8, 10),
-                Width = 175,
+            _selectCategory = new Dropdown() {
+                Location = new Point(0, 0),
+                Width = _parentPanel.Width,
                 Parent = _parentPanel,
             };
-            ShowItems.Items.Add("Tracked - Incomplete");
-            ShowItems.Items.Add("Tracked - Complete");
-            ShowItems.Items.Add("Tracked - All Daily");
-            ShowItems.Items.Add("Tracked - Not Daily");
-            ShowItems.Items.Add("Tracked - All");
-            ShowItems.Items.Add("Untracked");
-            ShowItems.Items.Add("All");
-            ShowItems.SelectedItem = "Tracked - Incomplete";
-            _dailyShow = ShowItems.SelectedItem;
-            ShowItems.ValueChanged += delegate {
-                _dailyShow = ShowItems.SelectedItem;
+            _selectCategory.ValueChanged += delegate {
+                _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
                 UpdateDailyPanel();
             };
-            Image updateIcon = new Image(_updateIcon) {
-                Size = new Point(ShowItems.Height, ShowItems.Height),
-                Location = new Point(ShowItems.Right + 8, 10),
-                Parent = _parentPanel,
-                BasicTooltipText = "Force API update\nAPI data can be 5+ min behind game data",
-            };
-            updateIcon.Click += delegate { Module.ModuleInstance.UpdateAchievements(); };
-            Image resetIcon = new Image(_resetIcon) {
-                Size = new Point(ShowItems.Height, ShowItems.Height),
-                Location = new Point(_parentPanel.Width - ShowItems.Height, 10),
-                Parent = _parentPanel,
-                BasicTooltipText = "Reset all items to incomplete",
-            };
-            resetIcon.Click += delegate {
-                Module._settingLastReset.Value = DateTime.Today.AddDays(-10);
-            };
-            _dailyCount = new Label() {
-                Location = new Point(resetIcon.Left - 110, resetIcon.Top + 7),
-                Width = 100,
-                AutoSizeHeight = false,
-                WrapText = false,
-                Parent = _parentPanel,
-                //Text = "Count: 8888",
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            Panel categoryPanel = new Panel() {
-                ShowBorder = true,
-                Title = "Categories",
-                Size = new Point(150, _parentPanel.Size.Y - ShowItems.Height - 8),
-                Location = new Point(Panel.MenuStandard.PanelOffset.X, ShowItems.Bottom + 5),
-                CanScroll = true,
-                Parent = _parentPanel,
-            };
+
             _dailyPanel = new FlowPanel() {
                 FlowDirection = ControlFlowDirection.LeftToRight,
                 ControlPadding = new Vector2(8, 8),
-                Location = new Point(categoryPanel.Right + Panel.MenuStandard.ControlOffset.X, categoryPanel.Top),
-                Size = new Point(_parentPanel.Width - categoryPanel.Right - Control.ControlStandard.ControlOffset.X, _parentPanel.Height - ShowItems.Height - 15 - 25 - 8),
+                Location = new Point(20, _selectCategory.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 35),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
             };
 
-            StandardButton trackAllButton = new StandardButton() {
-                Text = "Track All",
-                Size = new Point(110, 25),
-                Location = new Point(_dailyPanel.Left, _dailyPanel.Bottom + 8),
-                Parent = _parentPanel,
-            };
-            trackAllButton.Click += delegate { SetAllTracked(true); };
-            StandardButton untrackAllButton = new StandardButton() {
-                Text = "Untrack All",
-                Size = trackAllButton.Size,
-                Location = new Point(trackAllButton.Right + 8, trackAllButton.Top),
-                Parent = _parentPanel,
-            };
-            untrackAllButton.Click += delegate { SetAllTracked(false); };
-            StandardButton uncompleteAllButton = new StandardButton() {
-                Text = "Incomplete All",
-                Size = trackAllButton.Size,
-                Location = new Point(_dailyPanel.Right - 110, trackAllButton.Top),
-                Parent = _parentPanel,
-            };
-            uncompleteAllButton.Click += delegate { SetAllComplete(false); };
-            StandardButton completeAllButton = new StandardButton() {
-                Text = "Complete All",
-                Size = trackAllButton.Size,
-                Location = new Point(uncompleteAllButton.Left - trackAllButton.Width - 8, trackAllButton.Top),
-                Parent = _parentPanel,
-            };
-            completeAllButton.Click += delegate { SetAllComplete(true); };
-
-            _categoriesMenu = new Menu {
-                Size = categoryPanel.ContentRegion.Size,
-                MenuItemHeight = 40,
-                Parent = categoryPanel,
-                CanSelect = true
-            };
-
             foreach (Daily d in Module._dailies) {
-                d.Button = CreateDailyButton(d);
+                d.MiniButton2 = CreateDailyButton(d);
             }
         }
-         
 
-        public DailyDetailsButton CreateDailyButton(Daily d) {
-            Point iconSize = new Point(30, 30);
+        private DailyDetailsButton CreateDailyButton(Daily d) {
+            Point iconSize = new Point(26, 26);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
                 CanScroll = false,
-                Size = new Point((int)(_dailyPanel.Width / 3) - 12, 100),
+                Size = new Point(_dailyPanel.Size.X - 20, 73),
                 Parent = _dailyPanel,
             };
+
             Image buttonbackground = new Image(_btnBackground) {
                 Size = dailyButton.Size,
                 Parent = dailyButton,
@@ -189,7 +101,7 @@ namespace Manlaan.Dailies.Controls
             if (!string.IsNullOrEmpty(d.Icon)) {
                 try {
                     if (File.Exists(Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon))
-                        buttonIcon = Texture2D.FromFile(Graphics.GraphicsDevice, Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon);
+                        buttonIcon = Texture2D.FromFile(GraphicsService.Graphics.GraphicsDevice, Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon);
                     else
                         buttonIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\" + d.Icon);
                 }
@@ -198,29 +110,28 @@ namespace Manlaan.Dailies.Controls
                 }
             }
             Image icon = new Image(buttonIcon) {
-                Size = new Point(55,55),
+                Size = new Point(35, 35),
                 Parent = dailyButton,
-                Location = new Point (5,5),
+                Location = new Point(5, 5),
+                BasicTooltipText = d.Name,
             };
 
             Label Category = new Label() {
-                Location = new Point(70, 5),
-                Width = dailyButton.Size.X - 75,
+                Location = new Point(48, 2),
+                Width = dailyButton.Size.X - 15 - 42,
                 AutoSizeHeight = false,
                 WrapText = false,
                 Parent = dailyButton,
                 Text = d.Category,
-                Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Italic),
+                Font = ContentService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
             };
             Label Desc = new Label() {
-                Location = new Point(Category.Left, Category.Bottom),
+                Location = new Point(Category.Left, Category.Bottom - 1),
                 Width = Category.Width,
-                Height = dailyButton.Size.Y - (iconSize.Y + 4) - Category.Height,
                 AutoSizeHeight = false,
-                WrapText = true,
+                WrapText = false,
                 Parent = dailyButton,
                 Text = d.Name,
-                VerticalAlignment = VerticalAlignment.Top,
             };
 
             Image buttonbackground2 = new Image(_btnBackground) {
@@ -297,13 +208,13 @@ namespace Manlaan.Dailies.Controls
             }
             if (d.Times != null && d.Times.Length > 0) {
                 dailyButton.TimeButton = new Label() {
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2 + 5),
+                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2 + 3),
                     Width = 75,
                     AutoSizeHeight = false,
                     WrapText = false,
                     Parent = dailyButton,
                     Text = "",
-                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
+                    Font = ContentService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
                 };
                 xloc = dailyButton.TimeButton.Right + 5;
             }
@@ -329,25 +240,6 @@ namespace Manlaan.Dailies.Controls
                 };
                 xloc = CopyBtn.Right + 5;
             }
-
-            dailyButton.TrackedButton = new GlowButton() {
-                Icon = _fav0Icon,
-                ActiveIcon = _fav1Icon,
-                BasicTooltipText = "Toggle tracking",
-                ToggleGlow = true,
-                Checked = d.IsTracked,
-                Parent = dailyButton,
-                Location = new Point(dailyButton.Size.X - iconSize.X - 5, 0),
-                Size = iconSize,
-            };
-
-            dailyButton.TrackedButton.Click += delegate {
-                Module._dailySettings.SetTracked(d.Id, dailyButton.TrackedButton.Checked);
-                d.IsTracked = dailyButton.TrackedButton.Checked;
-                d.Button.TrackedButton.Checked = dailyButton.TrackedButton.Checked;
-                //d.MiniButton.TrackedButton.Checked = dailyButton.CompleteButton.Checked;
-                Module.ModuleInstance.UpdateDailyPanel();
-            };
 
             bool setAutoComplete = false;
             switch (d.API) {
@@ -377,6 +269,7 @@ namespace Manlaan.Dailies.Controls
                 };
                 dailyButton.CompleteButton.Click += delegate {
                     Module._dailySettings.SetComplete(d.Id, dailyButton.CompleteButton.Checked);
+                    //Daily daily = Module._combinedDailies.Find(x => x.Id.Equals(d.Id));
                     d.IsComplete = dailyButton.CompleteButton.Checked;
                     d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
@@ -403,79 +296,29 @@ namespace Manlaan.Dailies.Controls
         }
 
         public void UpdateDailyPanel() {
-            int count = 0;
-
-            foreach (Category cat in Module._categories) {
+            List<Category> categories = Module._categories;
+            foreach (Category cat in categories) {
                 cat.IsActive = false;
             }
 
             foreach (Daily d in Module._dailies) {
-                d.Button.Visible = false;
-                if (Module.InSection(d, _dailyShow, _dailySearch, "")) {
-                    Module._categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
+                d.MiniButton2.Visible = false;
+                if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
+                    categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
                 }
-                if (Module.InSection(d, _dailyShow, _dailySearch, _dailyCategory)) {
-                    count++;
-                    d.Button.Visible = true;
+                if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
+                    d.MiniButton2.Visible = true;
                 }
             }
             _dailyPanel.RecalculateLayout();
-            _dailyCount.Text = "Count: " + count.ToString();
 
-            _categoriesMenu.ClearChildren();
-
-            MenuItem categoryItem = _categoriesMenu.AddMenuItem("All");
-            if (_dailyCategory.Equals(""))
-                categoryItem.Select();
-            categoryItem.Click += delegate {
-                _dailyCategory = "";
-                UpdateDailyPanel();
-            };
-
-            foreach (Category cat in Module._categories) {
-                if (cat.IsActive) {
-                    categoryItem = _categoriesMenu.AddMenuItem(cat.Name);
-                    categoryItem.Click += delegate {
-                        _dailyCategory = cat.Name;
-                        UpdateDailyPanel();
-                    };
-                    if (_dailyCategory.Equals(cat.Name))
-                        categoryItem.Select();
-                }
+            _selectCategory.Items.Clear();
+            _selectCategory.Items.Add("All");
+            foreach (Category cat in categories) {
+                if (cat.IsActive)
+                    _selectCategory.Items.Add(cat.Name);
             }
-        }
-
-        public void SetAllComplete(bool complete, bool ignoreCategory = false) {
-            if (ignoreCategory) {
-                foreach (Daily d in Module._dailies) {
-                    Module._dailySettings.SetComplete(d.Id, complete);
-                    d.IsComplete = complete;
-                    d.Button.CompleteButton.Checked = complete;
-                    d.MiniButton.CompleteButton.Checked = complete;
-                }
-            }
-            else {
-                foreach (Daily d in Module._dailies) {
-                    if (Module.InSection(d, _dailyShow, _dailySearch, _dailyCategory)) {
-                        Module._dailySettings.SetComplete(d.Id, complete);
-                        d.IsComplete = complete;
-                        d.Button.CompleteButton.Checked = complete;
-                        d.MiniButton.CompleteButton.Checked = complete;
-                    }
-                }
-            }
-            Module.ModuleInstance.UpdateDailyPanel();
-        }
-        public void SetAllTracked(bool tracked) {
-            foreach (Daily d in Module._dailies) {
-                if (Module.InSection(d, _dailyShow, _dailySearch, _dailyCategory)) {
-                    Module._dailySettings.SetTracked(d.Id, tracked);
-                    d.IsTracked = tracked;
-                    d.Button.TrackedButton.Checked = tracked;
-                    //d.MiniButton.TrackedButton.Checked = tracked;
-                }
-            }
-            Module.ModuleInstance.UpdateDailyPanel();
+            _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
         }
 
     }

@@ -1,7 +1,7 @@
 [
     {
         "id": "boss_admiral_taidha_covington",
-        "name": "Taidha Covington",
+        "name": "Admiral Taidha Covington",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BKgBAAA=]",
@@ -11,7 +11,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Bloodtide Coast",
-        "times": []
+        "times": [ "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00" ],
+        "timesgroup" :  "World Boss"
     },
     {
         "id": "boss_claw_of_jormag",
@@ -25,7 +26,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Frostgorge Sound",
-        "times": []
+        "times": [ "02:30", "08:30", "11:30", "14:30", "17:30", "20:30", "23:30" ],
+        "timesgroup": "World Boss"
     },
     {
         "id": "boss_triple_trouble_wurm",
@@ -39,7 +41,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Bloodtide Coast",
-        "times": []
+        "times": [ "01:00", "04:00", "08:00", "12:30", "17:00", "20:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_fire_elemental",
@@ -53,7 +56,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Metrica Province",
-        "times": []
+        "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_inquest_golem_mark_ii",
@@ -67,7 +71,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Mount Maelstrom",
-        "times": []
+        "times": [ "02:00", "05:00", "08:00", "11:00", "14:00", "17:00", "20:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_great_jungle_wurm",
@@ -81,7 +86,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Caledon Forest",
-        "times": []
+        "times": [ "01:15", "03:15", "05:15", "07:15", "09:15", "11:15", "13:15", "15:15", "17:15", "19:15", "21:15", "23:15" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_karka_queen",
@@ -95,7 +101,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Southsun Cove",
-        "times": []
+        "times": [ "02:00", "06:00", "10:30", "15:00", "18:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_megadestroyer",
@@ -109,7 +116,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Mount Maelstrom",
-        "times": []
+        "times": [ "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_modniir_ulgoth",
@@ -123,7 +131,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Harathi Hinterlands",
-        "times": []
+        "times": [ "01:30", "04:30", "07:30", "10:30", "13:30", "16:30", "19:30", "22:30" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_shadow_behemoth",
@@ -137,7 +146,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Queensdale",
-        "times": []
+        "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_svanir_shaman_chief",
@@ -151,7 +161,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Wayfarer Foothills",
-        "times": []
+        "times": [ "00:15", "02:15", "04:15", "06:15", "08:15", "10:15", "12:15", "14:15", "16:15", "18:15", "20:15", "22:15" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_tequatl_the_sunless",
@@ -165,7 +176,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Sparkfly Fen",
-        "times": []
+        "times": [ "00:00", "03:00", "07:00", "11:30", "16:00", "19:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_dbshatterer",
@@ -179,7 +191,8 @@
         "api": "",
         "icon": "498983.png",
         "note": "Jahai Bluffs",
-        "times": []
+        "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_the_shatterer",
@@ -193,7 +206,8 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Blazeridge Steppes",
-        "times": []
+        "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_drakkar",
@@ -207,21 +221,53 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Bjora Marches",
-        "times": []
+        "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
+        "timesgroup": ""
     },
     {
-        "id": "boss_leyline",
-        "name": "Ley-Line Anomaly",
+        "id": "boss_leyline_gendarran",
+        "name": "Ley-Line Anomaly: Gendarran Fields",
         "category": "Metas & Bosses",
         "clipboard": "",
-        "waypoint": "",
+        "waypoint": "[&BOQAAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
         "timer": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly#Event_Timer",
         "achievement": "",
         "api": "",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "4:20", "10:20", "16:20", "22:20" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_leyline_ironmarches",
+        "name": "Ley-Line Anomaly: Iron Marches",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BOYBAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
+        "timer": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly#Event_Timer",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "02:20", "8:20", "14:20", "20:20" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_leyline_timerbline",
+        "name": "Ley-Line Anomaly: Timberline Falls",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BEwCAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly",
+        "timer": "https://wiki.guildwars2.com/wiki/Legendary_Ley-Line_Anomaly#Event_Timer",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:20", "06:20", "12:20", "18:20" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_dragonstorm",
@@ -235,7 +281,8 @@
         "api": "",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_marionette",
@@ -249,11 +296,12 @@
         "api": "",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
+        "timesgroup": ""
     },
     {
         "id": "boss_Hound",
-        "name": "Forged Hounds",
+        "name": "Vabbi: Forged Hounds",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BO0KAAA=]",
@@ -263,14 +311,165 @@
         "api": "",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_storm",
+        "name": "Storms of Winter",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BCcMAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Storms_of_Winter",
+        "timer": "https://wiki.guildwars2.com/wiki/Bjora_Marches#Events",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "01:35", "03:35", "05:35", "07:35", "09:35", "11:35", "13:35", "15:35", "17:35", "19:35", "21:35", "23:35" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_drytop",
+        "name": "Dry Top: Storm",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BIAHAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Sandstorm!",
+        "timer": "https://wiki.guildwars2.com/wiki/Sandstorm!#Events",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:40", "01:40", "02:40", "03:40", "04:40", "05:40", "06:40", "07:40", "08:40", "09:40", "10:40", "11:40", "12:40", "13:40", "14:40", "15:40", "16:40", "17:40", "18:40", "19:40", "20:40", "21:40", "22:40", "23:40" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_junundu",
+        "name": "Desolation: Junundu Rising",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BMEKAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Junundu_Rising",
+        "timer": "https://wiki.guildwars2.com/wiki/Junundu_Rising#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:30", "01:30", "02:30", "03:30", "04:30", "05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30", "21:30", "22:30", "23:30" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_palawadan",
+        "name": "Istan: Palawadan",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BAkLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Palawadan,_Jewel_of_Istan_(meta_event)",
+        "timer": "https://wiki.guildwars2.com/wiki/Palawadan,_Jewel_of_Istan_(meta_event)#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_thunderhead",
+        "name": "Thunderhead: Thunderhead Keep",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BLsLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Thunderhead_Keep_(meta_event)",
+        "timer": "https://wiki.guildwars2.com/wiki/Thunderhead_Keep_(meta_event)#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_oilfloes",
+        "name": "Thunderhead: Oil Floes",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BKYLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/The_Oil_Floes",
+        "timer": "https://wiki.guildwars2.com/wiki/The_Oil_Floes#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_concert",
+        "name": "Grothmar: Concert",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BPgLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/A_Concert_for_the_Ages",
+        "timer": "https://wiki.guildwars2.com/wiki/A_Concert_for_the_Ages#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "01:40", "03:40", "05:40", "07:40", "09:40", "11:40", "13:40", "15:40", "17:40", "19:40", "21:40", "23:40" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_doomlore",
+        "name": "Grothmar: Doomlore",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BA4MAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/The_Haunting_of_Doomlore_Shrine",
+        "timer": "https://wiki.guildwars2.com/wiki/The_Haunting_of_Doomlore_Shrine#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:40", "02:40", "04:40", "06:40", "08:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_effigy",
+        "name": "Grothmar: Effigy",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BA4MAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Ceremony_of_the_Sacred_Flame",
+        "timer": "https://wiki.guildwars2.com/wiki/Ceremony_of_the_Sacred_Flame#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:10", "02:10", "04:10", "06:10", "08:10", "10:10", "12:10", "14:10", "16:10", "18:10", "20:10", "22:10" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "boss_ooze",
+        "name": "Grothmar: Ooze Pit",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BPgLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/The_Ooze_Pit_Trials",
+        "timer": "https://wiki.guildwars2.com/wiki/The_Ooze_Pit_Trials#Event_schedule",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "01:05", "03:05", "05:05", "07:05", "09:05", "11:05", "13:05", "15:05", "17:05", "19:05", "21:05", "23:05" ],
+        "timesgroup": ""
     },
 
 
     /* Hero Choice Chests */
     {
         "id": "chest_ab",
-        "name": "Auric Basin Octovine",
+        "name": "Auric Basin: Octovine",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BMYHAAA=]",
@@ -280,11 +479,12 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_co",
-        "name": "Crystal Oasis Casino Blitz/Pinata",
+        "name": "Crystal Oasis: Casino Blitz/Pinata",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BLsKAAA=]",
@@ -294,21 +494,38 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
+        "timesgroup": ""
     },
     {
-        "id": "chest_vabbi",
-        "name": "Domain of Vabbi",
+        "id": "chest_vabbi_forged",
+        "name": "Vabbi: Forged with Fire",
         "category": "Metas & Bosses",
         "clipboard": "",
-        "waypoint": "[&BHQKAAA=]",
-        "wiki": "https://wiki.guildwars2.com/wiki/Domain_of_Vabbi",
-        "timer": "https://wiki.guildwars2.com/wiki/Domain_of_Vabbi#Events",
+        "waypoint": "[&BO0KAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Forged_with_Fire",
+        "timer": "https://wiki.guildwars2.com/wiki/Forged_with_Fire#Event_schedule",
         "achievement": "domain_of_vabbi_heros_choice_chest",
         "api": "mapchests",
         "icon": "498983.png",
-        "note": "Either Forged with Fire or Serpents Ire",
-        "times": []
+        "note": "",
+        "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
+        "timesgroup": ""
+    },
+    {
+        "id": "chest_vabbi_serpents",
+        "name": "Vabbi: Serpents' Ire",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BHQKAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Serpents%27_Ire",
+        "timer": "https://wiki.guildwars2.com/wiki/Serpents%27_Ire#Event_schedule",
+        "achievement": "domain_of_vabbi_heros_choice_chest",
+        "api": "mapchests",
+        "icon": "498983.png",
+        "note": "",
+        "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_ds",
@@ -322,11 +539,12 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_elon",
-        "name": "Elon Riverlands Doppelganger",
+        "name": "Elon Riverlands: Doppelganger",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BFMKAAA=]",
@@ -336,11 +554,12 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "01:30", "03:30", "05:30", "07:30", "09:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_td",
-        "name": "Tangled Depths Chak Gerent",
+        "name": "Tangled Depths: Chak Gerent",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BPUHAAA=]",
@@ -350,11 +569,12 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_deso",
-        "name": "Desolation Forged Demolisher",
+        "name": "Desolation: Forged Demolisher",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BKMKAAA=]",
@@ -364,11 +584,12 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
+        "timesgroup": ""
     },
     {
         "id": "chest_vb",
-        "name": "Verdant Brink Night Bosses",
+        "name": "Verdant Brink: Night Bosses",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BAgIAAA=]",
@@ -378,6 +599,7 @@
         "api": "mapchests",
         "icon": "498983.png",
         "note": "",
-        "times": []
+        "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
+        "timesgroup": ""
     }
 ]
