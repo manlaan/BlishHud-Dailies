@@ -143,6 +143,7 @@
     <Compile Include="DailyList\Wintersday.cs" />
     <Compile Include="Models\Achievements.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\FileList.cs" />
     <Compile Include="Models\DailyDetailButtons.cs" />
     <Compile Include="Models\Daily.cs" />
     <Compile Include="Models\DailySettingEntry.cs" />

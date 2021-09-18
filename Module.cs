@@ -17,6 +17,7 @@ using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using Manlaan.Dailies.Views;
+using System.Net;
 
 namespace Manlaan.Dailies
 {
@@ -124,40 +125,21 @@ namespace Manlaan.Dailies
             _cornerIcon.LoadingMessage = "Extracting Sample...";
             ExtractFile("sample.txt");
 
-            string[] jsonfiles = {
-                "Daily.json",
-                "Adventures.json",
-                "BjoraMarches.json",
-                "Champions.json",
-                "Converters.json",
-                "Crafting.json",
-                "Drizzlewood.json",
-                "Dungeons.json",
-                "Fractals.json",
-                "Gathering.json",
-                "GrothmarValley.json",
-                "JumpingPuzzles.json",
-                "LivingWorld.json",
-                "Merchants.json",
-                "Raids.json",
-                "StrikeMissions.json",
-                "WorldBosses.json",
-
-                "DragonBash.json",
-                "FourWinds.json",
-                "Halloween.json",
-                "LunarNewYear.json",
-                "SuperAdventure.json",
-                "Wintersday.json",
-            };
-
-            foreach (string file in jsonfiles) {
-                _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
-                _dailies.AddRange(readJson(ContentsManager.GetFileStream(file), file));
-            }
             string dailiesDirectory = DirectoriesManager.GetFullDirectoryPath("dailies");
+            try {
+                Directory.CreateDirectory(dailiesDirectory + "/cache");
+                new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/files.json", dailiesDirectory + "/cache/files.json");
+                List<FileList> files = readJsonFileList(new FileStream(dailiesDirectory + "/cache/files.json", FileMode.Open, FileAccess.Read), "files.json");
+                foreach (FileList file in files) {
+                    new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
+                    _cornerIcon.LoadingMessage = "Loading Dailies: " + file.File + "...";
+                    _dailies.AddRange(readJson(new FileStream(dailiesDirectory + "/cache/" + file.File, FileMode.Open, FileAccess.Read), file.File));
+                }
+            } catch { }
+
+
             foreach (string file in Directory.GetFiles(dailiesDirectory, ".")) {
-                if (file.ToLower().Contains(".json") && !file.ToLower().Contains("settings.json")) {
+                if (file.ToLower().Contains(".json") && !file.ToLower().Contains("settings.json") && !file.ToLower().Contains("files.json")) {
                     if (file.ToLower().Contains("new.json")) {
                         _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
                         List<Daily> newdaily = readJson(new FileStream(file, FileMode.Open, FileAccess.Read), file);
@@ -490,6 +472,28 @@ namespace Manlaan.Dailies
 
             try {
                 data = JsonSerializer.Deserialize<List<Daily>>(jsonContent, jsonOptions);
+                Logger.Info("Loaded File: " + filename);
+            }
+            catch (Exception ex) {
+                Logger.Error("Failed Deserialization: " + filename);
+            }
+            return data;
+        }
+        private List<FileList> readJsonFileList(Stream fileStream, string filename) {
+            List<FileList> data = new List<FileList>();
+            JsonSerializerOptions jsonOptions = new JsonSerializerOptions {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+                IgnoreNullValues = true
+            };
+
+            string jsonContent;
+            using (var jsonReader = new StreamReader(fileStream)) {
+                jsonContent = jsonReader.ReadToEnd();
+            }
+
+            try {
+                data = JsonSerializer.Deserialize<List<FileList>>(jsonContent, jsonOptions);
                 Logger.Info("Loaded File: " + filename);
             }
             catch (Exception ex) {
