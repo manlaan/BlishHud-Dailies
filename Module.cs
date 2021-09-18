@@ -127,19 +127,22 @@ namespace Manlaan.Dailies
 
             string dailiesDirectory = DirectoriesManager.GetFullDirectoryPath("dailies");
             try {
+                new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/sample.txt", dailiesDirectory + "/sample.txt");
+
                 Directory.CreateDirectory(dailiesDirectory + "/cache");
+                _cornerIcon.LoadingMessage = "Downloading Daily Files...";
                 new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/files.json", dailiesDirectory + "/cache/files.json");
                 List<FileList> files = readJsonFileList(new FileStream(dailiesDirectory + "/cache/files.json", FileMode.Open, FileAccess.Read), "files.json");
                 foreach (FileList file in files) {
+                    _cornerIcon.LoadingMessage = "Downloading and Adding Dailies: " + file.File + "...";
                     new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
-                    _cornerIcon.LoadingMessage = "Loading Dailies: " + file.File + "...";
                     _dailies.AddRange(readJson(new FileStream(dailiesDirectory + "/cache/" + file.File, FileMode.Open, FileAccess.Read), file.File));
                 }
             } catch { }
 
 
             foreach (string file in Directory.GetFiles(dailiesDirectory, ".")) {
-                if (file.ToLower().Contains(".json") && !file.ToLower().Contains("settings.json") && !file.ToLower().Contains("files.json")) {
+                if (file.ToLower().Contains(".json") && !file.ToLower().Contains("settings.json")) {
                     if (file.ToLower().Contains("new.json")) {
                         _cornerIcon.LoadingMessage = "Loading Dailies: " + file + "...";
                         List<Daily> newdaily = readJson(new FileStream(file, FileMode.Open, FileAccess.Read), file);
