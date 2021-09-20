@@ -18,19 +18,18 @@ namespace Manlaan.Dailies.Controls
         #region Load Static
 
         private static Texture2D _btnBackground, _defaulticon, _resetIcon, _updateIcon;
-        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon, _fav1Icon, _fav0Icon;
+        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _fav1Icon, _fav0Icon;
 
         static MainWindow() {
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
             _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
-            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("102367.png");
+            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _noteIcon = Module.ModuleInstance.ContentsManager.GetTexture("440023.png");
             _copyIcon = Module.ModuleInstance.ContentsManager.GetTexture("563464.png");
             _complete1Icon = Module.ModuleInstance.ContentsManager.GetTexture("784259.png");
             _complete0Icon = Module.ModuleInstance.ContentsManager.GetTexture("784261.png");
             _wpIcon = Module.ModuleInstance.ContentsManager.GetTexture("156628.png");
-            _clockIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
             _resetIcon = Module.ModuleInstance.ContentsManager.GetTexture("2256687.png");
