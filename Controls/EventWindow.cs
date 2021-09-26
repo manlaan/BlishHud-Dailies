@@ -9,61 +9,103 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
-using Blish_HUD.Graphics.UI;
 
-
-namespace Manlaan.Dailies.Views
+namespace Manlaan.Dailies.Controls
 {
-    public class MiniWindowView : View
+    public class EventWindow : WindowBase
     {
         #region Load Static
 
         private static Texture2D _wndBackground, _btnBackground, _pageIcon, _defaulticon;
-        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _clockIcon;
+        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon;
 
-        static MiniWindowView() {
-            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("155985.png");
+        static EventWindow() {
+            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("1863949.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
             _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
-            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("102367.png");
+            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _noteIcon = Module.ModuleInstance.ContentsManager.GetTexture("440023.png");
             _copyIcon = Module.ModuleInstance.ContentsManager.GetTexture("563464.png");
             _complete1Icon = Module.ModuleInstance.ContentsManager.GetTexture("784259.png");
             _complete0Icon = Module.ModuleInstance.ContentsManager.GetTexture("784261.png");
             _wpIcon = Module.ModuleInstance.ContentsManager.GetTexture("156628.png");
-            _clockIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
             _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("42684bw.png");
         }
         #endregion
 
-        private Dropdown _selectCategory;
+
+        private Dropdown _selectCategory , _selectTracked;
+        private Point WinSize = new Point();
         private FlowPanel _dailyPanel;
         private string _dailyCategory = "";
         private Panel _parentPanel;
 
-        public MiniWindowView() {
-            _parentPanel = new Panel();
-            _dailyPanel = new FlowPanel();
-            _selectCategory = new Dropdown();
+        public EventWindow(Point size) : base() {
+            WinSize = size;
+            BuildWindow();
         }
 
-        protected override void Build(Container buildPanel) {
-
+        private void BuildWindow() {
+            ConstructWindow(
+                _wndBackground,
+                new Vector2(0, 0),
+                new Rectangle(0, 0, WinSize.X, WinSize.Y),
+                Thickness.Zero,
+                45, false);
+            this.ContentRegion = new Rectangle(0, 0, WinSize.X, WinSize.Y);
             _parentPanel = new Panel() {
                 CanScroll = false,
-                Size = buildPanel.ContentRegion.Size,
-                Location = new Point(0, 0),
-                Parent = buildPanel,
+                Size = new Point(this.ContentRegion.Size.X, this.ContentRegion.Size.Y - 10),
+                Location = new Point(10, 10),
+                Parent = this,
             };
-            _selectCategory = new Dropdown() {
+            Image bgimage = new Image(_wndBackground) {
                 Location = new Point(0, 0),
-                Width = _parentPanel.Width,
+                Size = _parentPanel.Size,
+                Parent = _parentPanel,
+            };
+            Image headimage = new Image(_pageIcon) {
+                Location = new Point(10, 11),
+                Size = new Point(23, 23),
+                Parent = _parentPanel,
+            };
+            Label header = new Label() {
+                Location = new Point(40, 11),
+                Width = _parentPanel.Width - 80,
+                AutoSizeHeight = false,
+                WrapText = false,
+                Parent = _parentPanel,
+                Text = "Events",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Font = Content.DefaultFont18,
+            };
+
+            _selectCategory = new Dropdown() {
+                Location = new Point(10, 35),
+                Width = _parentPanel.Width - 30,
                 Parent = _parentPanel,
             };
             _selectCategory.ValueChanged += delegate {
+                _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
+                UpdateDailyPanel();
+            };
+            _selectTracked = new Dropdown() {
+                Location = new Point(_selectCategory.Location.X, _selectCategory.Bottom + 3),
+                Width = _parentPanel.Width - 30,
+                Parent = _parentPanel,
+            };
+            _selectTracked.Items.Add("Tracked - Incomplete");
+            _selectTracked.Items.Add("Tracked - Complete");
+            _selectTracked.Items.Add("Tracked - All Daily");
+            _selectTracked.Items.Add("Tracked - Not Daily");
+            _selectTracked.Items.Add("Tracked - All");
+            _selectTracked.Items.Add("Untracked");
+            _selectTracked.Items.Add("All");
+            _selectTracked.SelectedItem = "Tracked - Incomplete";
+            _selectTracked.ValueChanged += delegate {
                 _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
                 UpdateDailyPanel();
             };
@@ -71,19 +113,32 @@ namespace Manlaan.Dailies.Views
             _dailyPanel = new FlowPanel() {
                 FlowDirection = ControlFlowDirection.LeftToRight,
                 ControlPadding = new Vector2(8, 8),
-                Location = new Point(20, _selectCategory.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 35),
+                Location = new Point(10, _selectTracked.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectTracked.Bottom - 25),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
             };
 
+            List<Daily> events = Module._dailies;
+            events.Sort(delegate (Daily x, Daily y) {
+                if (x.NextEvent == null && y.NextEvent == null) return 0;
+                else if (x.NextEvent == null) return -1;
+                else if (y.NextEvent == null) return 1;
+                else return x.NextEvent.CompareTo(y.NextEvent);
+            });
+
             foreach (Daily d in Module._dailies) {
-                d.MiniButton2 = CreateDailyButton(d);
+                if (d.Times.Length > 0) { 
+                    d.EventButton = CreateDailyButton(d);
+                }
             }
+
+            _dailyCategory = "";
+            UpdateDailyPanel();
         }
 
-        private DailyDetailsButton CreateDailyButton(Daily d) {
+        public DailyDetailsButton CreateDailyButton(Daily d) {
             Point iconSize = new Point(26, 26);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
@@ -101,7 +156,7 @@ namespace Manlaan.Dailies.Views
             if (!string.IsNullOrEmpty(d.Icon)) {
                 try {
                     if (File.Exists(Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon))
-                        buttonIcon = Texture2D.FromFile(GraphicsService.Graphics.GraphicsDevice, Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon);
+                        buttonIcon = Texture2D.FromFile(Graphics.GraphicsDevice, Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon);
                     else
                         buttonIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\" + d.Icon);
                 }
@@ -123,7 +178,7 @@ namespace Manlaan.Dailies.Views
                 WrapText = false,
                 Parent = dailyButton,
                 Text = d.Category,
-                Font = ContentService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
+                Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
             };
             Label Desc = new Label() {
                 Location = new Point(Category.Left, Category.Bottom - 1),
@@ -141,10 +196,10 @@ namespace Manlaan.Dailies.Views
             };
 
             int xloc = 5;
-            if (!string.IsNullOrEmpty(d.Note)) {
+            if (!string.IsNullOrEmpty(d.Note) || Module._settingDebug.Value) {
                 GlowButton NoteBtn = new GlowButton {
                     Icon = _noteIcon,
-                    BasicTooltipText = d.Note,
+                    BasicTooltipText = d.Note + (Module._settingDebug.Value ? "\n\n" + d.Achievement + " - " + d.API + " - " + d.Id : ""),
                     Parent = dailyButton,
                     GlowColor = Color.White * 0.1f,
                     Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
@@ -214,7 +269,7 @@ namespace Manlaan.Dailies.Views
                     WrapText = false,
                     Parent = dailyButton,
                     Text = "",
-                    Font = ContentService.Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
+                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
                 };
                 xloc = dailyButton.TimeButton.Right + 5;
             }
@@ -302,14 +357,15 @@ namespace Manlaan.Dailies.Views
             }
 
             foreach (Daily d in Module._dailies) {
-                d.MiniButton2.Visible = false;
+                d.EventButton.Visible = false;
                 if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
                     categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
                 }
                 if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
-                    d.MiniButton2.Visible = true;
+                    d.EventButton.Visible = true;
                 }
             }
+            //_dailyPanel.SortChildren<Daily>((d1, d2) => { return DateTime.Compare(d1.NextEvent, d2.NextEvent); });
             _dailyPanel.RecalculateLayout();
 
             _selectCategory.Items.Clear();
@@ -321,5 +377,9 @@ namespace Manlaan.Dailies.Views
             _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
         }
 
+
+        /// <inheritdoc />
+        public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
+        }
     }
 }

@@ -16,7 +16,6 @@ using System.Diagnostics;
 using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
-using Manlaan.Dailies.Views;
 using System.Net;
 
 namespace Manlaan.Dailies
@@ -32,10 +31,14 @@ namespace Manlaan.Dailies
         public static List<Daily> _newdailies = new List<Daily>();
         public static List<Category> _categories = new List<Category>();
         public static SettingEntry<DateTime> _settingLastReset;
-        private SettingEntry<string> _settingFestivalStart;
+        //private SettingEntry<string> _settingFestivalStart;
         private SettingEntry<Point> _settingMiniLocation;
+        private SettingEntry<Point> _settingEventLocation;
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
+        private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
         private SettingEntry<bool> _setting24HrTime;
+        public static SettingEntry<bool> _settingDontShowIntro;
+        public static SettingEntry<bool> _settingDebug;
         private Stopwatch Timer_AchieveUpdate = new Stopwatch();
         private Stopwatch Timer_TimesUpdate = new Stopwatch();
         public static DailySettings _dailySettings;
@@ -44,9 +47,9 @@ namespace Manlaan.Dailies
         private MainWindow _mainWindow;
         private MiniWindow _miniWindow;
         private CornerIcon _cornerIcon;
-        private MiniWindow2 _miniWindow2;
-        private MiniWindowView _miniWindow2View;
-        private CornerIcon _cornerIcon2;
+        private EventWindow _eventWindow;
+        private CornerIcon _cornerEventIcon;
+        private IntroWindow _introWindow;
 
         private WindowTab _moduleTab;
 
@@ -63,15 +66,23 @@ namespace Manlaan.Dailies
         public Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { ModuleInstance = this; }
 
         protected override void DefineSettings(SettingCollection settings) {
-            _settingFestivalStart = settings.DefineSetting("DailyFestivalStart", @"01/01/2000", "Festival Start Date", "");
+            //_settingFestivalStart = settings.DefineSetting("DailyFestivalStart", @"01/01/2000", "Festival Start Date", "");
             _setting24HrTime = settings.DefineSetting("Daily24HrTime", false, "24 Hour Time", "");
+            _settingDebug = settings.DefineSetting("DailyDebug", false, "Debug (restart required)", "");
             _settingLastReset = settings.DefineSetting("DailyLastUpdate", new DateTime());
             _settingMiniLocation = settings.DefineSetting("DailyMiniLoc", new Point(100, 100));
+            _settingEventLocation = settings.DefineSetting("DailyEventLoc", new Point(100, 100));
             _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"280", "Mini Window Width", "");
             _settingMiniSizeH = settings.DefineSetting("DailyMiniSizeW", @"450", "Mini Window Height", "");
+            _settingEventSizeW = settings.DefineSetting("DailyEventSizeH", @"280", "Event Window Width", "");
+            _settingEventSizeH = settings.DefineSetting("DailyEventSizeW", @"450", "Event Window Height", "");
+            _settingDontShowIntro = settings.DefineSetting("DailyDontShowIntro", false, "Don't Show Intro", "");
             _setting24HrTime.SettingChanged += UpdateSettings_bool;
+            _settingDontShowIntro.SettingChanged += UpdateSettings_bool;
             _settingMiniSizeH.SettingChanged += UpdateSettings_string;
             _settingMiniSizeW.SettingChanged += UpdateSettings_string;
+            _settingEventSizeH.SettingChanged += UpdateSettings_string;
+            _settingEventSizeW.SettingChanged += UpdateSettings_string;
 
             //_dailiesTracked = settings.AddSubCollection("Tracked");
             //_dailiesComplete = settings.AddSubCollection("Complete");
@@ -88,10 +99,11 @@ namespace Manlaan.Dailies
                 Location = _settingMiniLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
-            //foreach (Daily d in _dailies) {
-            //    d.MiniButton = _miniWindow.CreateDailyButton(d);
-                //d.MiniButton2 = _miniWindow2View.CreateDailyButton(d);
-            //}
+            _eventWindow.Dispose();
+            _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
+                Location = _settingEventLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
+            };
             UpdateDailyPanel();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
@@ -104,7 +116,6 @@ namespace Manlaan.Dailies
             _categories = new List<Category>();
 
             _pageIcon = ContentsManager.GetTexture("42684bw.png");
-
         }
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
@@ -116,6 +127,12 @@ namespace Manlaan.Dailies
                 Priority = 10
             };
             _cornerIcon.LoadingMessage = "Loading Settings...";
+            _cornerEventIcon = new CornerIcon() {
+                IconName = "Events",
+                Icon = _pageIcon,
+                HoverIcon = _pageIcon,
+                Priority = 10
+            };
 
             _dailySettings = new DailySettings(DirectoriesManager.GetFullDirectoryPath("dailies"));
             _dailySettings.LoadSettings();
@@ -136,7 +153,9 @@ namespace Manlaan.Dailies
                 foreach (FileList file in files) {
                     _cornerIcon.LoadingMessage = "Downloading and Adding Dailies: " + file.File + "...";
                     new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
-                    _dailies.AddRange(readJson(new FileStream(dailiesDirectory + "/cache/" + file.File, FileMode.Open, FileAccess.Read), file.File));
+                    if (file.File.ToLower().Contains(".json")) {
+                        _dailies.AddRange(readJson(new FileStream(dailiesDirectory + "/cache/" + file.File, FileMode.Open, FileAccess.Read), file.File));
+                    }
                 }
             } catch { }
 
@@ -159,9 +178,11 @@ namespace Manlaan.Dailies
                     }
                 }
             }
-            var options = new JsonSerializerOptions { WriteIndented = true };
+
             FileStream createStream = File.Create(DirectoriesManager.GetFullDirectoryPath("dailies") + "\\new.json");
+            var options = new JsonSerializerOptions { WriteIndented = true };
             JsonSerializer.SerializeAsync(createStream, _newdailies, options);
+            createStream.Close();
 
             _cornerIcon.LoadingMessage = "Loading Categories...";
             foreach (Daily d in _dailies) {
@@ -184,39 +205,28 @@ namespace Manlaan.Dailies
                 else if (y.Name == null) return 1;
                 else return x.Name.CompareTo(y.Name);
             });
+            //_events.Sort(delegate (Daily x, Daily y) {
+            //    if (x.NextEvent == null && y.NextEvent == null) return 0;
+            //    else if (x.NextEvent == null) return -1;
+            //    else if (y.NextEvent == null) return 1;
+            //    else return x.NextEvent.CompareTo(y.NextEvent);
+            //});
 
-
-            _cornerIcon.LoadingMessage = "Creating Main Window Buttons...";
+            _cornerIcon.LoadingMessage = "Preloading Main Window...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
-            _cornerIcon.LoadingMessage = "Creating Mini Window Buttons...";
+            _cornerIcon.LoadingMessage = "Preloading Mini Window...";
             _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
                 Location = _settingMiniLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
-            _miniWindow2 = new MiniWindow2(ContentsManager.GetTexture("155985.png"), new Rectangle(0, 0, 100, 100), new Rectangle(10, 20, 80, 80)) {
-                Parent = Graphics.SpriteScreen,
-                Title = "Dailies",
-                Emblem = ContentsManager.GetTexture("icons\\42684.png"),
-                SavesPosition = true,
-                //SavesSize = true,
-                Id = "Manlaan_Dailies_MiniWindow",
-                CanClose = true,
-                CanResize = true,
+            _cornerIcon.LoadingMessage = "Preloading Event Window...";
+            _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
+                Location = _settingEventLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
             };
-            _miniWindow2View = new MiniWindowView();
 
             _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
-
-            _cornerIcon2 = new CornerIcon() {
-                IconName = "Dailies 2",
-                Icon = _pageIcon,
-                HoverIcon = _pageIcon,
-                Priority = 10
-            };
-            _cornerIcon2.Click += delegate {
-                _miniWindow2.ToggleWindow(_miniWindow2View);
-            };
-
+            _cornerEventIcon.Click += delegate { _eventWindow.ToggleWindow(); };
 
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
@@ -230,6 +240,15 @@ namespace Manlaan.Dailies
             Timer_TimesUpdate.Start();
             _moduleTab = Overlay.BlishHudWindow.AddTab("Dailies", _pageIcon, _mainWindow._parentPanel);
 
+            if (!_settingDontShowIntro.Value) {
+                _introWindow = new IntroWindow(new Point(375, 260)) {
+                    Location = new Point(200, 200),
+                    Parent = GameService.Graphics.SpriteScreen,
+                };
+                _introWindow.Show();
+            }
+
+
             UpdateAchievements();
             UpdateTimes();
 
@@ -242,7 +261,8 @@ namespace Manlaan.Dailies
             _dailySettings.SaveSettings();
             _miniWindow.UpdateDailyPanel();
             _mainWindow.UpdateDailyPanel();
-            //_miniWindow2View.UpdateDailyPanel();
+            _eventWindow.UpdateDailyPanel();
+            UpdateTimes();
         }
         internal async void UpdateAchievements() {
             Timer_AchieveUpdate.Restart();
@@ -270,7 +290,7 @@ namespace Manlaan.Dailies
 
                 var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
-                    if (grp != 9) { //dailies - retrieved from apiAchieveDay
+                    if (grp != 97) { //dailies - retrieved from apiAchieveDay
                         var apidata = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Categories.GetAsync(grp);
                         foreach (var data in apidata.Achievements) {
                             TodayAchieve.Add(data.ToString());
@@ -375,7 +395,8 @@ namespace Manlaan.Dailies
 
                             btn.IsComplete = complete;
                             btn.Button.CompleteButton.Checked = complete;
-                            btn.MiniButton.CompleteButton.Checked = complete;
+                            if (btn.MiniButton.Parent != null)
+                                btn.MiniButton.CompleteButton.Checked = complete;
                             btn.IsDaily = true;
                             break;
                     }
@@ -388,6 +409,7 @@ namespace Manlaan.Dailies
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 FileStream createStream = File.Create(DirectoriesManager.GetFullDirectoryPath("dailies") + "\\new.json");
                 await JsonSerializer.SerializeAsync(createStream, _newdailies, options);
+                createStream.Close();
             }
             UpdateDailyPanel();
         }
@@ -405,16 +427,22 @@ namespace Manlaan.Dailies
                         List<string> timestring_start = new List<string>();
                         List<string> timestring_end = new List<string>();
                         foreach (DateTime t in times) {
-                            if (t > DateTime.Now)
+                            if (t > DateTime.Now) {
                                 timestring_start.Add(t.ToString(timeformat));
-                            else
+                            }
+                            else {
                                 timestring_end.Add(t.ToString(timeformat));
+                            }
                         }
                         timestring_start = timestring_start.Concat(timestring_end).ToList();
                         day.Button.TimeButton.Text = timestring_start.First();
-                        day.MiniButton.TimeButton.Text = timestring_start.First();
+                        day.EventButton.TimeButton.Text = timestring_start.First();
                         day.Button.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
-                        day.MiniButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
+                        if (day.MiniButton.Parent != null) {
+                            day.MiniButton.TimeButton.Text = timestring_start.First();
+                            day.MiniButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
+                        }
+                        day.EventButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
                     }
                 }
             }
@@ -434,6 +462,8 @@ namespace Manlaan.Dailies
             }
             if (_miniWindow.Location != _settingMiniLocation.Value)
                 _settingMiniLocation.Value = _miniWindow.Location;
+            if (_eventWindow.Location != _settingEventLocation.Value)
+                _settingEventLocation.Value = _eventWindow.Location;
         }
 
         /// <inheritdoc />
@@ -443,13 +473,14 @@ namespace Manlaan.Dailies
             _setting24HrTime.SettingChanged -= UpdateSettings_bool;
             _settingMiniSizeH.SettingChanged -= UpdateSettings_string;
             _settingMiniSizeW.SettingChanged -= UpdateSettings_string;
+            _settingDontShowIntro.SettingChanged -= UpdateSettings_bool;
+
 
             _mainWindow?.Dispose();
             _miniWindow?.Dispose();
-            //_miniWindow2?.Dispose();
+            _eventWindow?.Dispose();
             _cornerIcon?.Dispose();
-            //_cornerIcon2?.Dispose();
-            // All static members must be manually unset
+            _cornerEventIcon?.Dispose();
 
             _dailies = null;
             _newdailies = null;

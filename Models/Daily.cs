@@ -43,7 +43,9 @@ namespace Manlaan.Dailies.Models
         [JsonIgnore]
         public DailyDetailsButton MiniButton { get; set; }
         [JsonIgnore]
-        public DailyDetailsButton MiniButton2 { get; set; }
+        public DailyDetailsButton EventButton { get; set; }
+        [JsonIgnore]
+        public DateTime NextEvent { get; set; }
 
         public Daily() {
             Id = "";
@@ -63,7 +65,8 @@ namespace Manlaan.Dailies.Models
             IsDaily = false;
             Button = new DailyDetailsButton();
             MiniButton = new DailyDetailsButton();
-            MiniButton2 = new DailyDetailsButton();
+            EventButton = new DailyDetailsButton();
+            NextEvent = new DateTime();
         }
 
         public override string ToString() {

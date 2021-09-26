@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Manlaan.Dailies
 {
-   public class DailySettings
+    public class DailySettings
     {
         private const string SETTINGS_FILENAME = "settings.json";
         public List<DailySettingEntry> _dailySettings = new List<DailySettingEntry>();
@@ -76,10 +76,9 @@ namespace Manlaan.Dailies
         public async void SaveSettings() {
             try {
                 var options = new JsonSerializerOptions { WriteIndented = true };
-                //string json = JsonSerializer.Serialize(_dailySettings, options);
-                //File.WriteAllText(_settingsFile, json);
                 FileStream createStream = File.Create(_settingsFile);
                 await JsonSerializer.SerializeAsync(createStream, _dailySettings, options);
+                createStream.Close();
             }
             catch { }
         }

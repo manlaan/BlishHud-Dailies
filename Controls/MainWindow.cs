@@ -12,7 +12,7 @@ using System.IO;
 
 namespace Manlaan.Dailies.Controls
 {
-    public class MainWindow : WindowBase
+    public class MainWindow : WindowBase2
     {
 
         #region Load Static
@@ -229,10 +229,10 @@ namespace Manlaan.Dailies.Controls
             };
 
             int xloc = 5;
-            if (!string.IsNullOrEmpty(d.Note)) {
+            if (!string.IsNullOrEmpty(d.Note) || Module._settingDebug.Value) {
                 GlowButton NoteBtn = new GlowButton {
                     Icon = _noteIcon,
-                    BasicTooltipText = d.Note,
+                    BasicTooltipText = d.Note + (Module._settingDebug.Value ? "\n\n" + d.Achievement + " - " + d.API + " - " + d.Id : ""),
                     Parent = dailyButton,
                     GlowColor = Color.White * 0.1f,
                     Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
