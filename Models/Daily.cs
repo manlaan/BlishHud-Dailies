@@ -32,6 +32,12 @@ namespace Manlaan.Dailies.Models
         public string Category { get; set; }
         [JsonPropertyName("times")]
         public string[] Times { get; set; }
+        [JsonPropertyName("timesgroup")]
+        public string TimesGroup { get; set; }
+        [JsonPropertyName("timesduration")]
+        public int TimesDuration { get; set; }
+        [JsonPropertyName("timescolor")]
+        public string TimesColor { get; set; }
         [JsonIgnore]
         public bool IsTracked { get; set; }
         [JsonIgnore]
@@ -60,7 +66,11 @@ namespace Manlaan.Dailies.Models
             Note = "";
             Category = "";
             Times = new string[] {};
-            IsTracked = false;
+            TimesGroup = "";
+            TimesDuration = 0;
+            TimesColor = "";
+
+        IsTracked = false;
             IsComplete = false;
             IsDaily = false;
             Button = new DailyDetailsButton();

@@ -29,6 +29,8 @@ namespace Manlaan.Dailies
 
         public static List<Daily> _dailies = new List<Daily>();
         public static List<Daily> _newdailies = new List<Daily>();
+        public static List<Event> _events = new List<Event>();
+        public static List<string> _eventGroups = new List<string>();
         public static List<Category> _categories = new List<Category>();
         public static SettingEntry<DateTime> _settingLastReset;
         //private SettingEntry<string> _settingFestivalStart;
@@ -191,6 +193,31 @@ namespace Manlaan.Dailies
                 d.IsTracked = daySetting.IsTracked;
                 if (!_categories.Exists(x => x.Name.Equals(d.Category)))
                     _categories.Add(new Category() { Name = d.Category, IsActive = false });
+
+                if (!_eventGroups.Contains(d.TimesGroup))
+                    _eventGroups.Add(d.TimesGroup);
+                foreach (string s in d.Times) {
+                    _events.Add(
+                        new Event() {
+                            DailyID = d.Id,
+                            Name = d.Name,
+                            StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).ToLocalTime(),
+                            EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration).ToLocalTime(),
+                            Group = d.TimesGroup,
+                            Button = new Panel()
+                        }
+                        );
+                    _events.Add(
+                        new Event() {
+                            DailyID = d.Id,
+                            Name = d.Name,
+                            StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).ToLocalTime(),
+                            EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration).ToLocalTime(),
+                            Group = d.TimesGroup,
+                            Button = new Panel()
+                        }
+                        );
+                }
             }
 
             _categories.Sort(delegate (Category x, Category y) {
@@ -205,12 +232,12 @@ namespace Manlaan.Dailies
                 else if (y.Name == null) return 1;
                 else return x.Name.CompareTo(y.Name);
             });
-            //_events.Sort(delegate (Daily x, Daily y) {
-            //    if (x.NextEvent == null && y.NextEvent == null) return 0;
-            //    else if (x.NextEvent == null) return -1;
-            //    else if (y.NextEvent == null) return 1;
-            //    else return x.NextEvent.CompareTo(y.NextEvent);
-            //});
+            _events.Sort(delegate (Event x, Event y) {
+                if (x.StartTime == null && y.StartTime == null) return 0;
+                else if (x.StartTime == null) return -1;
+                else if (y.StartTime == null) return 1;
+                else return x.StartTime.CompareTo(y.StartTime);
+            });
 
             _cornerIcon.LoadingMessage = "Preloading Main Window...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
