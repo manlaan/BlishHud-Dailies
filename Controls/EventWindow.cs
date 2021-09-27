@@ -80,7 +80,7 @@ namespace Manlaan.Dailies.Controls
 
             _dailyPanel = new Panel() {
                 Location = new Point(10, _selectTracked.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectTracked.Bottom - 25),
+                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectTracked.Bottom - 15),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = true,
@@ -92,18 +92,18 @@ namespace Manlaan.Dailies.Controls
                     Location = new Point(0, curY),
                     Parent = _dailyPanel,
                     BackgroundColor = Color.Blue,
-                    Size = _dailyPanel.Size,
+                    Size = new Point(_dailyPanel.Size.X, 20),
                 };
                 Label catLabel = new Label() {
                     Parent = catPanel,
                     Text = c.Name,
-                    Size = new Point(80,20),
+                    Size = new Point(100,20),
                     BackgroundColor = Color.Red,
                 };
-                foreach (Event e in Module._events) {
-                    if (e.Group.Equals(c.Name)) 
-                        e.Button = CreateDailyButton(catPanel, e);
-                }
+                //foreach (Event e in Module._events) {
+                //    if (e.Group.Equals(c.Name)) 
+                //        e.Button = CreateDailyButton(catPanel, e);
+                //}
                 curY += 20;
             }
 
@@ -112,7 +112,7 @@ namespace Manlaan.Dailies.Controls
         }
 
         public Panel CreateDailyButton(Panel panel, Event e) {
-            int width = (int)((WinSize.X - 80) / 8);
+            int width = (int)((WinSize.X - 100) / 8);
             Panel EventButton = new Panel() {
                 Size = new Point(width, 20),
                 Location = new Point((int)(((e.StartTime.Hour*10) + (e.StartTime.Minute/15)) * width), panel.Top),

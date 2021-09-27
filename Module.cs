@@ -240,6 +240,12 @@ namespace Manlaan.Dailies
                 else if (y.StartTime == null) return 1;
                 else return x.StartTime.CompareTo(y.StartTime);
             });
+            _eventGroups.Sort(delegate (Category x, Category y) {
+                if (x.Name == null && y.Name == null) return 0;
+                else if (x.Name == null) return -1;
+                else if (y.Name == null) return 1;
+                else return x.Name.CompareTo(y.Name);
+            });
 
             _cornerIcon.LoadingMessage = "Preloading Main Window...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
