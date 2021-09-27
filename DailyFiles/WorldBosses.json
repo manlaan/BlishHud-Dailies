@@ -167,7 +167,7 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "MediumTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_svanir_shaman_chief",
@@ -200,7 +200,7 @@
         "note": "Sparkfly Fen",
         "times": [ "00:00", "03:00", "07:00", "11:30", "16:00", "19:00" ],
         "timesgroup": "Hard Boss",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Turquoise"
     },
     {
@@ -217,7 +217,7 @@
         "note": "Jahai Bluffs",
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Jahai",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Plum"
     },
     {
@@ -251,7 +251,7 @@
         "note": "Bjora Marches",
         "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
         "timesgroup": "Bjora",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "SkyBlue"
     },
     {
@@ -319,7 +319,7 @@
         "note": "",
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "EOTN",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Turquoise"
     },
     {
@@ -336,7 +336,7 @@
         "note": "",
         "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
         "timesgroup": "EOTN",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Turquoise"
     },
     {
@@ -353,7 +353,7 @@
         "note": "",
         "times": [ "01:35", "03:35", "05:35", "07:35", "09:35", "11:35", "13:35", "15:35", "17:35", "19:35", "21:35", "23:35" ],
         "timesgroup": "Bjora",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "SkyBlue"
     },
     {
@@ -370,7 +370,7 @@
         "note": "",
         "times": [ "00:40", "01:40", "02:40", "03:40", "04:40", "05:40", "06:40", "07:40", "08:40", "09:40", "10:40", "11:40", "12:40", "13:40", "14:40", "15:40", "16:40", "17:40", "18:40", "19:40", "20:40", "21:40", "22:40", "23:40" ],
         "timesgroup": "Dry Top",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Goldenrod"
     },
     {
@@ -387,7 +387,7 @@
         "note": "",
         "times": [ "00:30", "01:30", "02:30", "03:30", "04:30", "05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30", "21:30", "22:30", "23:30" ],
         "timesgroup": "Desolation",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Tan"
     },
     {
@@ -404,7 +404,7 @@
         "note": "",
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Istan",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Plum"
     },
     {
@@ -421,7 +421,7 @@
         "note": "",
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Thunderhead",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Plum"
     },
     {
@@ -438,7 +438,7 @@
         "note": "",
         "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
         "timesgroup": "Thunderhead",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Plum"
     },
     {
@@ -472,7 +472,7 @@
         "note": "",
         "times": [ "00:40", "02:40", "04:40", "06:40", "08:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40" ],
         "timesgroup": "Grothmar",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "SkyBlue"
     },
     {
@@ -506,7 +506,7 @@
         "note": "",
         "times": [ "01:05", "03:05", "05:05", "07:05", "09:05", "11:05", "13:05", "15:05", "17:05", "19:05", "21:05", "23:05" ],
         "timesgroup": "Grothmar",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "SkyBlue"
     },
 
@@ -526,7 +526,7 @@
         "note": "",
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Auric Basin",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "YellowGreen"
     },
     {
@@ -543,7 +543,7 @@
         "note": "",
         "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
         "timesgroup": "Crystal Oasis",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Tan"
     },
     {
@@ -560,7 +560,7 @@
         "note": "",
         "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
         "timesgroup": "Vabbi",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Tan"
     },
     {
@@ -577,7 +577,7 @@
         "note": "",
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Vabbi",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Tan"
     },
     {
@@ -594,7 +594,7 @@
         "note": "",
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Dragon's Stand",
-        "timesduration": 15,
+        "timesduration": 120,
         "timescolor": "YellowGreen"
     },
     {
@@ -611,7 +611,7 @@
         "note": "",
         "times": [ "01:30", "03:30", "05:30", "07:30", "09:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30" ],
         "timesgroup": "Elon Riverlands",
-        "timesduration": 15,
+        "timesduration": 45,
         "timescolor": "Tan"
     },
     {
@@ -628,7 +628,7 @@
         "note": "",
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Tangled Depths",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "YellowGreen"
     },
     {
@@ -645,7 +645,7 @@
         "note": "",
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Desolation",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Tan"
     },
     {
@@ -662,7 +662,7 @@
         "note": "",
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Verdant Brink",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "YellowGreen"
     }
 ]

@@ -82,25 +82,20 @@ namespace Manlaan.Dailies.Controls
                 UpdateDailyPanel();
             };
 
-            _dailyPanel = new Panel() {
+            _minWidth = (float)((_parentPanel.Size.X - 40 - 100 - 15) / (float)(_hoursToShow * 60));
+
+
+            Panel timePanel = new Panel() {
                 Location = new Point(15, _selectCategory.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 15),
+                Size = new Point(_parentPanel.Size.X - 40, _categoryHeight),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
-                Padding = Thickness.Zero,
             };
 
-            int curY = 0;
-            _minWidth = ((float)(_dailyPanel.Width - 100 - 15) / (float)(_hoursToShow * 60));
             string timeformat = "h:mm tt";
             if (Module._setting24HrTime.Value) timeformat = "H:mm";
 
-            Panel timePanel = new Panel() {
-                Location = new Point(0, curY),
-                Parent = _dailyPanel,
-                Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
-            };
             for (int i = 0; i < (_hoursToShow * 4); i++) {
                 var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
                 float w = _minWidth * 15;
@@ -113,8 +108,17 @@ namespace Manlaan.Dailies.Controls
                     HorizontalAlignment = HorizontalAlignment.Left,
                 };
             }
-            curY += _categoryHeight;
 
+
+            _dailyPanel = new Panel() {
+                Location = new Point(15, timePanel.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - timePanel.Bottom - 15),
+                CanScroll = true,
+                Parent = _parentPanel,
+                ShowBorder = false,
+            };
+
+            int curY = 0;
             int cnt = 0;
             foreach (Category c in Module._eventGroups) {
                 Panel catPanel = new Panel() {
