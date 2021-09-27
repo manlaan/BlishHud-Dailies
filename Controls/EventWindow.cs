@@ -34,6 +34,8 @@ namespace Manlaan.Dailies.Controls
         private Panel _parentPanel;
         private int _hoursToShow = 4;
         private int _categoryHeight = 25;
+        private float _minWidth = 0;
+        private Panel _timeMarker;
 
         public EventWindow(Point size) : base() {
             WinSize = size;
@@ -59,7 +61,7 @@ namespace Manlaan.Dailies.Controls
 
             _selectCategory = new Dropdown() {
                 Location = new Point(15, 15),
-                Width = (_parentPanel.Width - 50)/2,
+                Width = ((_parentPanel.Width - 50) / 2 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
                 Parent = _parentPanel,
             };
             _selectCategory.ValueChanged += delegate {
@@ -68,7 +70,7 @@ namespace Manlaan.Dailies.Controls
             };
             _selectTracked = new Dropdown() {
                 Location = new Point(_selectCategory.Right + 10, _selectCategory.Top),
-                Width = (_parentPanel.Width - 50) / 2,
+                Width = ((_parentPanel.Width - 50) / 2 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
                 Parent = _parentPanel,
             };
             _selectTracked.Items.Add("Tracked - Incomplete");
@@ -90,7 +92,7 @@ namespace Manlaan.Dailies.Controls
             };
 
             int curY = 0;
-            int width = (int)((_dailyPanel.Width - 100) / (_hoursToShow * 60));
+            _minWidth = ((float)(_dailyPanel.Width - 100 - 15) / (float)(_hoursToShow * 60));
             string timeformat = "h:mm tt";
             if (Module._setting24HrTime.Value) timeformat = "H:mm";
 
@@ -100,13 +102,15 @@ namespace Manlaan.Dailies.Controls
                 Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
             };
             for (int i = 0; i < (_hoursToShow * 4); i++) {
-                var t = RoundDown(DateTime.UtcNow.AddMinutes(-30).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
+                var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
+                float w = _minWidth * 15;
+                float y = _minWidth * 15 * i;
                 Label timeLabel = new Label() {
-                    Size = new Point(width * 15, _categoryHeight),
-                    Location = new Point(100 + (width * 15 * i), 0),
+                    Size = new Point((int)w, _categoryHeight),
+                    Location = new Point(100 + (int)y, 0),
                     Parent = timePanel,
                     Text = t.ToString(timeformat),
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Left,
                 };
             }
             curY += _categoryHeight;
@@ -133,15 +137,25 @@ namespace Manlaan.Dailies.Controls
                 cnt++;
             }
 
+            float offset = (DateTime.UtcNow.Hour * 60 * _minWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minWidth);
+            float curtime = ((DateTime.UtcNow.Hour * 60 * _minWidth) + (DateTime.UtcNow.Minute) * _minWidth);
+            float timeloc = 100 + (curtime - offset);
+            _timeMarker = new Panel() {
+                Parent = _dailyPanel,
+                Size = new Point(2, _dailyPanel.Height),
+                BackgroundColor = Color.White,
+                Location = new Point((int)(timeloc), 0),
+                ZIndex = 10
+            };
+
             _dailyCategory = "";
             UpdateDailyPanel();
         }
 
         public Panel CreateDailyButton(Panel panel, Event e) {
-            int width = (int)((panel.Width - 100) / (_hoursToShow * 60));
-            int offset = (DateTime.UtcNow.Hour * 60 * width) + ((RoundDown(DateTime.UtcNow.AddMinutes(-30), TimeSpan.FromMinutes(15)).Minute) * width);
-            int buttonwidth = (e.Duration) * width;
-            int buttonstart = (e.StartTime.Hour * 60 * width) + ((e.StartTime.Minute) * width) + 100 - offset;
+            float offset = (DateTime.UtcNow.Hour * 60 * _minWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minWidth);
+            float buttonwidth = (e.Duration) * _minWidth;
+            float buttonstart = (e.StartTime.Hour * 60 * _minWidth) + ((e.StartTime.Minute) * _minWidth) + 100 - offset;
 
             if ((buttonstart + buttonwidth) > 100 && (buttonstart + buttonwidth) < WinSize.X) {
                 if (buttonstart < 100) {
@@ -150,8 +164,8 @@ namespace Manlaan.Dailies.Controls
                 }
 
                 Panel EventButton = new Panel() {
-                    Size = new Point(buttonwidth-2, _categoryHeight),
-                    Location = new Point(buttonstart, 0),
+                    Size = new Point((int)buttonwidth-2, _categoryHeight),
+                    Location = new Point((int)buttonstart, 0),
                     Parent = panel,
                     BackgroundColor = e.Color,
                 };

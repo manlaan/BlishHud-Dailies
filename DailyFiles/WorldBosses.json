@@ -31,7 +31,7 @@
         "times": [ "02:30", "05:30", "08:30", "11:30", "14:30", "17:30", "20:30", "23:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_triple_trouble_wurm",
@@ -48,7 +48,7 @@
         "times": [ "01:00", "04:00", "08:00", "12:30", "17:00", "20:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 30,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_fire_elemental",
@@ -82,7 +82,7 @@
         "times": [ "02:00", "05:00", "08:00", "11:00", "14:00", "17:00", "20:00", "23:00" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_great_jungle_wurm",
@@ -116,7 +116,7 @@
         "times": [ "02:00", "06:00", "10:30", "15:00", "18:00", "23:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_megadestroyer",
@@ -150,7 +150,7 @@
         "times": [ "01:30", "04:30", "07:30", "10:30", "13:30", "16:30", "19:30", "22:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_shadow_behemoth",
@@ -201,7 +201,7 @@
         "times": [ "00:00", "03:00", "07:00", "11:30", "16:00", "19:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_dbshatterer",
@@ -235,7 +235,7 @@
         "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "23:00" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_drakkar",
@@ -269,7 +269,7 @@
         "times": [ "4:20", "10:20", "16:20", "22:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_leyline_ironmarches",
@@ -286,7 +286,7 @@
         "times": [ "02:20", "8:20", "14:20", "20:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_leyline_timerbline",
@@ -303,7 +303,7 @@
         "times": [ "00:20", "06:20", "12:20", "18:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_dragonstorm",
@@ -320,7 +320,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "EOTN",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_marionette",
@@ -337,7 +337,7 @@
         "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
         "timesgroup": "EOTN",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_storm",
@@ -578,7 +578,7 @@
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Vabbi",
         "timesduration": 15,
-        "timescolor": "BurlyWood"
+        "timescolor": "Tan"
     },
     {
         "id": "chest_ds",
