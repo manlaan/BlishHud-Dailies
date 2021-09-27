@@ -232,7 +232,7 @@ namespace Manlaan.Dailies
                 if (!_categories.Exists(x => x.Name.Equals(d.Category)))
                     _categories.Add(new Category() { Name = d.Category, IsActive = false });
 
-                if (d.Times.Length > 0) {
+                if (d.Times!= null && d.Times.Length > 0) {
                     if (!_eventGroups.Exists(x => x.Name.Equals(d.TimesGroup)))
                         _eventGroups.Add(new Category() { Name = d.TimesGroup, IsActive = false, Set = d.TimesSet });
                     foreach (string s in d.Times) {
@@ -248,17 +248,18 @@ namespace Manlaan.Dailies
                                 Color = FindColor(d.TimesColor),
                             }
                             );
-                        //_events.Add(
-                        //    new Event() {
-                        //        DailyID = d.Id,
-                        //        Name = d.Name,
-                        //        StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
-                        //        EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
-                        //        Duration = d.TimesDuration,
-                        //        Group = d.TimesGroup,
-                        //        Button = new Panel()
-                        //    }
-                        //    );
+                        _events.Add(
+                            new Event() {
+                                DailyID = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
+                                Duration = d.TimesDuration,
+                                Group = d.TimesGroup,
+                                Button = new Panel(),
+                                Color = FindColor(d.TimesColor),
+                            }
+                            );
                     }
                 }
             }

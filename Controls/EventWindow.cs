@@ -139,7 +139,7 @@ namespace Manlaan.Dailies.Controls
         public Panel CreateDailyButton(Panel panel, Event e) {
             float offset = (DateTime.UtcNow.Hour * 60 * _minWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minWidth);
             float buttonwidth = (e.Duration) * _minWidth;
-            float buttonstart = (e.StartTime.Hour * 60 * _minWidth) + ((e.StartTime.Minute) * _minWidth) + 100 - offset;
+            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * _minWidth) + (e.StartTime.Hour * 60 * _minWidth) + ((e.StartTime.Minute) * _minWidth) + 100 - offset;
 
             if ((buttonstart + buttonwidth) > 100 && buttonstart < WinSize.X) {
                 if (buttonstart < 100) {

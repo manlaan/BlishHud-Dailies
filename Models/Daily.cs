@@ -65,6 +65,7 @@ namespace Manlaan.Dailies.Models
             Category = "";
             Times = new string[] {};
             TimesGroup = "";
+            TimesSet = "";
             TimesDuration = 0;
             TimesColor = "";
             IsTracked = false;

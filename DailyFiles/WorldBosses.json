@@ -245,7 +245,7 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Blazeridge Steppes",
-        "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "23:00" ],
+        "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "22:00" ],
         "timesgroup": "World Boss",
         "timesset": "Core",
         "timesduration": 15,
