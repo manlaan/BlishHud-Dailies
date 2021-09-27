@@ -210,7 +210,7 @@ namespace Manlaan.Dailies.Controls
                 int curY = 0;
                 int cnt = 0;
                 foreach (Category c in Module._eventGroups) {
-                    if (c.IsActive && (_selectedGroup.Equals("") || _selectedGroup.Equals(c.Name))) {
+                    if (c.IsActive && (_selectedGroup.Equals("") || _selectedGroup.Equals(c.Name)) && (_selectedSet.Equals("") || _selectedSet.Equals(c.Set))) {
                         Panel catPanel = new Panel() {
                             Location = new Point(0, curY),
                             Parent = _dailyPanel,

@@ -76,7 +76,7 @@ namespace Manlaan.Dailies
             _settingLastReset = settings.DefineSetting("DailyLastUpdate", new DateTime());
             _settingMiniLocation = settings.DefineSetting("DailyMiniLoc", new Point(100, 100));
             _settingEventLocation = settings.DefineSetting("DailyEventLoc", new Point(100, 100));
-            _settingEventHours = settings.DefineSetting("DailyEventLoc", "2", "Event Hours", "");
+            _settingEventHours = settings.DefineSetting("DailyEventHours", "2", "Event Hours", "");
             _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"280", "Mini Window Width", "");
             _settingMiniSizeH = settings.DefineSetting("DailyMiniSizeW", @"450", "Mini Window Height", "");
             _settingEventSizeW = settings.DefineSetting("DailyEventSizeH", @"280", "Event Window Width", "");
