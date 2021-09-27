@@ -31,7 +31,7 @@
         "times": [ "02:30", "05:30", "08:30", "11:30", "14:30", "17:30", "20:30", "23:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "Turquoise"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_triple_trouble_wurm",
@@ -48,7 +48,7 @@
         "times": [ "01:00", "04:00", "08:00", "12:30", "17:00", "20:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 30,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_fire_elemental",
@@ -99,7 +99,7 @@
         "times": [ "01:15", "03:15", "05:15", "07:15", "09:15", "11:15", "13:15", "15:15", "17:15", "19:15", "21:15", "23:15" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_karka_queen",
@@ -116,7 +116,7 @@
         "times": [ "02:00", "06:00", "10:30", "15:00", "18:00", "23:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_megadestroyer",
@@ -133,7 +133,7 @@
         "times": [ "00:30", "03:30", "06:30", "09:30", "12:30", "15:30", "18:30", "21:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "DarkTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_modniir_ulgoth",
@@ -150,7 +150,7 @@
         "times": [ "01:30", "04:30", "07:30", "10:30", "13:30", "16:30", "19:30", "22:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "Turquoise"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_shadow_behemoth",
@@ -184,7 +184,7 @@
         "times": [ "00:15", "02:15", "04:15", "06:15", "08:15", "10:15", "12:15", "14:15", "16:15", "18:15", "20:15", "22:15" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "MediumTurquoise"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_tequatl_the_sunless",
@@ -201,7 +201,7 @@
         "times": [ "00:00", "03:00", "07:00", "11:30", "16:00", "19:00" ],
         "timesgroup": "Hard Boss",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_dbshatterer",
@@ -218,7 +218,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Jahai",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Plum"
     },
     {
         "id": "boss_the_shatterer",
@@ -235,7 +235,7 @@
         "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "23:00" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "MediumTurquoise"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_drakkar",
@@ -252,7 +252,7 @@
         "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
         "timesgroup": "Bjora",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
     {
         "id": "boss_leyline_gendarran",
@@ -269,7 +269,7 @@
         "times": [ "4:20", "10:20", "16:20", "22:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_leyline_ironmarches",
@@ -286,7 +286,7 @@
         "times": [ "02:20", "8:20", "14:20", "20:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_leyline_timerbline",
@@ -303,7 +303,7 @@
         "times": [ "00:20", "06:20", "12:20", "18:20" ],
         "timesgroup": "Ley Line",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_dragonstorm",
@@ -320,7 +320,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "EOTN",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_marionette",
@@ -337,24 +337,7 @@
         "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
         "timesgroup": "EOTN",
         "timesduration": 15,
-        "timescolor": "White"
-    },
-    {
-        "id": "boss_Hound",
-        "name": "Vabbi: Forged Hounds",
-        "category": "Metas & Bosses",
-        "clipboard": "",
-        "waypoint": "[&BO0KAAA=]",
-        "wiki": "https://wiki.guildwars2.com/wiki/Forged_with_Fire",
-        "timer": "https://wiki.guildwars2.com/wiki/Forged_with_Fire#Event_schedule",
-        "achievement": "",
-        "api": "",
-        "icon": "498983.png",
-        "note": "",
-        "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
-        "timesgroup": "Vabbi",
-        "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "DarkTurquoise"
     },
     {
         "id": "boss_storm",
@@ -371,7 +354,7 @@
         "times": [ "01:35", "03:35", "05:35", "07:35", "09:35", "11:35", "13:35", "15:35", "17:35", "19:35", "21:35", "23:35" ],
         "timesgroup": "Bjora",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
     {
         "id": "boss_drytop",
@@ -388,7 +371,7 @@
         "times": [ "00:40", "01:40", "02:40", "03:40", "04:40", "05:40", "06:40", "07:40", "08:40", "09:40", "10:40", "11:40", "12:40", "13:40", "14:40", "15:40", "16:40", "17:40", "18:40", "19:40", "20:40", "21:40", "22:40", "23:40" ],
         "timesgroup": "Dry Top",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Goldenrod"
     },
     {
         "id": "boss_junundu",
@@ -405,7 +388,7 @@
         "times": [ "00:30", "01:30", "02:30", "03:30", "04:30", "05:30", "06:30", "07:30", "08:30", "09:30", "10:30", "11:30", "12:30", "13:30", "14:30", "15:30", "16:30", "17:30", "18:30", "19:30", "20:30", "21:30", "22:30", "23:30" ],
         "timesgroup": "Desolation",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Tan"
     },
     {
         "id": "boss_palawadan",
@@ -422,7 +405,7 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Istan",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Plum"
     },
     {
         "id": "boss_thunderhead",
@@ -439,7 +422,7 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Thunderhead",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Plum"
     },
     {
         "id": "boss_oilfloes",
@@ -456,7 +439,7 @@
         "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
         "timesgroup": "Thunderhead",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Plum"
     },
     {
         "id": "boss_concert",
@@ -473,7 +456,7 @@
         "times": [ "01:40", "03:40", "05:40", "07:40", "09:40", "11:40", "13:40", "15:40", "17:40", "19:40", "21:40", "23:40" ],
         "timesgroup": "Grothmar",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
     {
         "id": "boss_doomlore",
@@ -490,7 +473,7 @@
         "times": [ "00:40", "02:40", "04:40", "06:40", "08:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40" ],
         "timesgroup": "Grothmar",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
     {
         "id": "boss_effigy",
@@ -507,7 +490,7 @@
         "times": [ "00:10", "02:10", "04:10", "06:10", "08:10", "10:10", "12:10", "14:10", "16:10", "18:10", "20:10", "22:10" ],
         "timesgroup": "Grothmar",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
     {
         "id": "boss_ooze",
@@ -524,7 +507,7 @@
         "times": [ "01:05", "03:05", "05:05", "07:05", "09:05", "11:05", "13:05", "15:05", "17:05", "19:05", "21:05", "23:05" ],
         "timesgroup": "Grothmar",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "SkyBlue"
     },
 
 
@@ -544,7 +527,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Auric Basin",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "YellowGreen"
     },
     {
         "id": "chest_co",
@@ -561,7 +544,7 @@
         "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
         "timesgroup": "Crystal Oasis",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Tan"
     },
     {
         "id": "chest_vabbi_forged",
@@ -578,7 +561,7 @@
         "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
         "timesgroup": "Vabbi",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Tan"
     },
     {
         "id": "chest_vabbi_serpents",
@@ -595,7 +578,7 @@
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Vabbi",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "BurlyWood"
     },
     {
         "id": "chest_ds",
@@ -612,7 +595,7 @@
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Dragon's Stand",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "YellowGreen"
     },
     {
         "id": "chest_elon",
@@ -629,7 +612,7 @@
         "times": [ "01:30", "03:30", "05:30", "07:30", "09:30", "11:30", "13:30", "15:30", "17:30", "19:30", "21:30", "23:30" ],
         "timesgroup": "Elon Riverlands",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Tan"
     },
     {
         "id": "chest_td",
@@ -646,7 +629,7 @@
         "times": [ "00:30", "02:30", "04:30", "06:30", "08:30", "10:30", "12:30", "14:30", "16:30", "18:30", "20:30", "22:30" ],
         "timesgroup": "Tangled Depths",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "YellowGreen"
     },
     {
         "id": "chest_deso",
@@ -663,7 +646,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Desolation",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Tan"
     },
     {
         "id": "chest_vb",
@@ -680,6 +663,6 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Verdant Brink",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "YellowGreen"
     }
 ]

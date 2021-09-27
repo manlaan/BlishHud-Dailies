@@ -32,7 +32,7 @@ namespace Manlaan.Dailies.Controls
         private Panel _dailyPanel;
         private string _dailyCategory = "";
         private Panel _parentPanel;
-        private int _hoursToShow = 2;
+        private int _hoursToShow = 4;
         private int _categoryHeight = 25;
 
         public EventWindow(Point size) : base() {
