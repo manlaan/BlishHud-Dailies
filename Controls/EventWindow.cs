@@ -112,9 +112,10 @@ namespace Manlaan.Dailies.Controls
         }
 
         public Panel CreateDailyButton(Panel panel, Event e, int Y) {
-            int width = (int)((WinSize.X - 100) / 40);
+            int width = (int)((WinSize.X - 100) / 8);
+            int offset = (new DateTime().ToUniversalTime().Hour * 4 * width) + ((RoundDown(new DateTime().ToUniversalTime(), TimeSpan.FromMinutes(15)).Minute / 15) * Width);
             int buttonwidth = (e.Duration / 15) * width;
-            int buttonstart = (e.StartTime.Hour * 4 * width) + ((e.StartTime.Minute / 15) * width) + 100;
+            int buttonstart = (e.StartTime.Hour * 4 * width) + ((e.StartTime.Minute / 15) * width) + 100 - offset;
 
             Panel EventButton = new Panel() {
                 Size = new Point(buttonwidth, 20),
@@ -162,6 +163,11 @@ namespace Manlaan.Dailies.Controls
                     _selectCategory.Items.Add(cat.Name);
             }
             _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
+        }
+
+        private static DateTime RoundDown(DateTime dt, TimeSpan d) {
+            var delta = dt.Ticks % d.Ticks;
+            return new DateTime(dt.Ticks - delta, dt.Kind);
         }
     }
 }
