@@ -38,9 +38,11 @@ namespace Manlaan.Dailies
         private SettingEntry<Point> _settingEventLocation;
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
         private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
+        public static SettingEntry<string> _settingEventHours;
         public static SettingEntry<bool> _setting24HrTime;
         public static SettingEntry<bool> _settingDontShowIntro;
         public static SettingEntry<bool> _settingDebug;
+        public static int _miniSizeW, _miniSizeH, _eventSizeW, _eventSizeH, _eventHours;
         private Stopwatch Timer_AchieveUpdate = new Stopwatch();
         private Stopwatch Timer_TimesUpdate = new Stopwatch();
         public static DailySettings _dailySettings;
@@ -74,6 +76,7 @@ namespace Manlaan.Dailies
             _settingLastReset = settings.DefineSetting("DailyLastUpdate", new DateTime());
             _settingMiniLocation = settings.DefineSetting("DailyMiniLoc", new Point(100, 100));
             _settingEventLocation = settings.DefineSetting("DailyEventLoc", new Point(100, 100));
+            _settingEventHours = settings.DefineSetting("DailyEventLoc", "2", "Event Hours", "");
             _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"280", "Mini Window Width", "");
             _settingMiniSizeH = settings.DefineSetting("DailyMiniSizeW", @"450", "Mini Window Height", "");
             _settingEventSizeW = settings.DefineSetting("DailyEventSizeH", @"280", "Event Window Width", "");
@@ -85,27 +88,62 @@ namespace Manlaan.Dailies
             _settingMiniSizeW.SettingChanged += UpdateSettings_string;
             _settingEventSizeH.SettingChanged += UpdateSettings_string;
             _settingEventSizeW.SettingChanged += UpdateSettings_string;
+            _settingEventHours.SettingChanged += UpdateSettings_string;
 
             //_dailiesTracked = settings.AddSubCollection("Tracked");
             //_dailiesComplete = settings.AddSubCollection("Complete");
             //var selfManagedSettings = settings.AddSubCollection("Managed Settings");
         }
         private void UpdateSettings_string(object sender = null, ValueChangedEventArgs<string> e = null) {
-            if (int.Parse(_settingMiniSizeH.Value) < 0)
-                _settingMiniSizeH.Value = "0";
-            if (int.Parse(_settingMiniSizeW.Value) < 0)
-                _settingMiniSizeW.Value = "0";
+            int prevMiniSizeH = _miniSizeH;
+            int prevMiniSizeW = _miniSizeW;
+            int prevEventSizeH = _eventSizeH;
+            int prevEventSizeW = _eventSizeW;
+            int prevEventHours = _eventHours;
+            try {
+                _miniSizeW = int.Parse(_settingMiniSizeW.Value);
+                if (_miniSizeW < 0)
+                    _miniSizeW = prevMiniSizeW;
+                _miniSizeH = int.Parse(_settingMiniSizeH.Value);
+                if (_miniSizeH < 0)
+                    _miniSizeH = prevMiniSizeH;
+            }
+            catch {
+                _settingMiniSizeW.Value = _miniSizeW.ToString();
+                _settingMiniSizeH.Value = _miniSizeH.ToString();
+            }
+            try {
+                _eventSizeW = int.Parse(_settingEventSizeW.Value);
+                if (_eventSizeW < 0)
+                    _eventSizeW = prevEventSizeW;
+                _eventSizeH = int.Parse(_settingEventSizeH.Value);
+                if (_eventSizeH < 0)
+                    _eventSizeH = prevEventSizeH;
+                _eventHours = int.Parse(_settingEventHours.Value);
+                if (_eventHours < 0)
+                    _eventHours = prevEventHours;
+            }
+            catch {
+                _settingEventSizeW.Value = _eventSizeW.ToString();
+                _settingEventSizeH.Value = _eventSizeH.ToString();
+                _settingEventHours.Value = _eventHours.ToString();
+            }
 
-            _miniWindow.Dispose();
-            _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
-                Location = _settingMiniLocation.Value,
-                Parent = GameService.Graphics.SpriteScreen,
-            };
-            _eventWindow.Dispose();
-            _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
-                Location = _settingEventLocation.Value,
-                Parent = GameService.Graphics.SpriteScreen,
-            };
+
+            if (prevMiniSizeH != _miniSizeH || prevMiniSizeW != _miniSizeH) {
+                _miniWindow.Dispose();
+                _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
+                    Location = _settingMiniLocation.Value,
+                    Parent = GameService.Graphics.SpriteScreen,
+                };
+            }
+            if (prevEventSizeH != _eventSizeH || prevEventSizeW != _eventSizeW || prevEventHours != _eventHours) {
+                _eventWindow.Dispose();
+                _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
+                    Location = _settingEventLocation.Value,
+                    Parent = GameService.Graphics.SpriteScreen,
+                };
+            }
             UpdateDailyPanel();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
@@ -196,7 +234,7 @@ namespace Manlaan.Dailies
 
                 if (d.Times.Length > 0) {
                     if (!_eventGroups.Exists(x => x.Name.Equals(d.TimesGroup)))
-                        _eventGroups.Add(new Category() { Name = d.TimesGroup, IsActive = false });
+                        _eventGroups.Add(new Category() { Name = d.TimesGroup, IsActive = false, Set = d.TimesSet });
                     foreach (string s in d.Times) {
                         _events.Add(
                             new Event() {
@@ -207,7 +245,7 @@ namespace Manlaan.Dailies
                                 Duration = d.TimesDuration,
                                 Group = d.TimesGroup,
                                 Button = new Panel(),
-                                Color = FindColor(d.TimesColor)
+                                Color = FindColor(d.TimesColor),
                             }
                             );
                         //_events.Add(
@@ -472,16 +510,15 @@ namespace Manlaan.Dailies
                         }
                         timestring_start = timestring_start.Concat(timestring_end).ToList();
                         day.Button.TimeButton.Text = timestring_start.First();
-                        day.EventButton.TimeButton.Text = timestring_start.First();
                         day.Button.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
                         if (day.MiniButton.Parent != null) {
                             day.MiniButton.TimeButton.Text = timestring_start.First();
                             day.MiniButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
                         }
-                        day.EventButton.TimeButton.BasicTooltipText = string.Join("\n", timestring_start.ToArray());
                     }
                 }
             }
+            _eventWindow.UpdateDailyPanel();
         }
 
         protected override void Update(GameTime gameTime) {
@@ -510,6 +547,7 @@ namespace Manlaan.Dailies
             _settingMiniSizeH.SettingChanged -= UpdateSettings_string;
             _settingMiniSizeW.SettingChanged -= UpdateSettings_string;
             _settingDontShowIntro.SettingChanged -= UpdateSettings_bool;
+            _settingEventHours.SettingChanged -= UpdateSettings_string;
 
 
             _mainWindow?.Dispose();

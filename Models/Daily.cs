@@ -34,6 +34,8 @@ namespace Manlaan.Dailies.Models
         public string[] Times { get; set; }
         [JsonPropertyName("timesgroup")]
         public string TimesGroup { get; set; }
+        [JsonPropertyName("timesset")]
+        public string TimesSet { get; set; }
         [JsonPropertyName("timesduration")]
         public int TimesDuration { get; set; }
         [JsonPropertyName("timescolor")]
@@ -48,10 +50,6 @@ namespace Manlaan.Dailies.Models
         public DailyDetailsButton Button { get; set; }
         [JsonIgnore]
         public DailyDetailsButton MiniButton { get; set; }
-        [JsonIgnore]
-        public DailyDetailsButton EventButton { get; set; }
-        [JsonIgnore]
-        public DateTime NextEvent { get; set; }
 
         public Daily() {
             Id = "";
@@ -69,14 +67,11 @@ namespace Manlaan.Dailies.Models
             TimesGroup = "";
             TimesDuration = 0;
             TimesColor = "";
-
-        IsTracked = false;
+            IsTracked = false;
             IsComplete = false;
             IsDaily = false;
             Button = new DailyDetailsButton();
             MiniButton = new DailyDetailsButton();
-            EventButton = new DailyDetailsButton();
-            NextEvent = new DateTime();
         }
 
         public override string ToString() {

@@ -15,13 +15,17 @@ namespace Manlaan.Dailies.Models
     public class Category : IEquatable<Category>, IComparable<Category>
     {
         public string Name { get; set; }
+        public string Set { get; set; }
         public bool IsActive { get; set; }
         public MenuItem menuItem { get; set; }
+        public Panel CategoryPanel { get; set; }
 
         public Category() {
             Name = "";
+            Set = "";
             IsActive = true;
             menuItem = new MenuItem();
+            CategoryPanel = new Panel();
         }
 
         public override string ToString() {
