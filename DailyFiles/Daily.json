@@ -936,7 +936,7 @@
         "name": "Gather: Kryta Miner",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BBIAAAA=]",
+        "waypoint": "[&BBIAAAA=][&BJMBAAA=][&BPMAAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1971",
@@ -949,7 +949,7 @@
         "name": "Gather: Maguuma Jungle Forager",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BEIAAAA=]",
+        "waypoint": "[&BEIAAAA=][&BEABAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1973",
@@ -1001,7 +1001,7 @@
         "name": "Gather: Maguuma Wastes Lumberer",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BH8HAAA=]",
+        "waypoint": "[&BH8HAAA=][&BHoHAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1979",
@@ -1014,7 +1014,7 @@
         "name": "Gather: Maguuma Wastes Miner",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BH8HAAA=]",
+        "waypoint": "[&BH8HAAA=][&BHoHAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1978",
@@ -1027,7 +1027,7 @@
         "name": "Gather: Orr Forager",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BO8JAAA=]",
+        "waypoint": "[&BO8JAAA=][&BFgGAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1974",
@@ -1040,7 +1040,7 @@
         "name": "Gather: Orr Lumberer",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BKYCAAA=]",
+        "waypoint": "[&BKYCAAA=][&BO8JAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1976",
@@ -1053,7 +1053,7 @@
         "name": "Gather: Orr Miner",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BKgCAAA=]",
+        "waypoint": "[&BKgCAAA=][&BFgGAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1977",
@@ -1066,7 +1066,7 @@
         "name": "Gather: Shiverpeaks Forager",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BH0JAAA=]",
+        "waypoint": "[&BH0JAAA=][&BOYAAAA=][&BEwCAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1985",
@@ -1079,7 +1079,7 @@
         "name": "Gather: Shiverpeaks Lumberer",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BEUCAAA=]",
+        "waypoint": "[&BEUCAAA=][&BEsCAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1968",
@@ -1092,7 +1092,7 @@
         "name": "Gather: Shiverpeaks Miner",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BEwCAAA=]",
+        "waypoint": "[&BEwCAAA=][&BL8AAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "1984",
@@ -1157,7 +1157,7 @@
         "name": "Gather: Desert Miner",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BFMKAAA=]",
+        "waypoint": "[&BFMKAAA=][&BJMKAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "3888",
@@ -1170,7 +1170,7 @@
         "name": "Gather: Desert Forager",
         "category": "Dailies",
         "clipboard": "",
-        "waypoint": "[&BEMLAAA=]",
+        "waypoint": "[&BEMLAAA=][&BEAKAAA=][&BJEKAAA=]",
         "wiki": "https://wiki.guildwars2.com/wiki/Daily/easy_dailies",
         "timer": "",
         "achievement": "3760",
@@ -1981,7 +1981,7 @@
         "times": [ "02:30", "05:30", "08:30", "11:30", "14:30", "17:30", "20:30", "23:30" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Demolisher",
@@ -1998,7 +1998,7 @@
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_FireElem",
@@ -2015,7 +2015,7 @@
         "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Maw",
@@ -2032,7 +2032,7 @@
         "times": [ "00:15", "02:15", "04:15", "06:15", "08:15", "10:15", "12:15", "14:15", "16:15", "18:15", "20:15", "22:15" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_JungleWurm",
@@ -2049,7 +2049,7 @@
         "times": [ "01:15", "03:15", "05:15", "07:15", "09:15", "11:15", "13:15", "15:15", "17:15", "19:15", "21:15", "23:15" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Hound",
@@ -2066,7 +2066,7 @@
         "times": [ "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_ GolemMarkII",
@@ -2083,7 +2083,7 @@
         "times": [ "02:00", "05:00", "08:00", "11:00", "14:00", "17:00", "20:00", "23:00" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Megadestroyer",
@@ -2100,7 +2100,7 @@
         "times": [ "00:30", "03:30", "06:30", "09:30", "12:30", "15:30", "18:30", "21:30" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Behemoth",
@@ -2117,7 +2117,7 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
     {
         "id": "day_boss_Shatterer",
@@ -2134,7 +2134,7 @@
         "times": [ "01:00", "04:00", "07:00", "10:00", "13:00", "16:00", "19:00", "23:00" ],
         "timesgroup": "Daily",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Magenta"
     },
 
 

@@ -33,7 +33,7 @@ namespace Manlaan.Dailies.Controls
         private string _dailyCategory = "";
         private Panel _parentPanel;
         private int _hoursToShow = 2;
-        private int _categoryHeight = 30;
+        private int _categoryHeight = 25;
 
         public EventWindow(Point size) : base() {
             WinSize = size;
@@ -85,7 +85,8 @@ namespace Manlaan.Dailies.Controls
                 Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 15),
                 CanScroll = true,
                 Parent = _parentPanel,
-                ShowBorder = true,
+                ShowBorder = false,
+                Padding = Thickness.Zero,
             };
 
             int curY = 0;
@@ -96,7 +97,7 @@ namespace Manlaan.Dailies.Controls
             Panel timePanel = new Panel() {
                 Location = new Point(0, curY),
                 Parent = _dailyPanel,
-                Size = new Point(_dailyPanel.Size.X, _categoryHeight),
+                Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
             };
             for (int i = 0; i < 8; i++) {
                 var t = RoundDown(DateTime.UtcNow.AddMinutes(-30).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
@@ -115,13 +116,13 @@ namespace Manlaan.Dailies.Controls
                 Panel catPanel = new Panel() {
                     Location = new Point(0, curY),
                     Parent = _dailyPanel,
-                    Size = new Point(_dailyPanel.Size.X, _categoryHeight),
+                    Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
                     BackgroundTexture = (cnt % 2 == 0) ? _btnBackground : _blankBackground,
                 };
                 Label catLabel = new Label() {
                     Parent = catPanel,
                     Text = c.Name,
-                    Size = new Point(100,30),
+                    Size = new Point(100, _categoryHeight),
                     Location = new Point(5,0),
                 };
                 foreach (Event e in Module._events) {
@@ -156,13 +157,15 @@ namespace Manlaan.Dailies.Controls
                 };
 
                 Label EventDesc = new Label() {
-                    Location = new Point(5, 5),
-                    Width = EventButton.Width - 10,
+                    Size = new Point(EventButton.Size.X - 10, EventButton.Size.Y),
+                    Location = new Point(5, 0),
                     AutoSizeHeight = false,
                     WrapText = false,
                     Parent = EventButton,
                     Text = e.Name,
                     BasicTooltipText = e.Name + "\n" + e.StartTime.Hour.ToString() + ":" + e.StartTime.Minute.ToString(),
+                    TextColor = Color.Black,
+                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
                 };
 
                 return EventButton;
