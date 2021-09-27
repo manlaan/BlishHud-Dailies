@@ -12,54 +12,41 @@ using System.IO;
 
 namespace Manlaan.Dailies.Controls
 {
-    public class EventWindow : WindowBase
+    public class EventWindow : WindowBase2
     {
         #region Load Static
 
-        private static Texture2D _wndBackground, _btnBackground, _pageIcon, _defaulticon;
-        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon;
+        private static Texture2D _blankBackground, _wndBackground, _btnBackground, _pageIcon;
 
         static EventWindow() {
+            _blankBackground = Module.ModuleInstance.ContentsManager.GetTexture("blank.png");
             _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("1863949.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
-            _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
-            _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
-            _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
-            _noteIcon = Module.ModuleInstance.ContentsManager.GetTexture("440023.png");
-            _copyIcon = Module.ModuleInstance.ContentsManager.GetTexture("563464.png");
-            _complete1Icon = Module.ModuleInstance.ContentsManager.GetTexture("784259.png");
-            _complete0Icon = Module.ModuleInstance.ContentsManager.GetTexture("784261.png");
-            _wpIcon = Module.ModuleInstance.ContentsManager.GetTexture("156628.png");
-            _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
-            _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
-            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("42684bw.png");
+            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
         }
         #endregion
 
 
         private Dropdown _selectCategory , _selectTracked;
         private Point WinSize = new Point();
-        private FlowPanel _dailyPanel;
+        private Panel _dailyPanel;
         private string _dailyCategory = "";
         private Panel _parentPanel;
 
         public EventWindow(Point size) : base() {
             WinSize = size;
+            this.CanClose = false;
+            this.Title = "Events";
+            this.Emblem = _pageIcon;
             BuildWindow();
         }
 
         private void BuildWindow() {
-            ConstructWindow(
-                _wndBackground,
-                new Vector2(0, 0),
-                new Rectangle(0, 0, WinSize.X, WinSize.Y),
-                Thickness.Zero,
-                45, false);
-            this.ContentRegion = new Rectangle(0, 0, WinSize.X, WinSize.Y);
+            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y), new Rectangle(0, 0, WinSize.X, WinSize.Y));
             _parentPanel = new Panel() {
                 CanScroll = false,
-                Size = new Point(this.ContentRegion.Size.X, this.ContentRegion.Size.Y - 10),
-                Location = new Point(10, 10),
+                Size = new Point(WinSize.X, WinSize.Y),
+                Location = new Point(0, 0),
                 Parent = this,
             };
             Image bgimage = new Image(_wndBackground) {
@@ -67,24 +54,9 @@ namespace Manlaan.Dailies.Controls
                 Size = _parentPanel.Size,
                 Parent = _parentPanel,
             };
-            Image headimage = new Image(_pageIcon) {
-                Location = new Point(10, 11),
-                Size = new Point(23, 23),
-                Parent = _parentPanel,
-            };
-            Label header = new Label() {
-                Location = new Point(40, 11),
-                Width = _parentPanel.Width - 80,
-                AutoSizeHeight = false,
-                WrapText = false,
-                Parent = _parentPanel,
-                Text = "Events",
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Font = Content.DefaultFont18,
-            };
 
             _selectCategory = new Dropdown() {
-                Location = new Point(10, 35),
+                Location = new Point(15, 15),
                 Width = _parentPanel.Width - 30,
                 Parent = _parentPanel,
             };
@@ -98,11 +70,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = _parentPanel,
             };
             _selectTracked.Items.Add("Tracked - Incomplete");
-            _selectTracked.Items.Add("Tracked - Complete");
-            _selectTracked.Items.Add("Tracked - All Daily");
-            _selectTracked.Items.Add("Tracked - Not Daily");
             _selectTracked.Items.Add("Tracked - All");
-            _selectTracked.Items.Add("Untracked");
             _selectTracked.Items.Add("All");
             _selectTracked.SelectedItem = "Tracked - Incomplete";
             _selectTracked.ValueChanged += delegate {
@@ -110,262 +78,77 @@ namespace Manlaan.Dailies.Controls
                 UpdateDailyPanel();
             };
 
-            _dailyPanel = new FlowPanel() {
-                FlowDirection = ControlFlowDirection.LeftToRight,
-                ControlPadding = new Vector2(8, 8),
+            _dailyPanel = new Panel() {
                 Location = new Point(10, _selectTracked.Bottom + 5),
                 Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectTracked.Bottom - 25),
                 CanScroll = true,
                 Parent = _parentPanel,
-                ShowBorder = false,
+                ShowBorder = true,
             };
 
-            List<Daily> events = Module._dailies;
-            events.Sort(delegate (Daily x, Daily y) {
-                if (x.NextEvent == null && y.NextEvent == null) return 0;
-                else if (x.NextEvent == null) return -1;
-                else if (y.NextEvent == null) return 1;
-                else return x.NextEvent.CompareTo(y.NextEvent);
-            });
-
-            foreach (Daily d in Module._dailies) {
-                if (d.Times.Length > 0) { 
-                    d.EventButton = CreateDailyButton(d);
+            int curY = 0;
+            foreach (Category c in Module._eventGroups) {
+                Panel catPanel = new Panel() {
+                    Location = new Point(0, curY),
+                    Parent = _dailyPanel,
+                    BackgroundColor = Color.Blue,
+                    Size = _dailyPanel.Size,
+                };
+                Label catLabel = new Label() {
+                    Parent = catPanel,
+                    Text = c.Name,
+                    Size = new Point(80,20),
+                    BackgroundColor = Color.Red,
+                };
+                foreach (Event e in Module._events) {
+                    if (e.Group.Equals(c.Name)) 
+                        e.Button = CreateDailyButton(catPanel, e);
                 }
+                curY += 20;
             }
 
             _dailyCategory = "";
             UpdateDailyPanel();
         }
 
-        public DailyDetailsButton CreateDailyButton(Daily d) {
-            Point iconSize = new Point(26, 26);
-
-            DailyDetailsButton dailyButton = new DailyDetailsButton() {
-                CanScroll = false,
-                Size = new Point(_dailyPanel.Size.X - 20, 73),
-                Parent = _dailyPanel,
+        public Panel CreateDailyButton(Panel panel, Event e) {
+            int width = (int)((WinSize.X - 80) / 8);
+            Panel EventButton = new Panel() {
+                Size = new Point(width, 20),
+                Location = new Point((int)(((e.StartTime.Hour*10) + (e.StartTime.Minute/15)) * width), panel.Top),
+                Parent = panel,
+                BackgroundColor = Color.Red
             };
 
-            Image buttonbackground = new Image(_btnBackground) {
-                Size = dailyButton.Size,
-                Parent = dailyButton,
-            };
-
-            Texture2D buttonIcon = _defaulticon;
-            if (!string.IsNullOrEmpty(d.Icon)) {
-                try {
-                    if (File.Exists(Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon))
-                        buttonIcon = Texture2D.FromFile(Graphics.GraphicsDevice, Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon);
-                    else
-                        buttonIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\" + d.Icon);
-                }
-                catch {
-                    buttonIcon = _defaulticon;
-                }
-            }
-            Image icon = new Image(buttonIcon) {
-                Size = new Point(35, 35),
-                Parent = dailyButton,
-                Location = new Point(5, 5),
-                BasicTooltipText = d.Name,
-            };
-
-            Label Category = new Label() {
-                Location = new Point(48, 2),
-                Width = dailyButton.Size.X - 15 - 42,
-                AutoSizeHeight = false,
-                WrapText = false,
-                Parent = dailyButton,
-                Text = d.Category,
-                Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
-            };
             Label Desc = new Label() {
-                Location = new Point(Category.Left, Category.Bottom - 1),
-                Width = Category.Width,
+                //Location = new Point(EventButton.Left, EventButton.Top),
+                Width = EventButton.Width,
                 AutoSizeHeight = false,
                 WrapText = false,
-                Parent = dailyButton,
-                Text = d.Name,
+                Parent = EventButton,
+                Text = e.Name,
             };
 
-            Image buttonbackground2 = new Image(_btnBackground) {
-                Size = new Point(dailyButton.Size.X, iconSize.Y + 4),
-                Parent = dailyButton,
-                Location = new Point(0, dailyButton.Height - iconSize.Y - 4),
-            };
-
-            int xloc = 5;
-            if (!string.IsNullOrEmpty(d.Note) || Module._settingDebug.Value) {
-                GlowButton NoteBtn = new GlowButton {
-                    Icon = _noteIcon,
-                    BasicTooltipText = d.Note + (Module._settingDebug.Value ? "\n\n" + d.Achievement + " - " + d.API + " - " + d.Id : ""),
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                xloc = NoteBtn.Right + 5;
-            }
-            if (!string.IsNullOrEmpty(d.Wiki)) {
-                GlowButton WikiBtn = new GlowButton {
-                    Icon = _wikiIcon,
-                    BasicTooltipText = "Read about this on the wiki",
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                WikiBtn.Click += delegate {
-                    if (Module.UrlIsValid(d.Wiki)) {
-                        Process.Start(d.Wiki);
-                    }
-                };
-                xloc = WikiBtn.Right + 5;
-            }
-            if (!string.IsNullOrEmpty(d.Timer)) {
-                GlowButton TimeBtn = new GlowButton {
-                    Icon = _timerIcon,
-                    BasicTooltipText = "See timer on Wiki",
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                TimeBtn.Click += delegate {
-                    if (Module.UrlIsValid(d.Timer)) {
-                        Process.Start(d.Timer);
-                    }
-                };
-                xloc = TimeBtn.Right + 5;
-            }
-            if (!string.IsNullOrEmpty(d.Waypoint)) {
-                GlowButton WaypointBtn = new GlowButton {
-                    Icon = _wpIcon,
-                    BasicTooltipText = "Copy waypoint to clipboard",
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                WaypointBtn.Click += delegate {
-                    ClipboardUtil.WindowsClipboardService.SetTextAsync(d.Waypoint)
-                                    .ContinueWith((clipboardResult) => {
-                                        if (clipboardResult.IsFaulted) {
-                                            ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
-                                        }
-                                        else {
-                                            ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
-                                        }
-                                    });
-                };
-                xloc = WaypointBtn.Right + 5;
-            }
-            if (d.Times != null && d.Times.Length > 0) {
-                dailyButton.TimeButton = new Label() {
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2 + 3),
-                    Width = 75,
-                    AutoSizeHeight = false,
-                    WrapText = false,
-                    Parent = dailyButton,
-                    Text = "",
-                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
-                };
-                xloc = dailyButton.TimeButton.Right + 5;
-            }
-            if (!string.IsNullOrEmpty(d.Clipboard)) {
-                GlowButton CopyBtn = new GlowButton {
-                    Icon = _copyIcon,
-                    BasicTooltipText = "Copy text to clipboard",
-                    Parent = dailyButton,
-                    GlowColor = Color.White * 0.1f,
-                    Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                CopyBtn.Click += delegate {
-                    ClipboardUtil.WindowsClipboardService.SetTextAsync(d.Clipboard)
-                                    .ContinueWith((clipboardResult) => {
-                                        if (clipboardResult.IsFaulted) {
-                                            ScreenNotification.ShowNotification("Failed to copy to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
-                                        }
-                                        else {
-                                            ScreenNotification.ShowNotification("Copied to clipboard!", duration: 2);
-                                        }
-                                    });
-                };
-                xloc = CopyBtn.Right + 5;
-            }
-
-            bool setAutoComplete = false;
-            switch (d.API) {
-                default:
-                    break;
-                //Autocompletes
-                case "dungeons":
-                case "mapchests":
-                case "raids":
-                case "worldbosses":
-                case "dailycrafting":
-                    if (!string.IsNullOrEmpty(d.Achievement) && !string.IsNullOrEmpty(d.API) && Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression }))
-                        setAutoComplete = true;
-                    break;
-            }
-
-            if (!setAutoComplete) {
-                dailyButton.CompleteButton = new GlowButton() {
-                    Icon = _complete0Icon,
-                    ActiveIcon = _complete1Icon,
-                    BasicTooltipText = "Toggle complete",
-                    ToggleGlow = true,
-                    Checked = d.IsComplete,
-                    Parent = dailyButton,
-                    Location = new Point(dailyButton.Size.X - iconSize.X - 5, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                dailyButton.CompleteButton.Click += delegate {
-                    Module._dailySettings.SetComplete(d.Id, dailyButton.CompleteButton.Checked);
-                    //Daily daily = Module._combinedDailies.Find(x => x.Id.Equals(d.Id));
-                    d.IsComplete = dailyButton.CompleteButton.Checked;
-                    d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
-                    d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
-                    Module.ModuleInstance.UpdateDailyPanel();
-                };
-            }
-            else {
-                dailyButton.CompleteButton = new GlowButton() {
-                    Icon = _auto0Icon,
-                    ActiveIcon = _auto1Icon,
-                    BasicTooltipText = "Auto",
-                    ToggleGlow = true,
-                    Checked = d.IsComplete,
-                    Parent = dailyButton,
-                    Location = new Point(dailyButton.Size.X - iconSize.X - 5, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                dailyButton.CompleteButton.Click += delegate {
-                    dailyButton.CompleteButton.Checked = d.IsComplete;
-                };
-            }
-
-            return dailyButton;
+            return EventButton;
         }
 
         public void UpdateDailyPanel() {
-            List<Category> categories = Module._categories;
+            List<Category> categories = Module._eventGroups;
             foreach (Category cat in categories) {
                 cat.IsActive = false;
             }
 
-            foreach (Daily d in Module._dailies) {
-                d.EventButton.Visible = false;
+            foreach (Event e in Module._events) {
+                Daily d = Module._dailies.Find(x => x.Id.Equals(e.DailyID));
+                e.Button.Visible = true;
                 if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
-                    categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
+                    categories.Find(x => x.Name.Equals(d.TimesGroup)).IsActive = true;
                 }
                 if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
-                    d.EventButton.Visible = true;
+                    e.Button.Visible = true;
                 }
             }
-            //_dailyPanel.SortChildren<Daily>((d1, d2) => { return DateTime.Compare(d1.NextEvent, d2.NextEvent); });
+
             _dailyPanel.RecalculateLayout();
 
             _selectCategory.Items.Clear();
@@ -375,11 +158,6 @@ namespace Manlaan.Dailies.Controls
                     _selectCategory.Items.Add(cat.Name);
             }
             _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
-        }
-
-
-        /// <inheritdoc />
-        public override void PaintBeforeChildren(SpriteBatch spriteBatch, Rectangle bounds) {
         }
     }
 }

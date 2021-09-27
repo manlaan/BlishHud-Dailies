@@ -25,6 +25,7 @@ namespace Manlaan.Dailies.Controls
             _blankBackground = Module.ModuleInstance.ContentsManager.GetTexture("blank.png");
             _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("1863949.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
+            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
             _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
@@ -35,7 +36,6 @@ namespace Manlaan.Dailies.Controls
             _wpIcon = Module.ModuleInstance.ContentsManager.GetTexture("156628.png");
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
-            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
         }
         #endregion
 

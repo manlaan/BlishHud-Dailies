@@ -166,7 +166,7 @@ namespace Manlaan.Dailies.Controls
             };
 
             foreach (Daily d in Module._dailies) {
-                d.Button = CreateDailyButton(d);
+               // d.Button = CreateDailyButton(d);
             }
         }
          

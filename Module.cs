@@ -30,8 +30,8 @@ namespace Manlaan.Dailies
         public static List<Daily> _dailies = new List<Daily>();
         public static List<Daily> _newdailies = new List<Daily>();
         public static List<Event> _events = new List<Event>();
-        public static List<string> _eventGroups = new List<string>();
         public static List<Category> _categories = new List<Category>();
+        public static List<Category> _eventGroups = new List<Category>();
         public static SettingEntry<DateTime> _settingLastReset;
         //private SettingEntry<string> _settingFestivalStart;
         private SettingEntry<Point> _settingMiniLocation;
@@ -194,29 +194,31 @@ namespace Manlaan.Dailies
                 if (!_categories.Exists(x => x.Name.Equals(d.Category)))
                     _categories.Add(new Category() { Name = d.Category, IsActive = false });
 
-                if (!_eventGroups.Contains(d.TimesGroup))
-                    _eventGroups.Add(d.TimesGroup);
-                foreach (string s in d.Times) {
-                    _events.Add(
-                        new Event() {
-                            DailyID = d.Id,
-                            Name = d.Name,
-                            StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).ToLocalTime(),
-                            EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration).ToLocalTime(),
-                            Group = d.TimesGroup,
-                            Button = new Panel()
-                        }
-                        );
-                    _events.Add(
-                        new Event() {
-                            DailyID = d.Id,
-                            Name = d.Name,
-                            StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).ToLocalTime(),
-                            EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration).ToLocalTime(),
-                            Group = d.TimesGroup,
-                            Button = new Panel()
-                        }
-                        );
+                if (d.Times.Length > 0) {
+                    if (!_eventGroups.Exists(x => x.Name.Equals(d.TimesGroup)))
+                        _eventGroups.Add(new Category() { Name = d.TimesGroup, IsActive = false });
+                    foreach (string s in d.Times) {
+                        _events.Add(
+                            new Event() {
+                                DailyID = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration),
+                                Group = d.TimesGroup,
+                                Button = new Panel()
+                            }
+                            );
+                        _events.Add(
+                            new Event() {
+                                DailyID = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
+                                Group = d.TimesGroup,
+                                Button = new Panel()
+                            }
+                            );
+                    }
                 }
             }
 
@@ -258,8 +260,6 @@ namespace Manlaan.Dailies
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
             _cornerIcon.LoadingMessage = "";
-
-            //Loading Icon Off
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
