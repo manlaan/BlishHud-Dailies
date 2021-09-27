@@ -130,7 +130,7 @@
         "api": "worldbosses",
         "icon": "498983.png",
         "note": "Mount Maelstrom",
-        "times": [ "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00" ],
+        "times": [ "00:30", "03:30", "06:30", "09:30", "12:30", "15:30", "18:30", "21:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
         "timescolor": "White"
