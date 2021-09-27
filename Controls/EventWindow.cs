@@ -32,6 +32,8 @@ namespace Manlaan.Dailies.Controls
         private Panel _dailyPanel;
         private string _dailyCategory = "";
         private Panel _parentPanel;
+        private int _hoursToShow = 2;
+        private int _categoryHeight = 30;
 
         public EventWindow(Point size) : base() {
             WinSize = size;
@@ -57,7 +59,7 @@ namespace Manlaan.Dailies.Controls
 
             _selectCategory = new Dropdown() {
                 Location = new Point(15, 15),
-                Width = _parentPanel.Width - 30,
+                Width = (_parentPanel.Width - 50)/2,
                 Parent = _parentPanel,
             };
             _selectCategory.ValueChanged += delegate {
@@ -65,8 +67,8 @@ namespace Manlaan.Dailies.Controls
                 UpdateDailyPanel();
             };
             _selectTracked = new Dropdown() {
-                Location = new Point(_selectCategory.Location.X, _selectCategory.Bottom + 3),
-                Width = _parentPanel.Width - 30,
+                Location = new Point(_selectCategory.Right + 10, _selectCategory.Top),
+                Width = (_parentPanel.Width - 50) / 2,
                 Parent = _parentPanel,
             };
             _selectTracked.Items.Add("Tracked - Incomplete");
@@ -79,62 +81,93 @@ namespace Manlaan.Dailies.Controls
             };
 
             _dailyPanel = new Panel() {
-                Location = new Point(10, _selectTracked.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectTracked.Bottom - 15),
+                Location = new Point(15, _selectCategory.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _selectCategory.Bottom - 15),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = true,
             };
 
             int curY = 0;
+            int width = (int)((_dailyPanel.Width - 100) / (_hoursToShow * 60));
+            string timeformat = "h:mm tt";
+            if (Module._setting24HrTime.Value) timeformat = "H:mm";
+
+            Panel timePanel = new Panel() {
+                Location = new Point(0, curY),
+                Parent = _dailyPanel,
+                Size = new Point(_dailyPanel.Size.X, _categoryHeight),
+            };
+            for (int i = 0; i < 8; i++) {
+                var t = RoundDown(DateTime.UtcNow.AddMinutes(-30).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
+                Label timeLabel = new Label() {
+                    Size = new Point(width * 15, _categoryHeight),
+                    Location = new Point(100 + (width * 15 * i), 0),
+                    Parent = timePanel,
+                    Text = t.ToString(timeformat),
+                };
+            }
+            curY += _categoryHeight;
+
+            int cnt = 0;
             foreach (Category c in Module._eventGroups) {
                 Panel catPanel = new Panel() {
                     Location = new Point(0, curY),
                     Parent = _dailyPanel,
-                    BackgroundColor = Color.Blue,
-                    Size = new Point(_dailyPanel.Size.X, 20),
+                    Size = new Point(_dailyPanel.Size.X, _categoryHeight),
+                    BackgroundTexture = (cnt % 2 == 0) ? _btnBackground : _blankBackground,
                 };
                 Label catLabel = new Label() {
                     Parent = catPanel,
                     Text = c.Name,
-                    Size = new Point(100,20),
+                    Size = new Point(100,30),
                     BackgroundColor = Color.Red,
                 };
                 foreach (Event e in Module._events) {
                     if (e.Group.Equals(c.Name)) 
-                        e.Button = CreateDailyButton(catPanel, e, 0);
+                        e.Button = CreateDailyButton(catPanel, e);
                 }
-                curY += 20;
+                curY += _categoryHeight;
+                cnt++;
             }
 
             _dailyCategory = "";
             UpdateDailyPanel();
         }
 
-        public Panel CreateDailyButton(Panel panel, Event e, int Y) {
-            int width = (int)((WinSize.X - 100) / 8);
-            int offset = (new DateTime().ToUniversalTime().Hour * 4 * width) + ((RoundDown(new DateTime().ToUniversalTime(), TimeSpan.FromMinutes(15)).Minute / 15) * Width);
-            int buttonwidth = (e.Duration / 15) * width;
-            int buttonstart = (e.StartTime.Hour * 4 * width) + ((e.StartTime.Minute / 15) * width) + 100 - offset;
+        public Panel CreateDailyButton(Panel panel, Event e) {
+            int width = (int)((panel.Width - 100) / (_hoursToShow * 60));
+            int offset = (DateTime.UtcNow.Hour * 60 * width) + ((RoundDown(DateTime.UtcNow.AddMinutes(-30), TimeSpan.FromMinutes(15)).Minute) * width);
+            int buttonwidth = (e.Duration) * width;
+            int buttonstart = (e.StartTime.Hour * 60 * width) + ((e.StartTime.Minute) * width) + 100 - offset;
 
-            Panel EventButton = new Panel() {
-                Size = new Point(buttonwidth, 20),
-                Location = new Point(buttonstart, Y),
-                Parent = panel,
-                BackgroundColor = Color.Red
-            };
+            if ((buttonstart + buttonwidth) > 100 && (buttonstart + buttonwidth) < WinSize.X) {
+                if (buttonstart < 100) {
+                    buttonwidth = buttonstart + buttonwidth - 100;
+                    buttonstart = 100;
+                }
 
-            Label Desc = new Label() {
-                //Location = new Point(EventButton.Left, EventButton.Top),
-                Width = EventButton.Width,
-                AutoSizeHeight = false,
-                WrapText = false,
-                Parent = EventButton,
-                Text = e.Name,
-                BasicTooltipText = e.Name + "\n" + e.StartTime.Hour.ToString() + ":" + e.StartTime.Minute.ToString(),
-            };
+                Panel EventButton = new Panel() {
+                    Size = new Point(buttonwidth, _categoryHeight),
+                    Location = new Point(buttonstart, 0),
+                    Parent = panel,
+                    BackgroundTexture = _btnBackground,
+                };
 
-            return EventButton;
+                Label EventDesc = new Label() {
+                    Location = new Point(5, 5),
+                    Width = EventButton.Width,
+                    AutoSizeHeight = false,
+                    WrapText = false,
+                    Parent = EventButton,
+                    Text = e.Name,
+                    BasicTooltipText = e.Name + "\n" + e.StartTime.Hour.ToString() + ":" + e.StartTime.Minute.ToString(),
+                };
+
+                return EventButton;
+            } else {
+                return new Panel();
+            }
         }
 
         public void UpdateDailyPanel() {

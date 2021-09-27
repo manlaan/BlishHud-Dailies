@@ -47,7 +47,7 @@
         "note": "Bloodtide Coast",
         "times": [ "01:00", "04:00", "08:00", "12:30", "17:00", "20:00" ],
         "timesgroup": "Hard Boss",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "White"
     },
     {

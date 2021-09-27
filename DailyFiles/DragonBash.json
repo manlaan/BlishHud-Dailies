@@ -50,10 +50,6 @@
         "api": "achievements",
         "icon": "602783.png",
         "note": "Complete 10 Hologram Stampede at or above Tier 1",
-        "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
-        "timesgroup": "Dragon Bash",
-        "timesduration": 15,
-        "timescolor": "White"
     },
     {
         "id": "dragonbash_5345",
@@ -67,10 +63,6 @@
         "api": "achievements",
         "icon": "602783.png",
         "note": "Complete 10 Hologram Stampede at or above Tier 2",
-        "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
-        "timesgroup": "Dragon Bash",
-        "timesduration": 15,
-        "timescolor": "White"
     },
     {
         "id": "dragonbash_5344",

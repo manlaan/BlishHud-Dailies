@@ -38,7 +38,7 @@ namespace Manlaan.Dailies
         private SettingEntry<Point> _settingEventLocation;
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
         private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
-        private SettingEntry<bool> _setting24HrTime;
+        public static SettingEntry<bool> _setting24HrTime;
         public static SettingEntry<bool> _settingDontShowIntro;
         public static SettingEntry<bool> _settingDebug;
         private Stopwatch Timer_AchieveUpdate = new Stopwatch();
