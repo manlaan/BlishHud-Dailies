@@ -9,6 +9,7 @@ using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
 using Blish_HUD.Controls;
 using Blish_HUD.Content;
+using Microsoft.Xna.Framework;
 
 namespace Manlaan.Dailies.Models
 {
@@ -23,6 +24,7 @@ namespace Manlaan.Dailies.Models
         public int Duration { get; set; }
         public string Group { get; set; }
         public Panel Button { get; set; }
+        public Color Color { get; set; }
 
         public Event() {
             Name = "";

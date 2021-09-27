@@ -105,6 +105,7 @@ namespace Manlaan.Dailies.Controls
                     Location = new Point(100 + (width * 15 * i), 0),
                     Parent = timePanel,
                     Text = t.ToString(timeformat),
+                    HorizontalAlignment = HorizontalAlignment.Center
                 };
             }
             curY += _categoryHeight;
@@ -121,13 +122,13 @@ namespace Manlaan.Dailies.Controls
                     Parent = catPanel,
                     Text = c.Name,
                     Size = new Point(100,30),
-                    BackgroundColor = Color.Red,
+                    Location = new Point(5,0),
                 };
                 foreach (Event e in Module._events) {
                     if (e.Group.Equals(c.Name)) 
                         e.Button = CreateDailyButton(catPanel, e);
                 }
-                curY += _categoryHeight;
+                curY += _categoryHeight + 2;
                 cnt++;
             }
 
@@ -148,15 +149,15 @@ namespace Manlaan.Dailies.Controls
                 }
 
                 Panel EventButton = new Panel() {
-                    Size = new Point(buttonwidth, _categoryHeight),
+                    Size = new Point(buttonwidth-2, _categoryHeight),
                     Location = new Point(buttonstart, 0),
                     Parent = panel,
-                    BackgroundTexture = _btnBackground,
+                    BackgroundColor = e.Color,
                 };
 
                 Label EventDesc = new Label() {
                     Location = new Point(5, 5),
-                    Width = EventButton.Width,
+                    Width = EventButton.Width - 10,
                     AutoSizeHeight = false,
                     WrapText = false,
                     Parent = EventButton,

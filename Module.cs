@@ -206,7 +206,8 @@ namespace Manlaan.Dailies
                                 EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration),
                                 Duration = d.TimesDuration,
                                 Group = d.TimesGroup,
-                                Button = new Panel()
+                                Button = new Panel(),
+                                Color = FindColor(d.TimesColor)
                             }
                             );
                         //_events.Add(
@@ -615,6 +616,11 @@ namespace Manlaan.Dailies
                     break;
             }
             return false;
+        }
+        private Color FindColor(string colorname) {
+            if (colorname == null) colorname = "Black";
+            System.Drawing.Color systemColor = System.Drawing.Color.FromName(colorname);
+            return new Color(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
         }
     }
 }
