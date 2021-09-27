@@ -99,7 +99,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = _dailyPanel,
                 Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
             };
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < (_hoursToShow * 4); i++) {
                 var t = RoundDown(DateTime.UtcNow.AddMinutes(-30).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
                 Label timeLabel = new Label() {
                     Size = new Point(width * 15, _categoryHeight),
