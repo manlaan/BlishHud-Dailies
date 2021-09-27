@@ -20,6 +20,7 @@ namespace Manlaan.Dailies.Models
         public string DailyID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public int Duration { get; set; }
         public string Group { get; set; }
         public Panel Button { get; set; }
 
@@ -28,6 +29,7 @@ namespace Manlaan.Dailies.Models
             IsActive = true;
             DailyID = "";
             StartTime = new DateTime();
+            Duration = 0;
             EndTime = new DateTime();
             Group = "";
             Button = new Panel();

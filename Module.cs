@@ -204,20 +204,22 @@ namespace Manlaan.Dailies
                                 Name = d.Name,
                                 StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s),
                                 EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration),
+                                Duration = d.TimesDuration,
                                 Group = d.TimesGroup,
                                 Button = new Panel()
                             }
                             );
-                        _events.Add(
-                            new Event() {
-                                DailyID = d.Id,
-                                Name = d.Name,
-                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
-                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
-                                Group = d.TimesGroup,
-                                Button = new Panel()
-                            }
-                            );
+                        //_events.Add(
+                        //    new Event() {
+                        //        DailyID = d.Id,
+                        //        Name = d.Name,
+                        //        StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
+                        //        EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
+                        //        Duration = d.TimesDuration,
+                        //        Group = d.TimesGroup,
+                        //        Button = new Panel()
+                        //    }
+                        //    );
                     }
                 }
             }

@@ -100,10 +100,10 @@ namespace Manlaan.Dailies.Controls
                     Size = new Point(100,20),
                     BackgroundColor = Color.Red,
                 };
-                //foreach (Event e in Module._events) {
-                //    if (e.Group.Equals(c.Name)) 
-                //        e.Button = CreateDailyButton(catPanel, e);
-                //}
+                foreach (Event e in Module._events) {
+                    if (e.Group.Equals(c.Name)) 
+                        e.Button = CreateDailyButton(catPanel, e, 0);
+                }
                 curY += 20;
             }
 
@@ -111,11 +111,14 @@ namespace Manlaan.Dailies.Controls
             UpdateDailyPanel();
         }
 
-        public Panel CreateDailyButton(Panel panel, Event e) {
-            int width = (int)((WinSize.X - 100) / 8);
+        public Panel CreateDailyButton(Panel panel, Event e, int Y) {
+            int width = (int)((WinSize.X - 100) / 24);
+            int buttonwidth = (e.Duration / 15) * width;
+            int buttonstart = (e.StartTime.Hour * 4 * width) + ((e.StartTime.Minute / 15) * width) + 100;
+
             Panel EventButton = new Panel() {
-                Size = new Point(width, 20),
-                Location = new Point((int)(((e.StartTime.Hour*10) + (e.StartTime.Minute/15)) * width), panel.Top),
+                Size = new Point(buttonwidth, 20),
+                Location = new Point(buttonstart, Y),
                 Parent = panel,
                 BackgroundColor = Color.Red
             };
@@ -127,6 +130,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = EventButton,
                 Text = e.Name,
+                BasicTooltipText = e.Name
             };
 
             return EventButton;
