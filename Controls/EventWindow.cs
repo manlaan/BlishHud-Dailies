@@ -112,7 +112,7 @@ namespace Manlaan.Dailies.Controls
         }
 
         public Panel CreateDailyButton(Panel panel, Event e, int Y) {
-            int width = (int)((WinSize.X - 100) / 24);
+            int width = (int)((WinSize.X - 100) / 40);
             int buttonwidth = (e.Duration / 15) * width;
             int buttonstart = (e.StartTime.Hour * 4 * width) + ((e.StartTime.Minute / 15) * width) + 100;
 
@@ -130,7 +130,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = EventButton,
                 Text = e.Name,
-                BasicTooltipText = e.Name
+                BasicTooltipText = e.Name + "\n" + e.StartTime.Hour.ToString() + ":" + e.StartTime.Minute.ToString(),
             };
 
             return EventButton;
