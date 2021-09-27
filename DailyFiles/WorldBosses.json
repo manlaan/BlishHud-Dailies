@@ -14,7 +14,7 @@
         "times": [ "00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Cyan"
     },
     {
         "id": "boss_claw_of_jormag",
@@ -31,7 +31,7 @@
         "times": [ "02:30", "05:30", "08:30", "11:30", "14:30", "17:30", "20:30", "23:30" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_triple_trouble_wurm",
@@ -65,7 +65,7 @@
         "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
         "timesgroup": "World Boss",
         "timesduration": 15,
-        "timescolor": "White"
+        "timescolor": "Turquoise"
     },
     {
         "id": "boss_inquest_golem_mark_ii",
