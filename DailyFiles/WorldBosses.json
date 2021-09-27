@@ -122,7 +122,7 @@
         "times": [ "02:00", "06:00", "10:30", "15:00", "18:00", "23:00" ],
         "timesgroup": "Hard Boss",
         "timesset": "Core",
-        "timesduration": 15,
+        "timesduration": 30,
         "timescolor": "Turquoise"
     },
     {
@@ -284,7 +284,7 @@
         "times": [ "4:20", "10:20", "16:20", "22:20" ],
         "timesgroup": "Ley Line",
         "timesset": "Core",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Turquoise"
     },
     {
@@ -302,7 +302,7 @@
         "times": [ "02:20", "8:20", "14:20", "20:20" ],
         "timesgroup": "Ley Line",
         "timesset": "Core",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Turquoise"
     },
     {
@@ -320,7 +320,7 @@
         "times": [ "00:20", "06:20", "12:20", "18:20" ],
         "timesgroup": "Ley Line",
         "timesset": "Core",
-        "timesduration": 15,
+        "timesduration": 20,
         "timescolor": "Turquoise"
     },
     {
@@ -337,7 +337,7 @@
         "note": "",
         "times": [ "01:00", "03:00", "05:00", "07:00", "09:00", "11:00", "13:00", "15:00", "17:00", "19:00", "21:00", "23:00" ],
         "timesgroup": "EotN",
-        "timesset": "Core",   //Officially belongs in Saga, but fits better in EotN
+        "timesset": "Core", //Officially belongs in Saga, but fits better in EotN
         "timesduration": 20,
         "timescolor": "Turquoise"
     },
@@ -355,7 +355,7 @@
         "note": "",
         "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
         "timesgroup": "EotN",
-        "timesset": "Core", 
+        "timesset": "Core",
         "timesduration": 20,
         "timescolor": "Turquoise"
     },
@@ -379,7 +379,7 @@
     },
     {
         "id": "boss_drytop",
-        "name": "Dry Top: Storm",
+        "name": "Dry Top Storm",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BIAHAAA=]",
@@ -391,13 +391,13 @@
         "note": "",
         "times": [ "00:40", "01:40", "02:40", "03:40", "04:40", "05:40", "06:40", "07:40", "08:40", "09:40", "10:40", "11:40", "12:40", "13:40", "14:40", "15:40", "16:40", "17:40", "18:40", "19:40", "20:40", "21:40", "22:40", "23:40" ],
         "timesgroup": "Dry Top",
-        "timesset": "Core",  //Doesn't really belong in Core, but didn't want it to be lonely in its own section
+        "timesset": "Core", //Doesn't really belong in Core, but didn't want it to be lonely in its own section
         "timesduration": 20,
         "timescolor": "Goldenrod"
     },
     {
         "id": "boss_junundu",
-        "name": "Desolation: Junundu Rising",
+        "name": "Junundu Rising (Desolation)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BMEKAAA=]",
@@ -415,7 +415,7 @@
     },
     {
         "id": "boss_palawadan",
-        "name": "Istan: Palawadan",
+        "name": "Palawadan (Istan)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BAkLAAA=]",
@@ -432,8 +432,26 @@
         "timescolor": "Plum"
     },
     {
+        "id": "boss_sunspearuprising",
+        "name": "Sunspear Uprising (Istan)",
+        "category": "Metas & Bosses",
+        "clipboard": "",
+        "waypoint": "[&BAkLAAA=]",
+        "wiki": "https://wiki.guildwars2.com/wiki/Sunspear_Uprising",
+        "timer": "",
+        "achievement": "",
+        "api": "",
+        "icon": "498983.png",
+        "note": "Timer is estimated.  Relies on completing Caravan events to start.",
+        "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
+        "timesgroup": "Istan",
+        "timesset": "Living World Season 4",
+        "timesduration": 30,
+        "timescolor": "Plum"
+    },
+    {
         "id": "boss_thunderhead",
-        "name": "Thunderhead: Thunderhead Keep",
+        "name": "Thunderhead Keep",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BLsLAAA=]",
@@ -446,12 +464,12 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Thunderhead",
         "timesset": "Living World Season 4",
-        "timesduration": 30,
+        "timesduration": 35,
         "timescolor": "Plum"
     },
     {
         "id": "boss_oilfloes",
-        "name": "Thunderhead: Oil Floes",
+        "name": "Oil Floes (Thunderhead)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BKYLAAA=]",
@@ -464,12 +482,12 @@
         "times": [ "00:45", "02:45", "04:45", "06:45", "08:45", "10:45", "12:45", "14:45", "16:45", "18:45", "20:45", "22:45" ],
         "timesgroup": "Thunderhead",
         "timesset": "Living World Season 4",
-        "timesduration": 20,
+        "timesduration": 15,
         "timescolor": "Plum"
     },
     {
         "id": "boss_concert",
-        "name": "Grothmar: Concert",
+        "name": "Metal Concert (Grothmar)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BPgLAAA=]",
@@ -487,7 +505,7 @@
     },
     {
         "id": "boss_doomlore",
-        "name": "Grothmar: Doomlore",
+        "name": "Doomlore Shrine (Grothmar)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BA4MAAA=]",
@@ -497,15 +515,15 @@
         "api": "",
         "icon": "498983.png",
         "note": "",
-        "times": [ "00:40", "02:40", "04:40", "06:40", "08:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40" ],
+        "times": [ "00:38", "02:38", "04:38", "06:38", "08:38", "10:38", "12:38", "14:38", "16:38", "18:38", "20:38", "22:38" ],
         "timesgroup": "Grothmar",
         "timesset": "Icebrood Saga",
-        "timesduration": 20,
+        "timesduration": 22,
         "timescolor": "SkyBlue"
     },
     {
         "id": "boss_effigy",
-        "name": "Grothmar: Effigy",
+        "name": "Effigy (Grothmar)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BA4MAAA=]",
@@ -523,7 +541,7 @@
     },
     {
         "id": "boss_ooze",
-        "name": "Grothmar: Ooze Pit",
+        "name": "Ooze Pit (Grothmar)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BPgLAAA=]",
@@ -544,7 +562,7 @@
     /* Hero Choice Chests */
     {
         "id": "chest_ab",
-        "name": "Auric Basin: Octovine",
+        "name": "Octovine (Auric Basin)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BMYHAAA=]",
@@ -562,7 +580,7 @@
     },
     {
         "id": "chest_co",
-        "name": "Crystal Oasis: Casino Blitz/Pinata",
+        "name": "Casino Blitz/Pinata (Crystal Oasis)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BLsKAAA=]",
@@ -575,12 +593,12 @@
         "times": [ "00:05", "02:05", "04:05", "06:05", "08:05", "10:05", "12:05", "14:05", "16:05", "18:05", "20:05", "22:05" ],
         "timesgroup": "Crystal Oasis",
         "timesset": "Path of Fire",
-        "timesduration": 30,
+        "timesduration": 25,
         "timescolor": "Tan"
     },
     {
         "id": "chest_vabbi_forged",
-        "name": "Vabbi: Forged with Fire",
+        "name": "Forged with Fire (Vabbi)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BO0KAAA=]",
@@ -598,7 +616,7 @@
     },
     {
         "id": "chest_vabbi_serpents",
-        "name": "Vabbi: Serpents' Ire",
+        "name": "Serpents' Ire (Vabbi)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BHQKAAA=]",
@@ -634,7 +652,7 @@
     },
     {
         "id": "chest_elon",
-        "name": "Elon Riverlands: Doppelganger",
+        "name": "Doppelganger (Elon Riverlands)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BFMKAAA=]",
@@ -652,7 +670,7 @@
     },
     {
         "id": "chest_td",
-        "name": "Tangled Depths: Chak Gerent",
+        "name": "Chak Gerent (Tangled Depths)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BPUHAAA=]",
@@ -670,7 +688,7 @@
     },
     {
         "id": "chest_deso",
-        "name": "Desolation: Forged Demolisher",
+        "name": "Maws of Torment (Desolation)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BKMKAAA=]",
@@ -688,7 +706,7 @@
     },
     {
         "id": "chest_vb",
-        "name": "Verdant Brink: Night Bosses",
+        "name": "Night & Bosses (Verdant Brink)",
         "category": "Metas & Bosses",
         "clipboard": "",
         "waypoint": "[&BAgIAAA=]",
@@ -701,7 +719,7 @@
         "times": [ "01:45", "03:45", "05:45", "07:45", "09:45", "11:45", "13:45", "15:45", "17:45", "19:45", "21:45", "23:45" ],
         "timesgroup": "Verdant Brink",
         "timesset": "Heart of Thorns",
-        "timesduration": 20,
+        "timesduration": 45,
         "timescolor": "YellowGreen"
     }
 ]

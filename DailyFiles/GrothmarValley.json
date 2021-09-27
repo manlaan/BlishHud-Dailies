@@ -55,10 +55,10 @@
         "api": "achievements",
         "icon": "2199969.png",
         "note": "Doomlore Meta",
-        "times": [ "00:40", "02:40", "04:40", "06:40", "08:40", "10:40", "12:40", "14:40", "16:40", "18:40", "20:40", "22:40" ],
+        "times": [ "00:38", "02:38", "04:38", "06:38", "08:38", "10:38", "12:38", "14:38", "16:38", "18:38", "20:38", "22:38" ],
         "timesgroup": "Grothmar Daily",
         "timesset": "Daily",
-        "timesduration": 20,
+        "timesduration": 22,
         "timescolor": "Magenta"
     },
     {
