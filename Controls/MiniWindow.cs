@@ -75,7 +75,7 @@ namespace Manlaan.Dailies.Controls
             };
             _selectCategory.ValueChanged += delegate {
                 _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
-                UpdateDailyPanel();
+                UpdatePanel();
             };
 
             _dailyPanel = new FlowPanel() {
@@ -90,14 +90,14 @@ namespace Manlaan.Dailies.Controls
 
             foreach (Daily d in Module._dailies) {
                 if (d.IsTracked)
-                    d.MiniButton = CreateDailyButton(d);
+                    d.MiniButton = CreateButton(d);
             }
 
             _dailyCategory = "";
-            UpdateDailyPanel();
+            UpdatePanel();
         }
 
-        public DailyDetailsButton CreateDailyButton(Daily d) {
+        public DailyDetailsButton CreateButton(Daily d) {
             Point iconSize = new Point(26, 26);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
@@ -309,7 +309,7 @@ namespace Manlaan.Dailies.Controls
             return dailyButton;
         }
 
-        public void UpdateDailyPanel() {
+        public void UpdatePanel() {
             List<Category> categories = Module._categories;
             foreach (Category cat in categories) {
                 cat.IsActive = false;
@@ -319,7 +319,7 @@ namespace Manlaan.Dailies.Controls
                 d.MiniButton.Visible = false;
                 if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
                     if (d.MiniButton.Parent == null) {
-                        d.MiniButton = CreateDailyButton(d);
+                        d.MiniButton = CreateButton(d);
                         d.MiniButton.Visible = false;
                     }
                     categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;

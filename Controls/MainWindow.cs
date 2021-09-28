@@ -66,7 +66,7 @@ namespace Manlaan.Dailies.Controls
             };
             searchBox.TextChanged += delegate (object sender, EventArgs args) {
                 _dailySearch = searchBox.Text;
-               UpdateDailyPanel();
+                UpdatePanel();
             };
             Dropdown ShowItems = new Dropdown() {
                 Location = new Point(searchBox.Right + 8, 10),
@@ -84,7 +84,7 @@ namespace Manlaan.Dailies.Controls
             _dailyShow = ShowItems.SelectedItem;
             ShowItems.ValueChanged += delegate {
                 _dailyShow = ShowItems.SelectedItem;
-                UpdateDailyPanel();
+                UpdatePanel();
             };
             Image updateIcon = new Image(_updateIcon) {
                 Size = new Point(ShowItems.Height, ShowItems.Height),
@@ -166,12 +166,12 @@ namespace Manlaan.Dailies.Controls
             };
 
             foreach (Daily d in Module._dailies) {
-               // d.Button = CreateDailyButton(d);
+                d.Button = CreateButton(d);
             }
         }
          
 
-        public DailyDetailsButton CreateDailyButton(Daily d) {
+        public DailyDetailsButton CreateButton(Daily d) {
             Point iconSize = new Point(30, 30);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
@@ -401,7 +401,7 @@ namespace Manlaan.Dailies.Controls
             return dailyButton;
         }
 
-        public void UpdateDailyPanel() {
+        public void UpdatePanel() {
             int count = 0;
 
             foreach (Category cat in Module._categories) {
@@ -428,7 +428,7 @@ namespace Manlaan.Dailies.Controls
                 categoryItem.Select();
             categoryItem.Click += delegate {
                 _dailyCategory = "";
-                UpdateDailyPanel();
+                UpdatePanel();
             };
 
             foreach (Category cat in Module._categories) {
@@ -436,7 +436,7 @@ namespace Manlaan.Dailies.Controls
                     categoryItem = _categoriesMenu.AddMenuItem(cat.Name);
                     categoryItem.Click += delegate {
                         _dailyCategory = cat.Name;
-                        UpdateDailyPanel();
+                        UpdatePanel();
                     };
                     if (_dailyCategory.Equals(cat.Name))
                         categoryItem.Select();

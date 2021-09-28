@@ -22,30 +22,31 @@ namespace Manlaan.Dailies.Controls
             _blankBackground = Module.ModuleInstance.ContentsManager.GetTexture("blank.png");
             _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("1863949.png");
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
-            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
+            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("clock.png");
         }
         #endregion
 
 
-        private Dropdown _selectGroup, _selectTracked, _selectSet;
+        private Dropdown _selectTracked, _selectSet;
         private Point WinSize = new Point();
-        private Panel _dailyPanel;
+        private Panel _eventPanel;
         private string _selectedTracked = "";
-        private string _selectedGroup = "";
-        private string _selectedSet = "";
+        //private string _selectedSet = "";
         private Panel _parentPanel;
         private int _categoryHeight = 25;
-        private float _minWidth = 0;
+        private float _minuteWidth = 0;
         private Panel _timeMarker;
         private Panel _timePanel;
         private DateTime _prevTime = new DateTime();
         private List<string> _eventSets = new List<string>();
+        private List<Event> _events = new List<Event>();
+        private List<Category> _eventGroups = new List<Category>();
 
 
         public EventWindow(Point size) : base() {
-            foreach (Category cat in Module._eventGroups) {
-                if (!_eventSets.Contains(cat.Set))
-                    _eventSets.Add(cat.Set);
+            foreach (Daily d in Module._dailies) {
+                if (d.TimesSet.Length>0 && !_eventSets.Contains(d.TimesSet))
+                    _eventSets.Add(d.TimesSet);
             }
             _eventSets.Sort();
 
@@ -72,33 +73,23 @@ namespace Manlaan.Dailies.Controls
 
             _selectSet = new Dropdown() {
                 Location = new Point(15, 15),
-                Width = ((_parentPanel.Width - 50) / 3 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
+                Width = ((_parentPanel.Width - 50) / 2 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
                 Parent = _parentPanel,
             };
             _selectSet.Items.Add("All");
             foreach (string s in _eventSets) {
                 _selectSet.Items.Add(s);
             }
+            _selectSet.SelectedItem = "All";
             _selectSet.ValueChanged += delegate {
-                _selectedSet = (_selectSet.SelectedItem.Equals("All") ? "" : _selectSet.SelectedItem);
-                UpdateDailyPanel();
+                //_selectedSet = (_selectSet.SelectedItem.Equals("All") ? "" : _selectSet.SelectedItem);
+                UpdatePanel();
             };
-            _selectedSet = "";
-
-            _selectGroup = new Dropdown() {
-                Location = new Point(_selectSet.Right + 10, _selectSet.Top),
-                Width = ((_parentPanel.Width - 50) / 3 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
-                Parent = _parentPanel,
-            };
-            _selectGroup.ValueChanged += delegate {
-                _selectedGroup = (_selectGroup.SelectedItem.Equals("All") ? "" : _selectGroup.SelectedItem);
-                UpdateDailyPanel();
-            };
-            _selectedGroup = "";
+            //_selectedSet = "";
 
             _selectTracked = new Dropdown() {
-                Location = new Point(_selectGroup.Right + 10, _selectGroup.Top),
-                Width = ((_parentPanel.Width - 50) / 3 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
+                Location = new Point(_selectSet.Right + 5, _selectSet.Top),
+                Width = ((_parentPanel.Width - 50) / 2 > 170 ? 170 : (_parentPanel.Width - 50) / 2),
                 Parent = _parentPanel,
             };
             _selectTracked.Items.Add("Tracked - Incomplete");
@@ -107,175 +98,231 @@ namespace Manlaan.Dailies.Controls
             _selectTracked.SelectedItem = "Tracked - Incomplete";
             _selectTracked.ValueChanged += delegate {
                 _selectedTracked = (_selectTracked.SelectedItem.Equals("All") ? "" : _selectTracked.SelectedItem);
-                _selectGroup.SelectedItem = "All";
-                _selectedGroup = "";
-                UpdateDailyPanel();
+                UpdatePanel();
             };
             _selectedTracked = "Tracked - Incomplete";
 
-            _minWidth = (float)((_parentPanel.Size.X - 40 - 100 - 15) / (float)(int.Parse(Module._settingEventHours.Value) * 60));
+            _minuteWidth = ((float)_parentPanel.Size.X - 25 - 100 - 15) / (float.Parse(Module._settingEventHours.Value) * 60);
 
 
             _timePanel = new Panel() {
-                Location = new Point(15, _selectGroup.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 40, _categoryHeight),
+                Location = new Point(15, _selectSet.Bottom + 5),
+                Size = new Point(_parentPanel.Size.X - 25, _categoryHeight),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
             };
 
-            _dailyPanel = new Panel() {
+            _eventPanel = new Panel() {
                 Location = new Point(15, _timePanel.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 40, _parentPanel.Size.Y - _timePanel.Bottom - 15),
+                Size = new Point(_parentPanel.Size.X - 25, _parentPanel.Size.Y - _timePanel.Bottom - 15),
                 CanScroll = true,
                 Parent = _parentPanel,
                 ShowBorder = false,
+            };
+
+            _timeMarker = new Panel() {
+                Parent = _parentPanel,
+                Size = new Point(3, _eventPanel.Height),
+                BackgroundColor = Color.White,
+                ZIndex = 10
             };
 
             //UpdateTimes();
             //UpdateDailyPanel();
         }
 
-        public Panel CreateDailyButton(Panel panel, Event e) {
-            float offset = (DateTime.UtcNow.Hour * 60 * _minWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minWidth);
-            float buttonwidth = (e.Duration) * _minWidth;
-            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * _minWidth) + (e.StartTime.Hour * 60 * _minWidth) + ((e.StartTime.Minute) * _minWidth) + 100 - offset;
+        public Panel CreateButton(Panel panel, Event e) {
+            float offset = (DateTime.UtcNow.Hour * 60 * _minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minuteWidth);
+            float buttonwidth = (e.Duration) * _minuteWidth;
+            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * _minuteWidth) + (e.StartTime.Hour * 60 * _minuteWidth) + ((e.StartTime.Minute) * _minuteWidth) + 100 - offset;
 
-            if ((buttonstart + buttonwidth) > 100 && buttonstart < WinSize.X) {
-                if (buttonstart < 100) {
-                    buttonwidth = buttonstart + buttonwidth - 100;
-                    buttonstart = 100;
-                }
-
-                Panel EventButton = new Panel() {
-                    Size = new Point((int)buttonwidth-2, _categoryHeight),
-                    Location = new Point((int)buttonstart, 0),
-                    Parent = panel,
-                    BackgroundColor = e.Color,
-                };
-
-                Label EventDesc = new Label() {
-                    Size = new Point(EventButton.Size.X - 10, EventButton.Size.Y),
-                    Location = new Point(5, 0),
-                    AutoSizeHeight = false,
-                    WrapText = false,
-                    Parent = EventButton,
-                    Text = e.Name,
-                    BasicTooltipText = e.Name + "\n" + e.StartTime.Hour.ToString() + ":" + e.StartTime.Minute.ToString(),
-                    TextColor = Color.Black,
-                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
-                };
-
-                return EventButton;
-            } else {
-                return new Panel();
+            if (buttonstart < 100) {
+                buttonwidth = buttonstart + buttonwidth - 100;
+                buttonstart = 100;
             }
+
+            Panel EventButton = new Panel() {
+                Size = new Point((int)buttonwidth-2, _categoryHeight),
+                Location = new Point((int)buttonstart, 0),
+                Parent = panel,
+                BackgroundColor = e.Color,
+            };
+
+            string timeformat = "h:mm tt";
+            if (Module._setting24HrTime.Value) timeformat = "H:mm";
+
+            Label EventDesc = new Label() {
+                Size = new Point(EventButton.Size.X - 10, _categoryHeight),
+                Location = new Point(5, 0),
+                AutoSizeHeight = false,
+                WrapText = false,
+                Parent = EventButton,
+                Text = e.Name,
+                BasicTooltipText = e.Name + "\n" + e.StartTime.ToLocalTime().ToString(timeformat) + " - " + e.EndTime.ToLocalTime().ToString(timeformat),
+                TextColor = Color.Black,
+                Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
+            };
+            EventDesc.Click += delegate {
+                ClipboardUtil.WindowsClipboardService.SetTextAsync(e.Waypoint)
+                                .ContinueWith((clipboardResult) => {
+                                    if (clipboardResult.IsFaulted) {
+                                        ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
+                                    }
+                                    else {
+                                        ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
+                                    }
+                                });
+            };
+
+            return EventButton;
         }
 
-        public void UpdateDailyPanel() {
-            foreach (Category cat in Module._eventGroups) {
-                cat.IsActive = false;
-            }
-            foreach (Event e in Module._events) {
-                Daily d = Module._dailies.Find(x => x.Id.Equals(e.DailyID));
-                if (Module.InSection(d, _selectedTracked, "", "")) {
-                    Module._eventGroups.Find(x => x.Name.Equals(d.TimesGroup)).IsActive = true;
+        public void PopulateEvents() {
+            _events = new List<Event>();
+            _eventGroups = new List<Category>();
+            foreach (Daily d in Module._dailies) {
+                if (d.Times != null && d.Times.Length > 0) {
+                    if (!_eventGroups.Exists(x => x.Name.Equals(d.TimesGroup)))
+                        _eventGroups.Add(new Category() { Name = d.TimesGroup, IsActive = false, Set = d.TimesSet });
+                    foreach (string s in d.Times) {
+                        _events.Add(
+                            new Event() {
+                                DailyID = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration),
+                                Duration = d.TimesDuration,
+                                Group = d.TimesGroup,
+                                Button = new Panel(),
+                                Color = FindColor(d.TimesColor),
+                                Waypoint = d.Waypoint,
+                                Daily = new Daily() { IsTracked = d.IsTracked, IsComplete = d.IsComplete, Name = d.Name, Category = d.Category, IsDaily = d.IsDaily },
+                            }
+                            );
+                        _events.Add(
+                            new Event() {
+                                DailyID = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
+                                Duration = d.TimesDuration,
+                                Group = d.TimesGroup,
+                                Button = new Panel(),
+                                Color = FindColor(d.TimesColor),
+                                Waypoint = d.Waypoint,
+                                Daily = new Daily() { IsTracked = d.IsTracked, IsComplete = d.IsComplete, Name = d.Name, Category = d.Category, IsDaily = d.IsDaily },
+                            }
+                            );
+                    }
                 }
             }
+            _events.Sort(delegate (Event x, Event y) {
+                if (x.StartTime == null && y.StartTime == null) return 0;
+                else if (x.StartTime == null) return -1;
+                else if (y.StartTime == null) return 1;
+                else return x.StartTime.CompareTo(y.StartTime);
+            });
+            _eventGroups.Sort(delegate (Category x, Category y) {
+                if (x.Name == null && y.Name == null) return 0;
+                else if (x.Name == null) return -1;
+                else if (y.Name == null) return 1;
+                else return x.Name.CompareTo(y.Name);
+            });
+        }
+
+        public void UpdatePanel() {
+            PopulateEvents();
+
+            string timeformat = "h:mm tt";
+            if (Module._setting24HrTime.Value) timeformat = "H:mm";
+
+            DateTime panelStartTime = RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15));
+            DateTime panelEndTime = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes((int.Parse(Module._settingEventHours.Value) * 4) * 15), TimeSpan.FromMinutes(15));
+
+            _timePanel.ClearChildren();
+            for (int i = 0; i < (int.Parse(Module._settingEventHours.Value) * 4); i++) {
+                var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
+                float w = _minuteWidth * 15;
+                float y = _minuteWidth * 15 * i;
+                Label timeLabel = new Label() {
+                    Size = new Point((int)w, _categoryHeight),
+                    Location = new Point(100 + (int)y, 0),
+                    Parent = _timePanel,
+                    Text = t.ToString(timeformat),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Regular),
+                };
+            }
 
 
-            DateTime newTime = RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15));
-            if (newTime != _prevTime) {
-                _prevTime = newTime;
-
-                string timeformat = "h:mm tt";
-                if (Module._setting24HrTime.Value) timeformat = "H:mm";
-
-                _timePanel.ClearChildren();
-                for (int i = 0; i < (int.Parse(Module._settingEventHours.Value) * 4); i++) {
-                    var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
-                    float w = _minWidth * 15;
-                    float y = _minWidth * 15 * i;
-                    Label timeLabel = new Label() {
-                        Size = new Point((int)w, _categoryHeight),
-                        Location = new Point(100 + (int)y, 0),
-                        Parent = _timePanel,
-                        Text = t.ToString(timeformat),
-                        HorizontalAlignment = HorizontalAlignment.Left,
+            _eventPanel.ClearChildren();
+            int curY = 0;
+            int cnt = 0;
+            foreach (Category c in _eventGroups) {
+                if (_selectSet.SelectedItem.Equals("All") || _selectSet.SelectedItem.Equals(c.Set)) {
+                    c.CategoryPanel = new Panel() {
+                        Location = new Point(0, curY),
+                        Parent = _eventPanel,
+                        Size = new Point(_eventPanel.Size.X - 15, _categoryHeight),
+                        BackgroundTexture = (cnt % 2 == 0) ? _btnBackground : _blankBackground,
+                        Visible = false,
                     };
-                }
+                    Label catLabel = new Label() {
+                        Parent = c.CategoryPanel,
+                        Text = c.Name,
+                        Size = new Point(100, _categoryHeight),
+                        Location = new Point(5, 0),
+                    };
 
-
-                _dailyPanel.ClearChildren();
-                int curY = 0;
-                int cnt = 0;
-                foreach (Category c in Module._eventGroups) {
-                    if (c.IsActive && (_selectedGroup.Equals("") || _selectedGroup.Equals(c.Name)) && (_selectedSet.Equals("") || _selectedSet.Equals(c.Set))) {
-                        Panel catPanel = new Panel() {
-                            Location = new Point(0, curY),
-                            Parent = _dailyPanel,
-                            Size = new Point(_dailyPanel.Size.X - 15, _categoryHeight),
-                            BackgroundTexture = (cnt % 2 == 0) ? _btnBackground : _blankBackground,
-                        };
-                        Label catLabel = new Label() {
-                            Parent = catPanel,
-                            Text = c.Name,
-                            Size = new Point(100, _categoryHeight),
-                            Location = new Point(5, 0),
-                        };
-                        foreach (Event e in Module._events) {
-                            if (e.Group.Equals(c.Name))
-                                e.Button = CreateDailyButton(catPanel, e);
+                    int btnCount = 0;
+                    foreach (Event e in _events) {
+                        if (e.Daily.IsDaily && 
+                            e.Group.Equals(c.Name) &&
+                            Module.InSection(e.Daily, _selectedTracked, "", "") &&
+                            e.EndTime > panelStartTime && e.StartTime < panelEndTime) {
+                                e.Button = CreateButton(c.CategoryPanel, e);
+                                btnCount++;
                         }
+                    }
 
-                        c.CategoryPanel = catPanel;
+                    if (btnCount > 0) {
+                        c.CategoryPanel.Visible = true;
                         curY += _categoryHeight + 2;
                         cnt++;
                     }
                 }
-
-                _timeMarker = new Panel() {
-                    Parent = _dailyPanel,
-                    Size = new Point(3, _dailyPanel.Height),
-                    BackgroundColor = Color.White,
-                    Location = new Point(100, 0),
-                    ZIndex = 10
-                };
             }
 
-            float offset = (DateTime.UtcNow.Hour * 60 * _minWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minWidth);
-            float curtime = ((DateTime.UtcNow.Hour * 60 * _minWidth) + (DateTime.UtcNow.Minute) * _minWidth);
-            float timeloc = 100 + (curtime - offset);
-            _timeMarker.Location = new Point((int)(timeloc), 0);
+            float offset = (DateTime.UtcNow.Hour * 60 * _minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * _minuteWidth);
+            float curtime = ((DateTime.UtcNow.Hour * 60 * _minuteWidth) + (DateTime.UtcNow.Minute) * _minuteWidth);
+            float timeloc = 100 + (curtime - offset) + _eventPanel.Location.X;
+            _timeMarker.Location = new Point((int)(timeloc), _eventPanel.Top);
 
+/*
 
-
-            foreach (Event e in Module._events) {
+            foreach (Event e in _events) {
                 Daily d = Module._dailies.Find(x => x.Id.Equals(e.DailyID));
                 e.Button.Visible = false;
                 if (Module.InSection(d, _selectedTracked, "", "")) {
-                    if ((e.Group.Equals(_selectedGroup) || _selectedGroup.Equals("")) && d.IsDaily) {
+                    if (d.IsDaily) {
                         e.Button.Visible = true;
                     }
                 }
             }
-
-            _dailyPanel.RecalculateLayout();
-
-            _selectGroup.Items.Clear();
-            _selectGroup.Items.Add("All");
-            foreach (Category cat in Module._eventGroups) {
-                if (cat.IsActive) {
-                    _selectGroup.Items.Add(cat.Name);
-                }
-            }
-            _selectGroup.SelectedItem = (_selectedGroup.Equals("") ? "All" : _selectedGroup);
-            _prevTime = new DateTime();
+*/
+            _eventPanel.RecalculateLayout();
         }
 
         private static DateTime RoundDown(DateTime dt, TimeSpan d) {
             var delta = dt.Ticks % d.Ticks;
             return new DateTime(dt.Ticks - delta, dt.Kind);
         }
+        private Color FindColor(string colorname) {
+            if (colorname == null) colorname = "Black";
+            System.Drawing.Color systemColor = System.Drawing.Color.FromName(colorname);
+            return new Color(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
+        }
+
     }
 }

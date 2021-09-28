@@ -25,6 +25,8 @@ namespace Manlaan.Dailies.Models
         public string Group { get; set; }
         public Panel Button { get; set; }
         public Color Color { get; set; }
+        public string Waypoint { get; set; }
+        public Daily Daily { get; set; }
 
         public Event() {
             Name = "";
@@ -35,6 +37,8 @@ namespace Manlaan.Dailies.Models
             EndTime = new DateTime();
             Group = "";
             Button = new Panel();
+            Waypoint = "";
+            Daily = new Daily();
         }
 
         public override string ToString() {
