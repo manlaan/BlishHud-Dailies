@@ -189,10 +189,13 @@ namespace Manlaan.Dailies
                 List<FileList> files = readJsonFileList(new FileStream(dailiesDirectory + "/cache/files.json", FileMode.Open, FileAccess.Read), "files.json");
                 foreach (FileList file in files) {
                     _cornerIcon.LoadingMessage = "Downloading and Adding Dailies: " + file.File + "...";
-                    string filepath = dailiesDirectory + "/cache/" + file.File;
-                    //if (!File.Exists(filepath) || System.IO.File.GetLastWriteTime(filepath) < DateTime.Parse(file.Date)) {
+                    string filepath = dailiesDirectory + "\\cache\\" + file.File;
+                    var a = File.Exists(filepath);
+                    var b = File.GetLastWriteTime(filepath);
+                    var c = DateTime.Parse(file.Date);
+                    if (!File.Exists(filepath) || File.GetLastWriteTime(filepath) < DateTime.Parse(file.Date)) {
                         new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
-                    //}
+                    }
                     if (file.File.ToLower().Contains(".json")) {
                         _dailies.AddRange(readJson(new FileStream(filepath, FileMode.Open, FileAccess.Read), file.File));
                     }

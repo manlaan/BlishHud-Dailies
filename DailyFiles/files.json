@@ -1,102 +1,102 @@
 [
     {
         "file": "!Do Not Modify These Files!.txt",
-        "date" :  "2021-09-30"
+        "date" :  "9/30/2021"
     },
     {
         "file": "Adventures.json",
-        "date": "2021-09-06"
+        "date": "9/6/2021"
     },
     {
         "file": "BjoraMarches.json",
-        "date": "2021-09-27"
+        "date": "9/27/2021",
     },
     {
         "file": "Champions.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021",
     },
     {
         "file": "Converters.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Crafting.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Daily.json",
-        "date": "2021-09-27"
+        "date": "9/27/2021"
     },
     {
         "file": "DragonBash.json",
-        "date": "2021-09-27"
+        "date": "9/27/2021",
     },
     {
         "file": "Drizzlewood.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Dungeons.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "FourWinds.json",
-        "date": "2021-09-19"
+        "date": "9/19/2021"
     },
     {
         "file": "Fractals.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Gathering.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "GrothmarValley.json",
-        "date": "2021-09-27"
+        "date": "9/27/2021"
     },
     {
         "file": "Halloween.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "JumpingPuzzles.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "LivingWorld.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "LunarNewYear.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Merchants.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Raids.json",
-        "date": "2021-09-18"
+        "date": "9/18/2021"
     },
     {
         "file": "StrikeMissions.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Raids.json",
-        "date": "2021-09-06"
+        "date": "9/6/2021"
     },
     {
         "file": "SuperAdventure.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "Wintersday.json",
-        "date": "2021-09-05"
+        "date": "9/5/2021"
     },
     {
         "file": "WorldBosses.json",
-        "date": "2021-09-27"
+        "date": "9/27/2021"
     }
 ]
