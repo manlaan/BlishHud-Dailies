@@ -10,7 +10,7 @@ namespace Manlaan.Dailies.Models
     {
         [JsonPropertyName("file")]
         public string File { get; set; }
-        [JsonPropertyName("Date")]
+        [JsonPropertyName("date")]
         public string Date { get; set; }
     }
 }

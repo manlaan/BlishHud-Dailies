@@ -44,11 +44,16 @@ namespace Manlaan.Dailies.Controls
 
 
         public EventWindow(Point size) : base() {
+            _eventSets.Add("Daily");
+            _eventSets.Add("Core");
+            _eventSets.Add("Heart of Thorns");
+            _eventSets.Add("Path of Fire");
+            _eventSets.Add("Living World Season 4");
+            _eventSets.Add("Icebrood Saga");
             foreach (Daily d in Module._dailies) {
                 if (d.TimesSet.Length>0 && !_eventSets.Contains(d.TimesSet))
                     _eventSets.Add(d.TimesSet);
             }
-            _eventSets.Sort();
 
             WinSize = size;
             this.CanClose = false;
@@ -128,8 +133,7 @@ namespace Manlaan.Dailies.Controls
                 ZIndex = 10
             };
 
-            //UpdateTimes();
-            //UpdateDailyPanel();
+            UpdatePanel();
         }
 
         public Panel CreateButton(Panel panel, Event e) {
@@ -159,7 +163,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = EventButton,
                 Text = e.Name,
-                BasicTooltipText = e.Name + "\n" + e.StartTime.ToLocalTime().ToString(timeformat) + " - " + e.EndTime.ToLocalTime().ToString(timeformat),
+                BasicTooltipText = e.Name + "\n" + e.StartTime.ToLocalTime().ToString(timeformat) + " - " + e.EndTime.ToLocalTime().ToString(timeformat) + (Module._settingDebug.Value ? "\n\nbutton: " + buttonstart.ToString() + "\nPanel: "+panel.Size.X.ToString()+","+panel.Size.Y.ToString() : ""),
                 TextColor = Color.Black,
                 Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
             };
@@ -277,12 +281,11 @@ namespace Manlaan.Dailies.Controls
 
                     int btnCount = 0;
                     foreach (Event e in _events) {
-                        if (e.Daily.IsDaily && 
-                            e.Group.Equals(c.Name) &&
-                            Module.InSection(e.Daily, _selectedTracked, "", "") &&
-                            e.EndTime > panelStartTime && e.StartTime < panelEndTime) {
+                        if (e.Daily.IsDaily && e.Group.Equals(c.Name) && Module.InSection(e.Daily, _selectedTracked, "", "") ) {
+                            btnCount++;
+                            if (e.EndTime > panelStartTime && e.StartTime < panelEndTime) {
                                 e.Button = CreateButton(c.CategoryPanel, e);
-                                btnCount++;
+                            }
                         }
                     }
 
@@ -298,19 +301,6 @@ namespace Manlaan.Dailies.Controls
             float curtime = ((DateTime.UtcNow.Hour * 60 * _minuteWidth) + (DateTime.UtcNow.Minute) * _minuteWidth);
             float timeloc = 100 + (curtime - offset) + _eventPanel.Location.X;
             _timeMarker.Location = new Point((int)(timeloc), _eventPanel.Top);
-
-/*
-
-            foreach (Event e in _events) {
-                Daily d = Module._dailies.Find(x => x.Id.Equals(e.DailyID));
-                e.Button.Visible = false;
-                if (Module.InSection(d, _selectedTracked, "", "")) {
-                    if (d.IsDaily) {
-                        e.Button.Visible = true;
-                    }
-                }
-            }
-*/
             _eventPanel.RecalculateLayout();
         }
 
