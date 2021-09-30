@@ -245,17 +245,24 @@ namespace Manlaan.Dailies.Controls
             DateTime panelEndTime = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes((int.Parse(Module._settingEventHours.Value) * 4) * 15), TimeSpan.FromMinutes(15));
 
             _timePanel.ClearChildren();
-            for (int i = 0; i < (int.Parse(Module._settingEventHours.Value) * 4); i++) {
+            for (int i = 0; i < (int.Parse(Module._settingEventHours.Value) * 4)+1; i++) {
                 var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
                 float w = _minuteWidth * 15;
                 float y = _minuteWidth * 15 * i;
                 Label timeLabel = new Label() {
                     Size = new Point((int)w, _categoryHeight),
-                    Location = new Point(100 + (int)y, 0),
+                    Location = new Point(100 + (int)y - (int)(w/2), 0),
                     Parent = _timePanel,
                     Text = t.ToString(timeformat),
-                    HorizontalAlignment = HorizontalAlignment.Left,
+                    HorizontalAlignment = HorizontalAlignment.Center,
                     Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Regular),
+                };
+                Panel timeIndicator = new Panel() {
+                    Parent = _timePanel,
+                    Size = new Point(3, 3),
+                    Location = new Point(100 + (int)y, _categoryHeight - 3),
+                    BackgroundColor = Color.Gray,
+                    ZIndex = 11
                 };
             }
 
