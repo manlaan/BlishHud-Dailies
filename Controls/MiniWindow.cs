@@ -316,7 +316,7 @@ namespace Manlaan.Dailies.Controls
             }
 
             foreach (Daily d in Module._dailies) {
-                d.MiniButton.Visible = false;
+                //d.MiniButton.Visible = false;
                 if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
                     if (d.MiniButton.Parent == null) {
                         d.MiniButton = CreateButton(d);
@@ -325,7 +325,11 @@ namespace Manlaan.Dailies.Controls
                     categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
                 }
                 if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
-                    d.MiniButton.Visible = true;
+                    if (!d.MiniButton.Visible)
+                        d.MiniButton.Visible = true;
+                } else {
+                    if (d.MiniButton.Visible)
+                        d.MiniButton.Visible = false;
                 }
             }
             _dailyPanel.RecalculateLayout();

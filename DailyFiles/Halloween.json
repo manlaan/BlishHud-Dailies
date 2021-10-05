@@ -206,5 +206,24 @@
         "api": "achievements",
         "icon": "602778.png",
         "note": "Open 10 trick-or-treat bags."
+    },
+
+    {
+        "id": "halloween_madkingsays",
+        "name": "Mad King Says",
+        "category": "Halloween",
+        "clipboard": "",
+        "waypoint": "",
+        "wiki": "https://wiki.guildwars2.com/wiki/Your_Mad_King_says...",
+        "timer": "https://wiki.guildwars2.com/wiki/Your_Mad_King_says...#Walkthrough",
+        "achievement": "",
+        "api": "",
+        "icon": "602778.png",
+        "note": "",
+        "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],
+        "timesgroup": "Halloween",
+        "timesset": "Festival",
+        "timesduration": 15,
+        "timescolor": "Magenta"
     }
 ]

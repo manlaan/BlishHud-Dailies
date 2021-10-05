@@ -409,13 +409,16 @@ namespace Manlaan.Dailies.Controls
             }
 
             foreach (Daily d in Module._dailies) {
-                d.Button.Visible = false;
                 if (Module.InSection(d, _dailyShow, _dailySearch, "")) {
                     Module._categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
                 }
                 if (Module.InSection(d, _dailyShow, _dailySearch, _dailyCategory)) {
                     count++;
-                    d.Button.Visible = true;
+                    if (!d.Button.Visible)
+                        d.Button.Visible = true;
+                } else {
+                    if (d.Button.Visible)
+                        d.Button.Visible = false;
                 }
             }
             _dailyPanel.RecalculateLayout();
