@@ -17,6 +17,7 @@ using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using System.Net;
+using System.Text;
 
 namespace Manlaan.Dailies
 {
@@ -30,6 +31,8 @@ namespace Manlaan.Dailies
         public static List<Daily> _dailies = new List<Daily>();
         public static List<Daily> _newdailies = new List<Daily>();
         public static List<Category> _categories = new List<Category>();
+        private List<string> _APIDailies = new List<string>();
+
         public static SettingEntry<DateTime> _settingLastReset;
         //private SettingEntry<string> _settingFestivalStart;
         private SettingEntry<Point> _settingMiniLocation;
@@ -286,6 +289,7 @@ namespace Manlaan.Dailies
             }
 
 
+            UpdateGW2API();
             UpdateAchievements();
             UpdateTimes();
 
@@ -303,7 +307,7 @@ namespace Manlaan.Dailies
         }
         internal async void UpdateAchievements() {
             Timer_AchieveUpdate.Restart();
-            List<string> TodayAchieve = new List<string>();
+            List<string> TodayAchieve = _APIDailies;
             List<Achievement> AllAchieves = new List<Achievement>();
             bool newDaily = false;
 
@@ -325,6 +329,8 @@ namespace Manlaan.Dailies
                     if (a.Level.Max == 80)
                         TodayAchieve.Add(a.Id.ToString());
 
+                /// This doesn't work correctly due to GW2Sharp caching results for some categories for over an hour past reset.  <see cref="UpdateGW2API"/> 
+                /* 
                 var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
                     if (grp != 97) { //dailies - retrieved from apiAchieveDay
@@ -334,6 +340,7 @@ namespace Manlaan.Dailies
                         }
                     }
                 }
+                */
 
                 foreach (string ach in TodayAchieve) {
                     Daily daily = _dailies.Find(x => x.Achievement.Equals(ach));
@@ -358,6 +365,7 @@ namespace Manlaan.Dailies
 
             TodayAchieve.AddRange(DailyList.Activity.Dailies());
             TodayAchieve.AddRange(DailyList.Merchants.Dailies());
+            TodayAchieve.AddRange(DailyList.Awakened.Dailies());
             //TodayAchieve.AddRange(DailyList.FourWinds.Dailies(_settingFestivalStart.Value));  //Not needed. Part of Daily API  -- API very slow at updating this, so using manual method instead
             //TodayAchieve.AddRange(DailyList.StrikeMissions.Dailies());  //For Weekly - Broken due to daily reset and completion not sent
             //TodayAchieve.AddRange(DailyList.DragonBash.Dailies(_settingFestivalStart.Value)); //Maybe part of daily api 
@@ -449,6 +457,35 @@ namespace Manlaan.Dailies
             }
             UpdateDailyPanel();
         }
+        
+        /* Doing this because gw2sharp seems to cache some of the categories for over an hour past reset */
+        private void UpdateGW2API () {
+            _APIDailies.Clear();
+
+            try {
+                var url = ReadTextFromUrl("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8");
+                JsonSerializerOptions jsonOptions = new JsonSerializerOptions {
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    AllowTrailingCommas = true,
+                    IgnoreNullValues = true
+                };
+                var json = JsonSerializer.Deserialize<GW2API_Category>(url, jsonOptions);
+
+                foreach (int i in json.Categories) {
+                    try {
+                        url = ReadTextFromUrl("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString());
+                        var json2 = JsonSerializer.Deserialize<GW2API_Group>(url, jsonOptions);
+                        foreach (int j in json2.Achievements) {
+                            if (j != 97)  //dailies - retrieved from apiAchieveDay
+                                _APIDailies.Add(j.ToString());
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
         private void UpdateTimes() {
             Timer_TimesUpdate.Restart();
             string timeformat = "h:mm tt";
@@ -491,6 +528,7 @@ namespace Manlaan.Dailies
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
                 _settingLastReset.Value = DateTime.UtcNow.Date;
                 _mainWindow.SetAllComplete(false, true);
+                UpdateGW2API();
                 UpdateAchievements();
             }
             if (_miniWindow.Location != _settingMiniLocation.Value)
@@ -604,6 +642,14 @@ namespace Manlaan.Dailies
                     break;
             }
             return false;
+        }
+
+        string ReadTextFromUrl(string url) {
+            using (var client = new WebClient())
+            using (var stream = client.OpenRead(url))
+            using (var textReader = new StreamReader(stream, Encoding.UTF8, true)) {
+                return textReader.ReadToEnd();
+            }
         }
     }
 }

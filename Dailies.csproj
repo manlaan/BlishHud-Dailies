@@ -133,6 +133,7 @@
     <Compile Include="Controls\MainWindow.cs" />
     <Compile Include="Controls\MiniWindow.cs" />
     <Compile Include="DailyList\Activity.cs" />
+    <Compile Include="DailyList\Awakened.cs" />
     <Compile Include="DailyList\DragonBash.cs" />
     <Compile Include="DailyList\FourWinds.cs" />
     <Compile Include="DailyList\Halloween.cs" />
@@ -148,6 +149,8 @@
     <Compile Include="Models\DailyDetailButtons.cs" />
     <Compile Include="Models\Daily.cs" />
     <Compile Include="Models\DailySettingEntry.cs" />
+    <Compile Include="Models\GW2API_Category.cs" />
+    <Compile Include="Models\GW2API_Group.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="DailySettings.cs" />
   </ItemGroup>
