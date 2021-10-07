@@ -289,7 +289,6 @@ namespace Manlaan.Dailies
             }
 
 
-            UpdateGW2API();
             UpdateAchievements();
             UpdateTimes();
 
@@ -341,6 +340,7 @@ namespace Manlaan.Dailies
                     }
                 }
                 */
+                TodayAchieve.AddRange(UpdateGW2API());
 
                 foreach (string ach in TodayAchieve) {
                     Daily daily = _dailies.Find(x => x.Achievement.Equals(ach));
@@ -459,8 +459,8 @@ namespace Manlaan.Dailies
         }
         
         /* Doing this because gw2sharp seems to cache some of the categories for over an hour past reset */
-        private void UpdateGW2API () {
-            _APIDailies.Clear();
+        private List<string> UpdateGW2API () {
+            List<string> achiev = new List<string>();
 
             try {
                 var url = ReadTextFromUrl("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8");
@@ -477,13 +477,14 @@ namespace Manlaan.Dailies
                         var json2 = JsonSerializer.Deserialize<GW2API_Group>(url, jsonOptions);
                         foreach (int j in json2.Achievements) {
                             if (j != 97)  //dailies - retrieved from apiAchieveDay
-                                _APIDailies.Add(j.ToString());
+                                achiev.Add(j.ToString());
                         }
                     }
                     catch { }
                 }
             }
             catch { }
+            return achiev;
         }
 
         private void UpdateTimes() {
@@ -528,7 +529,6 @@ namespace Manlaan.Dailies
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
                 _settingLastReset.Value = DateTime.UtcNow.Date;
                 _mainWindow.SetAllComplete(false, true);
-                UpdateGW2API();
                 UpdateAchievements();
             }
             if (_miniWindow.Location != _settingMiniLocation.Value)

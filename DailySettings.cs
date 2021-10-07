@@ -75,9 +75,14 @@ namespace Manlaan.Dailies
 
         public async void SaveSettings() {
             try {
+                List<DailySettingEntry> toSave = new List<DailySettingEntry>();
+                foreach (DailySettingEntry d in _dailySettings) {
+                    if (d.IsTracked || d.IsComplete)
+                        toSave.Add(d);
+                }
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 FileStream createStream = File.Create(_settingsFile);
-                await JsonSerializer.SerializeAsync(createStream, _dailySettings, options);
+                await JsonSerializer.SerializeAsync(createStream, toSave, options);
                 createStream.Close();
             }
             catch { }

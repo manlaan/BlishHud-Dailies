@@ -8,7 +8,7 @@ namespace Manlaan.Dailies.Models
 {
     public class DailySettingEntry : IEquatable<DailySettingEntry>
     {
-        [JsonPropertyName("category")]
+        [JsonPropertyName("id")]
         public string Id { get; set; }
         [JsonPropertyName("IsTracked")]
         public bool IsTracked { get; set; }
