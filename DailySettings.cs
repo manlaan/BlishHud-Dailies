@@ -2,6 +2,7 @@
 using System.IO;
 using Manlaan.Dailies.Models;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Manlaan.Dailies
 {
@@ -10,6 +11,7 @@ namespace Manlaan.Dailies
         private const string SETTINGS_FILENAME = "settings.json";
         public List<DailySettingEntry> _dailySettings = new List<DailySettingEntry>();
         private string _settingsFile = "";
+        private bool _running = false;
 
         public DailySettings (string modulepath) {
             _settingsFile = modulepath + "\\" + SETTINGS_FILENAME;
@@ -74,18 +76,15 @@ namespace Manlaan.Dailies
         }
 
         public async void SaveSettings() {
-            try {
-                List<DailySettingEntry> toSave = new List<DailySettingEntry>();
-                foreach (DailySettingEntry d in _dailySettings) {
-                    if (d.IsTracked || d.IsComplete)
-                        toSave.Add(d);
-                }
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                FileStream createStream = File.Create(_settingsFile);
-                await JsonSerializer.SerializeAsync(createStream, toSave, options);
-                createStream.Close();
+            List<DailySettingEntry> toSave = new List<DailySettingEntry>();
+            foreach (DailySettingEntry d in _dailySettings) {
+                if (d.IsTracked || d.IsComplete)
+                    toSave.Add(d);
             }
-            catch { }
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            FileStream createStream = File.Create(_settingsFile);
+            await JsonSerializer.SerializeAsync(createStream, toSave, options);
+            createStream.Close();
         }
     }
 }

@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
 using Blish_HUD.Graphics.UI;
+using System.Threading.Tasks;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -45,6 +46,7 @@ namespace Manlaan.Dailies.Controls
         private FlowPanel _dailyPanel;
         private string _dailyCategory = "";
         private Panel _parentPanel;
+        private bool _running = false;
 
         public MiniWindow(Point size) : base() {
             WinSize = size;
@@ -73,10 +75,7 @@ namespace Manlaan.Dailies.Controls
                 Width = _parentPanel.Width - 30,
                 Parent = _parentPanel,
             };
-            _selectCategory.ValueChanged += delegate {
-                _dailyCategory = (_selectCategory.SelectedItem.Equals("All") ? "" : _selectCategory.SelectedItem);
-                UpdatePanel();
-            };
+            _selectCategory.ValueChanged += SelectCategoryChanged;
 
             _dailyPanel = new FlowPanel() {
                 FlowDirection = ControlFlowDirection.LeftToRight,
@@ -94,7 +93,6 @@ namespace Manlaan.Dailies.Controls
             }
 
             _dailyCategory = "";
-            UpdatePanel();
         }
 
         public DailyDetailsButton CreateButton(Daily d) {
@@ -283,10 +281,13 @@ namespace Manlaan.Dailies.Controls
                 };
                 dailyButton.CompleteButton.Click += delegate {
                     Module._dailySettings.SetComplete(d.Id, dailyButton.CompleteButton.Checked);
-                    //Daily daily = Module._combinedDailies.Find(x => x.Id.Equals(d.Id));
                     d.IsComplete = dailyButton.CompleteButton.Checked;
                     d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
+                    if (dailyButton.CompleteButton.Checked) {
+                        d.MiniButton.Visible = false;
+                        _dailyPanel.RecalculateLayout();
+                    }
                     Module.ModuleInstance.UpdateDailyPanel();
                 };
             }
@@ -310,6 +311,10 @@ namespace Manlaan.Dailies.Controls
         }
 
         public void UpdatePanel() {
+            if (_running) return;
+
+            _running = true;
+
             List<Category> categories = Module._categories;
             foreach (Category cat in categories) {
                 cat.IsActive = false;
@@ -327,13 +332,15 @@ namespace Manlaan.Dailies.Controls
                 if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
                     if (!d.MiniButton.Visible)
                         d.MiniButton.Visible = true;
-                } else {
+                }
+                else {
                     if (d.MiniButton.Visible)
                         d.MiniButton.Visible = false;
                 }
             }
             _dailyPanel.RecalculateLayout();
 
+            _selectCategory.ValueChanged -= SelectCategoryChanged;
             _selectCategory.Items.Clear();
             _selectCategory.Items.Add("All");
             foreach (Category cat in categories) {
@@ -341,7 +348,14 @@ namespace Manlaan.Dailies.Controls
                     _selectCategory.Items.Add(cat.Name);
             }
             _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
+            _selectCategory.ValueChanged += SelectCategoryChanged;
+
+            _running = false;
         }
 
+        private void SelectCategoryChanged(object sender = null, ValueChangedEventArgs e = null) {
+            _dailyCategory = (e.CurrentValue.Equals("All") ? "" : e.CurrentValue);
+            UpdatePanel();
+        }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -47,6 +48,7 @@ namespace Manlaan.Dailies.Controls
         private Menu _categoriesMenu;
         public string _dailySearch = "", _dailyShow = "", _dailyCategory = "";
         private Label _dailyCount;
+        private bool _running = false;
 
         public MainWindow(Point size) : base() {
             WinSize = size;
@@ -344,7 +346,6 @@ namespace Manlaan.Dailies.Controls
                 Module._dailySettings.SetTracked(d.Id, dailyButton.TrackedButton.Checked);
                 d.IsTracked = dailyButton.TrackedButton.Checked;
                 d.Button.TrackedButton.Checked = dailyButton.TrackedButton.Checked;
-                //d.MiniButton.TrackedButton.Checked = dailyButton.CompleteButton.Checked;
                 Module.ModuleInstance.UpdateDailyPanel();
             };
 
@@ -402,6 +403,10 @@ namespace Manlaan.Dailies.Controls
         }
 
         public void UpdatePanel() {
+            if (_running) return;
+
+            _running = true;
+
             int count = 0;
 
             foreach (Category cat in Module._categories) {
@@ -416,7 +421,8 @@ namespace Manlaan.Dailies.Controls
                     count++;
                     if (!d.Button.Visible)
                         d.Button.Visible = true;
-                } else {
+                }
+                else {
                     if (d.Button.Visible)
                         d.Button.Visible = false;
                 }
@@ -445,6 +451,8 @@ namespace Manlaan.Dailies.Controls
                         categoryItem.Select();
                 }
             }
+                
+            _running = false;
         }
 
         public void SetAllComplete(bool complete, bool ignoreCategory = false) {

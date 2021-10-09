@@ -18,6 +18,7 @@ using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using System.Net;
 using System.Text;
+using System.Net.Http;
 
 namespace Manlaan.Dailies
 {
@@ -46,8 +47,11 @@ namespace Manlaan.Dailies
         public static int _miniSizeW, _miniSizeH, _eventSizeW, _eventSizeH, _eventHours;
         private Stopwatch Timer_AchieveUpdate = new Stopwatch();
         private Stopwatch Timer_TimesUpdate = new Stopwatch();
+        private Stopwatch Timer_APIUpdate = new Stopwatch();
         public static DailySettings _dailySettings;
         private Texture2D _pageIcon, _eventIcon;
+        private bool _runningAchieve = false;
+        private bool _runningTimes = false;
 
         private MainWindow _mainWindow;
         private MiniWindow _miniWindow;
@@ -148,7 +152,7 @@ namespace Manlaan.Dailies
             UpdateDailyPanel();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
-            UpdateTimes();
+            UpdateDailyPanel();
         }
 
         protected override void Initialize() {
@@ -161,6 +165,7 @@ namespace Manlaan.Dailies
         }
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
+            UpdateGW2API();
 
             _cornerIcon = new CornerIcon() {
                 IconName = "Dailies",
@@ -254,16 +259,19 @@ namespace Manlaan.Dailies
 
             _cornerIcon.LoadingMessage = "Preloading Main Window...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
+            _mainWindow.UpdatePanel();
             _cornerIcon.LoadingMessage = "Preloading Mini Window...";
             _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
                 Location = _settingMiniLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
+            _miniWindow.UpdatePanel();
             _cornerIcon.LoadingMessage = "Preloading Event Window...";
             _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
                 Location = _settingEventLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
+            _eventWindow.UpdatePanel();
 
             _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
             _cornerEventIcon.Click += delegate { _eventWindow.ToggleWindow(); };
@@ -278,6 +286,7 @@ namespace Manlaan.Dailies
         protected override void OnModuleLoaded(EventArgs e) {
             Timer_AchieveUpdate.Start();
             Timer_TimesUpdate.Start();
+            Timer_APIUpdate.Start();
             _moduleTab = Overlay.BlishHudWindow.AddTab("Dailies", _pageIcon, _mainWindow._parentPanel);
 
             if (!_settingDontShowIntro.Value) {
@@ -288,7 +297,6 @@ namespace Manlaan.Dailies
                 _introWindow.Show();
             }
 
-
             UpdateAchievements();
             UpdateTimes();
 
@@ -297,14 +305,25 @@ namespace Manlaan.Dailies
         }
 
 
-        internal void UpdateDailyPanel() {
-            _dailySettings.SaveSettings();
-            _miniWindow.UpdatePanel();
-            _mainWindow.UpdatePanel();
-            _eventWindow.UpdatePanel();
-            UpdateTimes();
+        internal async void UpdateDailyPanel() {
+            try {
+                await Task.Run(() => _dailySettings.SaveSettings());
+                //await Task.Run(() => _miniWindow.UpdatePanel());
+                //await Task.Run(() => _mainWindow.UpdatePanel());
+                await Task.Run(() => _eventWindow.UpdatePanel());
+                //await Task.Run(() => UpdateTimes());
+                //_dailySettings.SaveSettings();
+                _miniWindow.UpdatePanel();
+                _mainWindow.UpdatePanel();
+                //_eventWindow.UpdatePanel();
+                UpdateTimes();
+            }
+            catch { }
         }
         internal async void UpdateAchievements() {
+            if (_runningAchieve) return;
+            _runningAchieve = true;
+
             Timer_AchieveUpdate.Restart();
             List<string> TodayAchieve = _APIDailies;
             List<Achievement> AllAchieves = new List<Achievement>();
@@ -313,7 +332,7 @@ namespace Manlaan.Dailies
             try {
                 var apiAchieveDay = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Daily.GetAsync();
                 foreach (var a in apiAchieveDay.Fractals)
-                    if (a.Level.Max == 80) 
+                    if (a.Level.Max == 80)
                         TodayAchieve.Add(a.Id.ToString());
                 foreach (var a in apiAchieveDay.Pve)
                     if (a.Level.Max == 80)
@@ -340,7 +359,6 @@ namespace Manlaan.Dailies
                     }
                 }
                 */
-                TodayAchieve.AddRange(UpdateGW2API());
 
                 foreach (string ach in TodayAchieve) {
                     Daily daily = _dailies.Find(x => x.Achievement.Equals(ach));
@@ -401,13 +419,12 @@ namespace Manlaan.Dailies
                         Daily daily = _dailies.Find(x => x.Achievement.Equals(ach.Id));
                         if (daily == null) {
                             newDaily = true;
-                            _newdailies.Add(new Daily { Id = "new_" + ach.Id, Name = ach.Id, Category = "New", Achievement = ach.Id, API = ach.API, Note = ach.API});
+                            _newdailies.Add(new Daily { Id = "new_" + ach.Id, Name = ach.Id, Category = "New", Achievement = ach.Id, API = ach.API, Note = ach.API });
 
                             _dailies.Add(new Daily { Id = "new_" + ach.Id, Name = ach.Id, Category = "New", Achievement = ach.Id, API = ach.API, Note = ach.API });
                             daily = _dailies.Find(x => x.Achievement.Equals(ach.Id));
                             daily.Button = _mainWindow.CreateButton(daily);
                             daily.MiniButton = _miniWindow.CreateButton(daily);
-                            //daily.MiniButton2 = _miniWindow2View.CreateDailyButton(daily);
 
                             if (!_categories.Exists(x => x.Name.Equals("New")))
                                 _categories.Add(new Category() { Name = "New", IsActive = false });
@@ -417,14 +434,11 @@ namespace Manlaan.Dailies
                 catch { }
             }
 
-            foreach (Daily btn in _dailies) {
-                if (!string.IsNullOrEmpty(btn.Achievement) && !string.IsNullOrEmpty(btn.API)) {
-                    switch (btn.API) {
+            foreach (Daily d in _dailies) {
+                if (!string.IsNullOrEmpty(d.Achievement) && !string.IsNullOrEmpty(d.API)) {
+                    switch (d.API) {
                         default:
-                            if (btn.Achievement.Equals("4283")) {
-                                var a = btn;
-                            }
-                            btn.IsDaily = string.IsNullOrEmpty(TodayAchieve.Find(x => x.Equals(btn.Achievement))) ? false : true;
+                            d.IsDaily = string.IsNullOrEmpty(TodayAchieve.Find(x => x.Equals(d.Achievement))) ? false : true;
                             break;
                         //Autocompletes
                         case "dungeons":
@@ -432,21 +446,21 @@ namespace Manlaan.Dailies
                         case "raids":
                         case "worldbosses":
                         case "dailycrafting":
-                            Achievement ach = AllAchieves.Find(x => x.Id.Equals(btn.Achievement));
+                            Achievement ach = AllAchieves.Find(x => x.Id.Equals(d.Achievement));
                             bool complete = (ach == null) ? false : ach.Done;
 
-                            _dailySettings.SetComplete(btn.Id, complete);
+                            _dailySettings.SetComplete(d.Id, complete);
 
-                            btn.IsComplete = complete;
-                            btn.Button.CompleteButton.Checked = complete;
-                            if (btn.MiniButton.Parent != null)
-                                btn.MiniButton.CompleteButton.Checked = complete;
-                            btn.IsDaily = true;
+                            d.IsComplete = complete;
+                            //d.Button.CompleteButton.Checked = complete;
+                            //if (d.MiniButton.Parent != null)
+                            //    d.MiniButton.CompleteButton.Checked = complete;
+                            d.IsDaily = true;
                             break;
                     }
                 }
                 else {
-                    btn.IsDaily = true;
+                    d.IsDaily = true;
                 }
             }
             if (newDaily) {
@@ -456,25 +470,30 @@ namespace Manlaan.Dailies
                 createStream.Close();
             }
             UpdateDailyPanel();
+
+            _runningAchieve = false;
         }
         
         /* Doing this because gw2sharp seems to cache some of the categories for over an hour past reset */
-        private List<string> UpdateGW2API () {
+        private async void UpdateGW2API () {
+            Timer_APIUpdate.Restart();
+
             List<string> achiev = new List<string>();
+            JsonSerializerOptions jsonOptions = new JsonSerializerOptions {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+                IgnoreNullValues = true
+            };
 
             try {
-                var url = ReadTextFromUrl("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8");
-                JsonSerializerOptions jsonOptions = new JsonSerializerOptions {
-                    ReadCommentHandling = JsonCommentHandling.Skip,
-                    AllowTrailingCommas = true,
-                    IgnoreNullValues = true
-                };
-                var json = JsonSerializer.Deserialize<GW2API_Category>(url, jsonOptions);
+                string contents = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8");
+                GW2API_Category json = JsonSerializer.Deserialize<GW2API_Category>(contents, jsonOptions);
 
                 foreach (int i in json.Categories) {
                     try {
-                        url = ReadTextFromUrl("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString());
-                        var json2 = JsonSerializer.Deserialize<GW2API_Group>(url, jsonOptions);
+                        string contents2 = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString());
+                        GW2API_Group json2 = JsonSerializer.Deserialize<GW2API_Group>(contents2, jsonOptions);
+
                         foreach (int j in json2.Achievements) {
                             if (j != 97)  //dailies - retrieved from apiAchieveDay
                                 achiev.Add(j.ToString());
@@ -484,10 +503,14 @@ namespace Manlaan.Dailies
                 }
             }
             catch { }
-            return achiev;
+
+            _APIDailies = achiev;
         }
 
         private void UpdateTimes() {
+            if (_runningTimes) return;
+            _runningTimes = true;
+
             Timer_TimesUpdate.Restart();
             string timeformat = "h:mm tt";
             if (_setting24HrTime.Value) timeformat = "H:mm";
@@ -516,20 +539,26 @@ namespace Manlaan.Dailies
                     }
                 }
             }
-            _eventWindow.UpdatePanel();
+
+            _runningTimes = false;
         }
 
-        protected override void Update(GameTime gameTime) {
-            if (Timer_AchieveUpdate.ElapsedMilliseconds > 120000) {   //2 minutes  (2min * 60sec * 1000ms)
-                UpdateAchievements();
+        protected override async void Update(GameTime gameTime) {
+            if (Timer_AchieveUpdate.ElapsedMilliseconds > 120000) {   //2 minutes  (5min * 60sec * 1000ms)
+                await Task.Run(() => UpdateAchievements());
             }
-            if (Timer_TimesUpdate.ElapsedMilliseconds > 60000) {   //1 minutes  (1min * 60sec * 1000ms)
-                UpdateTimes();
+            if (Timer_APIUpdate.ElapsedMilliseconds > 300000) {   //5 minutes
+                await Task.Run(() => UpdateGW2API());
+            }
+            if (Timer_TimesUpdate.ElapsedMilliseconds > 60000) {   //1 minute
+                await Task.Run(() => _eventWindow.UpdatePanel());
+                await Task.Run(() => UpdateTimes());
             }
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
                 _settingLastReset.Value = DateTime.UtcNow.Date;
                 _mainWindow.SetAllComplete(false, true);
-                UpdateAchievements();
+                await Task.Run(() => UpdateGW2API());
+                await Task.Run(() => UpdateAchievements());
             }
             if (_miniWindow.Location != _settingMiniLocation.Value)
                 _settingMiniLocation.Value = _miniWindow.Location;
@@ -642,14 +671,6 @@ namespace Manlaan.Dailies
                     break;
             }
             return false;
-        }
-
-        string ReadTextFromUrl(string url) {
-            using (var client = new WebClient())
-            using (var stream = client.OpenRead(url))
-            using (var textReader = new StreamReader(stream, Encoding.UTF8, true)) {
-                return textReader.ReadToEnd();
-            }
         }
     }
 }
