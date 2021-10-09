@@ -94,10 +94,6 @@ namespace Manlaan.Dailies
             _settingEventSizeH.SettingChanged += UpdateSettings_string;
             _settingEventSizeW.SettingChanged += UpdateSettings_string;
             _settingEventHours.SettingChanged += UpdateSettings_string;
-
-            //_dailiesTracked = settings.AddSubCollection("Tracked");
-            //_dailiesComplete = settings.AddSubCollection("Complete");
-            //var selfManagedSettings = settings.AddSubCollection("Managed Settings");
         }
         private void UpdateSettings_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             int prevMiniSizeH = _miniSizeH;
@@ -114,8 +110,8 @@ namespace Manlaan.Dailies
                     _miniSizeH = prevMiniSizeH;
             }
             catch {
-                _settingMiniSizeW.Value = _miniSizeW.ToString();
-                _settingMiniSizeH.Value = _miniSizeH.ToString();
+                _settingMiniSizeW.Value = prevMiniSizeW.ToString();
+                _settingMiniSizeH.Value = prevMiniSizeH.ToString();
             }
             try {
                 _eventSizeW = int.Parse(_settingEventSizeW.Value);
@@ -129,9 +125,9 @@ namespace Manlaan.Dailies
                     _eventHours = prevEventHours;
             }
             catch {
-                _settingEventSizeW.Value = _eventSizeW.ToString();
-                _settingEventSizeH.Value = _eventSizeH.ToString();
-                _settingEventHours.Value = _eventHours.ToString();
+                _settingEventSizeW.Value = prevEventSizeW.ToString();
+                _settingEventSizeH.Value = prevEventSizeH.ToString();
+                _settingEventHours.Value = prevEventHours.ToString();
             }
 
 
@@ -141,6 +137,8 @@ namespace Manlaan.Dailies
                     Location = _settingMiniLocation.Value,
                     Parent = GameService.Graphics.SpriteScreen,
                 };
+                UpdateDailyPanel();
+                _miniWindow.Show();
             }
             if (prevEventSizeH != _eventSizeH || prevEventSizeW != _eventSizeW || prevEventHours != _eventHours) {
                 _eventWindow.Dispose();
@@ -148,8 +146,9 @@ namespace Manlaan.Dailies
                     Location = _settingEventLocation.Value,
                     Parent = GameService.Graphics.SpriteScreen,
                 };
+                UpdateDailyPanel();
+                _eventWindow.Show();
             }
-            UpdateDailyPanel();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
             UpdateDailyPanel();

@@ -11,6 +11,11 @@
     "api": "",   /* achievements, dungeons, mapchests, raids, worldbosses, dailycrafting */
     "icon": "42684.png",   /* Icon name.  Can be in blm/ref/icons, or in My Documents/Guild Wars 2/addons/blishhud/dailies */
     "note": "Note"  /* Note text */
+    "times": [ "00:00", "02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" ],  /* UTC time the event happens (time after reset) */
+    "timesgroup": "Halloween",  /* Group */
+    "timesset": "Festival",  /* Category */
+    "timesduration": 15,  /* Duration */
+    "timescolor": "Magenta"  /* Color  https://docs.microsoft.com/en-us/dotnet/api/system.windows.media.colors?view=net-5.0&viewFallbackFrom=net-4.7.2 */
   },
   {
     "id": "custom_2",

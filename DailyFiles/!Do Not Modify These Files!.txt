@@ -1,0 +1,2 @@
+These files are automatically downloaded from the server. Any changes made will be overwritten.  
+If you want to create your own Dailies, place the file in the module directory (Documents\Guild Wars 2\addons\blishhud\dailies)
