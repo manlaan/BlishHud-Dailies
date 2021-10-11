@@ -17,8 +17,6 @@ using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using System.Net;
-using System.Text;
-using System.Net.Http;
 
 namespace Manlaan.Dailies
 {
@@ -32,7 +30,6 @@ namespace Manlaan.Dailies
         public static List<Daily> _dailies = new List<Daily>();
         public static List<Daily> _newdailies = new List<Daily>();
         public static List<Category> _categories = new List<Category>();
-        private List<string> _APIDailies = new List<string>();
 
         public static SettingEntry<DateTime> _settingLastReset;
         //private SettingEntry<string> _settingFestivalStart;
@@ -164,7 +161,6 @@ namespace Manlaan.Dailies
         }
         protected override async Task LoadAsync() {
             var sw = Stopwatch.StartNew();
-            UpdateGW2API();
 
             _cornerIcon = new CornerIcon() {
                 IconName = "Dailies",
@@ -188,20 +184,20 @@ namespace Manlaan.Dailies
 
             string dailiesDirectory = DirectoriesManager.GetFullDirectoryPath("dailies");
             try {
-                new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/sample.txt", dailiesDirectory + "/sample.txt");
+                //new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/sample.txt", dailiesDirectory + "/sample.txt");
+                new WebClient().DownloadFile("https://manlaan.000webhostapp.com/DailyFiles/sample.txt", dailiesDirectory + "/sample.txt");
 
                 Directory.CreateDirectory(dailiesDirectory + "/cache");
                 _cornerIcon.LoadingMessage = "Downloading Daily Files...";
-                new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/files.json", dailiesDirectory + "/cache/files.json");
+                //new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/files.json", dailiesDirectory + "/cache/files.json");
+                new WebClient().DownloadFile("https://manlaan.000webhostapp.com/DailyFiles/files.json", dailiesDirectory + "/cache/files.json");
                 List<FileList> files = readJsonFileList(new FileStream(dailiesDirectory + "/cache/files.json", FileMode.Open, FileAccess.Read), "files.json");
                 foreach (FileList file in files) {
                     _cornerIcon.LoadingMessage = "Downloading and Adding Dailies: " + file.File + "...";
                     string filepath = dailiesDirectory + "\\cache\\" + file.File;
-                    var a = File.Exists(filepath);
-                    var b = File.GetLastWriteTime(filepath);
-                    var c = DateTime.Parse(file.Date);
                     if (!File.Exists(filepath) || File.GetLastWriteTime(filepath) < DateTime.Parse(file.Date)) {
-                        new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
+                        //new WebClient().DownloadFile("https://raw.githubusercontent.com/manlaan/BlishHud-Dailies/main/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
+                        new WebClient().DownloadFile("https://manlaan.000webhostapp.com/DailyFiles/" + file.File, dailiesDirectory + "/cache/" + file.File);
                     }
                     if (file.File.ToLower().Contains(".json")) {
                         _dailies.AddRange(readJson(new FileStream(filepath, FileMode.Open, FileAccess.Read), file.File));
@@ -272,6 +268,9 @@ namespace Manlaan.Dailies
             };
             _eventWindow.UpdatePanel();
 
+            UpdateAchievements();
+            UpdateTimes();
+
             _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
             _cornerEventIcon.Click += delegate { _eventWindow.ToggleWindow(); };
 
@@ -296,9 +295,6 @@ namespace Manlaan.Dailies
                 _introWindow.Show();
             }
 
-            UpdateAchievements();
-            UpdateTimes();
-
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
@@ -307,14 +303,9 @@ namespace Manlaan.Dailies
         internal async void UpdateDailyPanel() {
             try {
                 await Task.Run(() => _dailySettings.SaveSettings());
-                //await Task.Run(() => _miniWindow.UpdatePanel());
-                //await Task.Run(() => _mainWindow.UpdatePanel());
                 await Task.Run(() => _eventWindow.UpdatePanel());
-                //await Task.Run(() => UpdateTimes());
-                //_dailySettings.SaveSettings();
                 _miniWindow.UpdatePanel();
                 _mainWindow.UpdatePanel();
-                //_eventWindow.UpdatePanel();
                 UpdateTimes();
             }
             catch { }
@@ -324,7 +315,7 @@ namespace Manlaan.Dailies
             _runningAchieve = true;
 
             Timer_AchieveUpdate.Restart();
-            List<string> TodayAchieve = _APIDailies;
+            List<string> TodayAchieve = new List<string>(); //_APIDailies;
             List<Achievement> AllAchieves = new List<Achievement>();
             bool newDaily = false;
 
@@ -346,8 +337,9 @@ namespace Manlaan.Dailies
                     if (a.Level.Max == 80)
                         TodayAchieve.Add(a.Id.ToString());
 
+                TodayAchieve.AddRange(UpdateGW2API());
                 /// This doesn't work correctly due to GW2Sharp caching results for some categories for over an hour past reset.  <see cref="UpdateGW2API"/> 
-                /* 
+                /*
                 var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
                     if (grp != 97) { //dailies - retrieved from apiAchieveDay
@@ -356,8 +348,7 @@ namespace Manlaan.Dailies
                             TodayAchieve.Add(data.ToString());
                         }
                     }
-                }
-                */
+                }*/
 
                 foreach (string ach in TodayAchieve) {
                     Daily daily = _dailies.Find(x => x.Achievement.Equals(ach));
@@ -447,13 +438,8 @@ namespace Manlaan.Dailies
                         case "dailycrafting":
                             Achievement ach = AllAchieves.Find(x => x.Id.Equals(d.Achievement));
                             bool complete = (ach == null) ? false : ach.Done;
-
                             _dailySettings.SetComplete(d.Id, complete);
-
                             d.IsComplete = complete;
-                            //d.Button.CompleteButton.Checked = complete;
-                            //if (d.MiniButton.Parent != null)
-                            //    d.MiniButton.CompleteButton.Checked = complete;
                             d.IsDaily = true;
                             break;
                     }
@@ -474,7 +460,7 @@ namespace Manlaan.Dailies
         }
         
         /* Doing this because gw2sharp seems to cache some of the categories for over an hour past reset */
-        private async void UpdateGW2API () {
+        private List<string> UpdateGW2API () {
             Timer_APIUpdate.Restart();
 
             List<string> achiev = new List<string>();
@@ -503,7 +489,7 @@ namespace Manlaan.Dailies
             }
             catch { }
 
-            _APIDailies = achiev;
+            return achiev;
         }
 
         private void UpdateTimes() {
@@ -543,11 +529,8 @@ namespace Manlaan.Dailies
         }
 
         protected override async void Update(GameTime gameTime) {
-            if (Timer_AchieveUpdate.ElapsedMilliseconds > 120000) {   //2 minutes  (5min * 60sec * 1000ms)
-                await Task.Run(() => UpdateAchievements());
-            }
             if (Timer_APIUpdate.ElapsedMilliseconds > 300000) {   //5 minutes
-                await Task.Run(() => UpdateGW2API());
+                await Task.Run(() => UpdateAchievements());
             }
             if (Timer_TimesUpdate.ElapsedMilliseconds > 60000) {   //1 minute
                 await Task.Run(() => _eventWindow.UpdatePanel());
@@ -556,7 +539,6 @@ namespace Manlaan.Dailies
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
                 _settingLastReset.Value = DateTime.UtcNow.Date;
                 _mainWindow.SetAllComplete(false, true);
-                await Task.Run(() => UpdateGW2API());
                 await Task.Run(() => UpdateAchievements());
             }
             if (_miniWindow.Location != _settingMiniLocation.Value)
@@ -567,14 +549,12 @@ namespace Manlaan.Dailies
 
         /// <inheritdoc />
         protected override void Unload() {
-            // Unload here
             Overlay.BlishHudWindow.RemoveTab(_moduleTab);
             _setting24HrTime.SettingChanged -= UpdateSettings_bool;
             _settingMiniSizeH.SettingChanged -= UpdateSettings_string;
             _settingMiniSizeW.SettingChanged -= UpdateSettings_string;
             _settingDontShowIntro.SettingChanged -= UpdateSettings_bool;
             _settingEventHours.SettingChanged -= UpdateSettings_string;
-
 
             _mainWindow?.Dispose();
             _miniWindow?.Dispose();
@@ -608,7 +588,7 @@ namespace Manlaan.Dailies
                 data = JsonSerializer.Deserialize<List<Daily>>(jsonContent, jsonOptions);
                 Logger.Info("Loaded File: " + filename);
             }
-            catch (Exception ex) {
+            catch {
                 Logger.Error("Failed Deserialization: " + filename);
             }
             return data;
@@ -630,7 +610,7 @@ namespace Manlaan.Dailies
                 data = JsonSerializer.Deserialize<List<FileList>>(jsonContent, jsonOptions);
                 Logger.Info("Loaded File: " + filename);
             }
-            catch (Exception ex) {
+            catch {
                 Logger.Error("Failed Deserialization: " + filename);
             }
             return data;

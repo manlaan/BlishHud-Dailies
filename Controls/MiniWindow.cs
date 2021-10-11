@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Manlaan.Dailies.Models;
@@ -9,8 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
-using Blish_HUD.Graphics.UI;
-using System.Threading.Tasks;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -53,15 +48,16 @@ namespace Manlaan.Dailies.Controls
             this.CanClose = false;
             this.Title = "Dailies";
             this.Emblem = _pageIcon;
+            this.CanResize = false;
             BuildWindow();
         }
 
         private void BuildWindow() {
-            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y), new Rectangle(0, 0, WinSize.X, WinSize.Y));
+            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y+6), new Rectangle(0, 0, WinSize.X, WinSize.Y+6));
             _parentPanel = new Panel() {
                 CanScroll = false,
                 Size = new Point(WinSize.X, WinSize.Y),
-                Location = new Point(0, 0),
+                Location = new Point(0, 6),
                 Parent = this,
             };
             Image bgimage = new Image(_wndBackground) {

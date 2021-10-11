@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Manlaan.Dailies.Models;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
+
 
 namespace Manlaan.Dailies.Controls
 {
@@ -31,8 +27,8 @@ namespace Manlaan.Dailies.Controls
         private Dropdown _selectTracked, _selectSet;
         private Point WinSize = new Point();
         private Panel _eventPanel;
-        private string _selectedTracked = "";
-        //private string _selectedSet = "";
+        private string _trackedSelected = "Tracked - Incomplete";
+        private string _categorySelected = "All";
         private Panel _parentPanel;
         private int _categoryHeight = 25;
         private Panel _timeMarker;
@@ -61,15 +57,16 @@ namespace Manlaan.Dailies.Controls
             this.CanClose = false;
             this.Title = "Events";
             this.Emblem = _pageIcon;
+            this.CanResize = false;
             BuildWindow();
         }
 
         private void BuildWindow() {
-            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y), new Rectangle(0, 0, WinSize.X, WinSize.Y));
+            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y+6), new Rectangle(0, 0, WinSize.X, WinSize.Y+6));
             _parentPanel = new Panel() {
                 CanScroll = false,
                 Size = new Point(WinSize.X, WinSize.Y),
-                Location = new Point(0, 0),
+                Location = new Point(0, 6),
                 Parent = this,
             };
             Image bgimage = new Image(_wndBackground) {
@@ -87,7 +84,7 @@ namespace Manlaan.Dailies.Controls
             foreach (string s in _eventSets) {
                 _selectSet.Items.Add(s);
             }
-            _selectSet.SelectedItem = "All";
+            _selectSet.SelectedItem = _categorySelected;
             _selectSet.ValueChanged += delegate {
                 UpdatePanel();
             };
@@ -100,12 +97,11 @@ namespace Manlaan.Dailies.Controls
             _selectTracked.Items.Add("Tracked - Incomplete");
             _selectTracked.Items.Add("Tracked - All");
             _selectTracked.Items.Add("All");
-            _selectTracked.SelectedItem = "Tracked - Incomplete";
+            _selectTracked.SelectedItem = _trackedSelected;
             _selectTracked.ValueChanged += delegate {
-                _selectedTracked = (_selectTracked.SelectedItem.Equals("All") ? "" : _selectTracked.SelectedItem);
+                _trackedSelected = _selectTracked.SelectedItem;
                 UpdatePanel();
             };
-            _selectedTracked = "Tracked - Incomplete";
 
             _timePanel = new Panel() {
                 Location = new Point(15, _selectSet.Bottom + 5),
@@ -135,7 +131,7 @@ namespace Manlaan.Dailies.Controls
 
         public Panel CreateButton(Panel panel, Event e) {
             float minuteWidth = ((float)_parentPanel.Size.X - 25 - 100 - 15) / (float.Parse(Module._settingEventHours.Value) * 60);
-            float offset = (DateTime.UtcNow.Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * minuteWidth);
+            float offset = (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
             float buttonwidth = (e.Duration) * minuteWidth;
             float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (e.StartTime.Hour * 60 * minuteWidth) + ((e.StartTime.Minute) * minuteWidth) + 100 - offset;
 
@@ -161,7 +157,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = EventButton,
                 Text = e.Name,
-                BasicTooltipText = e.Name + "\n" + e.StartTime.ToLocalTime().ToString(timeformat) + " - " + e.EndTime.ToLocalTime().ToString(timeformat) + (Module._settingDebug.Value ? "\n\nbutton: " + buttonstart.ToString() + "\nPanel: "+panel.Size.X.ToString()+","+panel.Size.Y.ToString() : ""),
+                BasicTooltipText = e.Name + "\n" + e.StartTime.ToLocalTime().ToString(timeformat) + " - " + e.EndTime.ToLocalTime().ToString(timeformat),
                 TextColor = Color.Black,
                 Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
             };
@@ -235,8 +231,8 @@ namespace Manlaan.Dailies.Controls
 
         public void UpdatePanel() {
             if (_running) return;
-
             _running = true;
+
 
             float minuteWidth = ((float)_parentPanel.Size.X - 25 - 100 - 15) / (float.Parse(Module._settingEventHours.Value) * 60);
             PopulateEvents();
@@ -244,12 +240,12 @@ namespace Manlaan.Dailies.Controls
             string timeformat = "h:mm tt";
             if (Module._setting24HrTime.Value) timeformat = "H:mm";
 
-            DateTime panelStartTime = RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15));
-            DateTime panelEndTime = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes((int.Parse(Module._settingEventHours.Value) * 4) * 15), TimeSpan.FromMinutes(15));
+            DateTime panelStartTime = RoundDown(DateTime.UtcNow.AddMinutes(-15));
+            DateTime panelEndTime = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes((int.Parse(Module._settingEventHours.Value) * 4) * 15));
 
             _timePanel.ClearChildren();
             for (int i = 0; i < (int.Parse(Module._settingEventHours.Value) * 4) + 1; i++) {
-                var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime(), TimeSpan.FromMinutes(15));
+                var t = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes(i * 15).ToLocalTime());
                 float w = minuteWidth * 15;
                 float y = minuteWidth * 15 * i;
                 Label timeLabel = new Label() {
@@ -290,7 +286,7 @@ namespace Manlaan.Dailies.Controls
 
                     int btnCount = 0;
                     foreach (Event e in _events) {
-                        if (e.Daily.IsDaily && e.Group.Equals(c.Name) && Module.InSection(e.Daily, _selectedTracked, "", "")) {
+                        if (e.Daily.IsDaily && e.Group.Equals(c.Name) && Module.InSection(e.Daily, (_trackedSelected.Equals("All")?"": _trackedSelected), "", "")) {
                             btnCount++;
                             if (e.EndTime > panelStartTime && e.StartTime < panelEndTime) {
                                 e.Button = CreateButton(c.CategoryPanel, e);
@@ -306,7 +302,7 @@ namespace Manlaan.Dailies.Controls
                 }
             }
 
-            float offset = (DateTime.UtcNow.Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15), TimeSpan.FromMinutes(15)).Minute) * minuteWidth);
+            float offset = (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
             float curtime = ((DateTime.UtcNow.Hour * 60 * minuteWidth) + (DateTime.UtcNow.Minute) * minuteWidth);
             float timeloc = 100 + (curtime - offset) + _eventPanel.Location.X;
             _timeMarker.Location = new Point((int)(timeloc), _eventPanel.Top);
@@ -315,15 +311,13 @@ namespace Manlaan.Dailies.Controls
             _running = false;
         }
 
-        private static DateTime RoundDown(DateTime dt, TimeSpan d) {
-            var delta = dt.Ticks % d.Ticks;
-            return new DateTime(dt.Ticks - delta, dt.Kind);
+        private static DateTime RoundDown(DateTime dt) {
+            return dt.AddMinutes(-dt.Minute % 15);
         }
         private Color FindColor(string colorname) {
             if (colorname == null) colorname = "Black";
             System.Drawing.Color systemColor = System.Drawing.Color.FromName(colorname);
             return new Color(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
         }
-
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Manlaan.Dailies.Models;
@@ -10,6 +7,7 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Blish_HUD.Input;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -94,7 +92,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = _parentPanel,
                 BasicTooltipText = "Force API update\nAPI data can be 5+ min behind game data",
             };
-            updateIcon.Click += delegate { Module.ModuleInstance.UpdateAchievements(); };
+            updateIcon.Click += UpdateAchievements;
             Image resetIcon = new Image(_resetIcon) {
                 Size = new Point(ShowItems.Height, ShowItems.Height),
                 Location = new Point(_parentPanel.Width - ShowItems.Height, 10),
@@ -486,6 +484,10 @@ namespace Manlaan.Dailies.Controls
                 }
             }
             Module.ModuleInstance.UpdateDailyPanel();
+        }
+
+        private async void UpdateAchievements(object sender = null, MouseEventArgs e = null) {
+            await Task.Run(() => Module.ModuleInstance.UpdateAchievements());
         }
 
     }

@@ -11,7 +11,6 @@ namespace Manlaan.Dailies
         private const string SETTINGS_FILENAME = "settings.json";
         public List<DailySettingEntry> _dailySettings = new List<DailySettingEntry>();
         private string _settingsFile = "";
-        private bool _running = false;
 
         public DailySettings (string modulepath) {
             _settingsFile = modulepath + "\\" + SETTINGS_FILENAME;
