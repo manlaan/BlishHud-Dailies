@@ -131,9 +131,11 @@ namespace Manlaan.Dailies.Controls
 
         public Panel CreateButton(Panel panel, Event e) {
             float minuteWidth = ((float)_parentPanel.Size.X - 25 - 100 - 15) / (float.Parse(Module._settingEventHours.Value) * 60);
-            float offset = (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
+            float offset = ((e.StartTime.Date.AddMinutes(-15) - DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
             float buttonwidth = (e.Duration) * minuteWidth;
-            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (e.StartTime.Hour * 60 * minuteWidth) + ((e.StartTime.Minute) * minuteWidth) + 100 - offset;
+            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (e.StartTime.Hour * 60 * minuteWidth) + ((e.StartTime.Minute) * minuteWidth) + 100;
+            //if (offset > buttonstart) offset = 0;
+            buttonstart -= offset;
 
             if (buttonstart < 100) {
                 buttonwidth = buttonstart + buttonwidth - 100;
@@ -304,6 +306,7 @@ namespace Manlaan.Dailies.Controls
 
             float offset = (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
             float curtime = ((DateTime.UtcNow.Hour * 60 * minuteWidth) + (DateTime.UtcNow.Minute) * minuteWidth);
+            if (offset > curtime) offset = 0;
             float timeloc = 100 + (curtime - offset) + _eventPanel.Location.X;
             _timeMarker.Location = new Point((int)(timeloc), _eventPanel.Top);
             _eventPanel.RecalculateLayout();

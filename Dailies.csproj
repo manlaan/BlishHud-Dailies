@@ -128,6 +128,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\AlertWindow.cs" />
     <Compile Include="Controls\EventWindow.cs" />
     <Compile Include="Controls\IntroWindow.cs" />
     <Compile Include="Controls\MainWindow.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="DailyList\SuperAdventure.cs" />
     <Compile Include="DailyList\Wintersday.cs" />
     <Compile Include="Models\Achievements.cs" />
+    <Compile Include="Models\Alert.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\FileList.cs" />

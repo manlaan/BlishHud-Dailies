@@ -13,30 +13,26 @@ using Microsoft.Xna.Framework;
 
 namespace Manlaan.Dailies.Models
 {
-    public class 
-        Event : IEquatable<Event>, IComparable<Event>
+    public class Alert : IEquatable<Alert>, IComparable<Alert>
     {
+        public string ID { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; }
         public string DailyID { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int Duration { get; set; }
-        public string Group { get; set; }
-        public Panel Button { get; set; }
-        public Color Color { get; set; }
-        public string Waypoint { get; set; }
-        public Daily Daily { get; set; }
+        public DailyDetailsButton Button { get; set; }
 
-        public Event() {
+        public Alert() {
+            ID = "";
             Name = "";
+            IsActive = true;
             DailyID = "";
             StartTime = new DateTime();
             Duration = 0;
             EndTime = new DateTime();
-            Group = "";
-            Button = new Panel();
-            Waypoint = "";
-            Daily = new Daily();
+            Button = new DailyDetailsButton();
         }
 
         public override string ToString() {
@@ -44,13 +40,13 @@ namespace Manlaan.Dailies.Models
         }
         public override bool Equals(object obj) {
             if (obj == null) return false;
-            Event objAsCat = obj as Event;
-            if (objAsCat == null) return false;
-            else return Equals(objAsCat);
+            Alert objAsAlert = obj as Alert;
+            if (objAsAlert == null) return false;
+            else return Equals(objAsAlert);
         }
-        public bool Equals(Event other) {
+        public bool Equals(Alert other) {
             if (other == null) return false;
-            return (this.Name.Equals(other.Name));
+            return (this.ID.Equals(other.ID));
         }
         public override int GetHashCode() {
             return 0;
@@ -58,11 +54,11 @@ namespace Manlaan.Dailies.Models
         public int SortByNameAscending(string name1, string name2) {
             return name1.CompareTo(name2);
         }
-        public int CompareTo(Event compare) {
+        public int CompareTo(Alert compare) {
             if (compare == null)
                 return 1;
             else
-                return this.Name.CompareTo(compare.Name);
+                return this.ID.CompareTo(compare.ID);
         }
     }
 }

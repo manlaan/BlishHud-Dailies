@@ -17,6 +17,7 @@ using System.Linq;
 using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using System.Net;
+using Blish_HUD.Gw2WebApi;
 
 namespace Manlaan.Dailies
 {
@@ -35,8 +36,13 @@ namespace Manlaan.Dailies
         //private SettingEntry<string> _settingFestivalStart;
         private SettingEntry<Point> _settingMiniLocation;
         private SettingEntry<Point> _settingEventLocation;
+        public static SettingEntry<Point> _settingAlertLocation;
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
         private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
+        public static SettingEntry<string> _settingAlertNotify;
+        private SettingEntry<string> _settingAlertSizeW, _settingAlertSizeH;
+        private SettingEntry<bool> _settingAlertEnabled;
+        public static SettingEntry<bool> _settingAlertDrag;
         public static SettingEntry<string> _settingEventHours;
         public static SettingEntry<bool> _setting24HrTime;
         public static SettingEntry<bool> _settingDontShowIntro;
@@ -56,8 +62,11 @@ namespace Manlaan.Dailies
         private EventWindow _eventWindow;
         private CornerIcon _cornerEventIcon;
         private IntroWindow _introWindow;
+        private AlertWindow _alertWindow;
 
         private WindowTab _moduleTab;
+
+        public static string[] _autoCompleteAchievements = new string[] { "dungeons", "mapchests", "raids", "worldbosses", "dailycrafting" };
 
 
         #region Service Managers
@@ -84,71 +93,112 @@ namespace Manlaan.Dailies
             _settingEventSizeW = settings.DefineSetting("DailyEventSizeH", @"600", "Event Window Width", "");
             _settingEventSizeH = settings.DefineSetting("DailyEventSizeW", @"300", "Event Window Height", "");
             _settingDontShowIntro = settings.DefineSetting("DailyDontShowIntro", false, "Don't Show Intro", "");
+            _settingAlertSizeW = settings.DefineSetting("DailyAlertSizeW", @"280", "Alert Width", "");
+            _settingAlertSizeH = settings.DefineSetting("DailyAlertSizeH", @"450", "Alert Height", "");
+            _settingAlertNotify = settings.DefineSetting("DailyAlertNotify", @"10", "Alert Notify (min)", "");
+            _settingAlertLocation = settings.DefineSetting("DailyAlertLoc", new Point(100, 100));
+            _settingAlertDrag = settings.DefineSetting("DailyAlertDrag", false, "Alert Draging (White Box)", "");
+            _settingAlertEnabled = settings.DefineSetting("DailyAlertEnabled", false, "Alert Enabled", "");
+
             _setting24HrTime.SettingChanged += UpdateSettings_bool;
             _settingDontShowIntro.SettingChanged += UpdateSettings_bool;
-            _settingMiniSizeH.SettingChanged += UpdateSettings_string;
-            _settingMiniSizeW.SettingChanged += UpdateSettings_string;
-            _settingEventSizeH.SettingChanged += UpdateSettings_string;
-            _settingEventSizeW.SettingChanged += UpdateSettings_string;
-            _settingEventHours.SettingChanged += UpdateSettings_string;
+            _settingMiniSizeH.SettingChanged += UpdateSettings_Mini_string;
+            _settingMiniSizeW.SettingChanged += UpdateSettings_Mini_string;
+            _settingEventSizeH.SettingChanged += UpdateSettings_Event_string;
+            _settingEventSizeW.SettingChanged += UpdateSettings_Event_string;
+            _settingEventHours.SettingChanged += UpdateSettings_Event_string;
+            _settingAlertSizeW.SettingChanged += UpdateSettings_Alert_string;
+            _settingAlertSizeH.SettingChanged += UpdateSettings_Alert_string;
+            _settingAlertNotify.SettingChanged += UpdateSettings_Alert_string;
+            _settingAlertDrag.SettingChanged += UpdateSettings_bool;
+            _settingAlertEnabled.SettingChanged += UpdateSettings_bool;
         }
-        private void UpdateSettings_string(object sender = null, ValueChangedEventArgs<string> e = null) {
-            int prevMiniSizeH = _miniSizeH;
-            int prevMiniSizeW = _miniSizeW;
-            int prevEventSizeH = _eventSizeH;
-            int prevEventSizeW = _eventSizeW;
-            int prevEventHours = _eventHours;
+        private void UpdateSettings_Alert_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             try {
-                _miniSizeW = int.Parse(_settingMiniSizeW.Value);
-                if (_miniSizeW < 0)
-                    _miniSizeW = prevMiniSizeW;
-                _miniSizeH = int.Parse(_settingMiniSizeH.Value);
-                if (_miniSizeH < 0)
-                    _miniSizeH = prevMiniSizeH;
+                if (int.Parse(_settingAlertSizeW.Value) < 0)
+                    _settingAlertSizeW.Value = "100";
             }
             catch {
-                _settingMiniSizeW.Value = prevMiniSizeW.ToString();
-                _settingMiniSizeH.Value = prevMiniSizeH.ToString();
+                _settingAlertSizeW.Value = "100";
             }
             try {
-                _eventSizeW = int.Parse(_settingEventSizeW.Value);
-                if (_eventSizeW < 0)
-                    _eventSizeW = prevEventSizeW;
-                _eventSizeH = int.Parse(_settingEventSizeH.Value);
-                if (_eventSizeH < 0)
-                    _eventSizeH = prevEventSizeH;
-                _eventHours = int.Parse(_settingEventHours.Value);
-                if (_eventHours < 0)
-                    _eventHours = prevEventHours;
+                if (int.Parse(_settingAlertSizeH.Value) < 0)
+                    _settingAlertSizeH.Value = "100";
             }
             catch {
-                _settingEventSizeW.Value = prevEventSizeW.ToString();
-                _settingEventSizeH.Value = prevEventSizeH.ToString();
-                _settingEventHours.Value = prevEventHours.ToString();
+                _settingAlertSizeH.Value = "100";
             }
-
-
-            if (prevMiniSizeH != _miniSizeH || prevMiniSizeW != _miniSizeH) {
-                _miniWindow.Dispose();
-                _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
-                    Location = _settingMiniLocation.Value,
-                    Parent = GameService.Graphics.SpriteScreen,
-                };
-                UpdateDailyPanel();
-                _miniWindow.Show();
+            try {
+                if (int.Parse(_settingAlertNotify.Value) < 0)
+                    _settingEventHours.Value = "10";
             }
-            if (prevEventSizeH != _eventSizeH || prevEventSizeW != _eventSizeW || prevEventHours != _eventHours) {
-                _eventWindow.Dispose();
-                _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
-                    Location = _settingEventLocation.Value,
-                    Parent = GameService.Graphics.SpriteScreen,
-                };
-                UpdateDailyPanel();
-                _eventWindow.Show();
+            catch {
+                _settingAlertNotify.Value = "10";
             }
+            _alertWindow.Dispose();
+            _alertWindow = new AlertWindow(new Point(int.Parse(_settingAlertSizeW.Value), int.Parse(_settingAlertSizeH.Value))) {
+                Location = _settingAlertLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
+            };
+            UpdateDailyPanel();
+            _alertWindow.Show();
+        }
+        private void UpdateSettings_Mini_string(object sender = null, ValueChangedEventArgs<string> e = null) {
+            try {
+                if (int.Parse(_settingMiniSizeW.Value) < 0)
+                    _settingMiniSizeW.Value = "100";
+            }
+            catch {
+                _settingMiniSizeW.Value = "100";
+            }
+            try {
+                if (int.Parse(_settingMiniSizeH.Value) < 0)
+                    _settingMiniSizeH.Value = "100";
+            }
+            catch {
+                _settingMiniSizeH.Value = "100";
+            }
+            _miniWindow.Dispose();
+            _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
+                Location = _settingMiniLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
+            };
+            UpdateDailyPanel();
+            _miniWindow.Show();
+        }
+        private void UpdateSettings_Event_string(object sender = null, ValueChangedEventArgs<string> e = null) {
+            try {
+                if (int.Parse(_settingEventSizeW.Value) < 0)
+                    _settingEventSizeW.Value = "100";
+            }
+            catch {
+                _settingEventSizeW.Value = "100";
+            }
+            try {
+                if (int.Parse(_settingEventSizeH.Value) < 0)
+                    _settingEventSizeH.Value = "100";
+            }
+            catch {
+                _settingEventSizeH.Value = "100";
+            }
+            try {
+                if (float.Parse(_settingEventHours.Value) < 0)
+                    _settingEventHours.Value = "2";
+            }
+            catch {
+                _settingEventHours.Value = "2";
+            }
+            _eventWindow.Dispose();
+            _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
+                Location = _settingEventLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
+            };
+            UpdateDailyPanel();
+            _eventWindow.Show();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
             UpdateDailyPanel();
+            _alertWindow.Visible = _settingAlertEnabled.Value;
         }
 
         protected override void Initialize() {
@@ -255,18 +305,28 @@ namespace Manlaan.Dailies
             _cornerIcon.LoadingMessage = "Preloading Main Window...";
             _mainWindow = new MainWindow(Overlay.BlishHudWindow.ContentRegion.Size);
             _mainWindow.UpdatePanel();
+
             _cornerIcon.LoadingMessage = "Preloading Mini Window...";
             _miniWindow = new MiniWindow(new Point(int.Parse(_settingMiniSizeW.Value), int.Parse(_settingMiniSizeH.Value))) {
                 Location = _settingMiniLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
             _miniWindow.UpdatePanel();
+
             _cornerIcon.LoadingMessage = "Preloading Event Window...";
             _eventWindow = new EventWindow(new Point(int.Parse(_settingEventSizeW.Value), int.Parse(_settingEventSizeH.Value))) {
                 Location = _settingEventLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
             };
             _eventWindow.UpdatePanel();
+
+            _cornerIcon.LoadingMessage = "Preloading Alert Window...";
+            _alertWindow = new AlertWindow(new Point(int.Parse(_settingAlertSizeW.Value), int.Parse(_settingAlertSizeH.Value))) {
+                Location = _settingAlertLocation.Value,
+                Parent = GameService.Graphics.SpriteScreen,
+            };
+            if (_settingAlertEnabled.Value) 
+                _alertWindow.Show();
 
             UpdateAchievements();
             UpdateTimes();
@@ -304,6 +364,7 @@ namespace Manlaan.Dailies
             try {
                 await Task.Run(() => _dailySettings.SaveSettings());
                 await Task.Run(() => _eventWindow.UpdatePanel());
+                await Task.Run(() => _alertWindow.UpdatePanel());
                 _miniWindow.UpdatePanel();
                 _mainWindow.UpdatePanel();
                 UpdateTimes();
@@ -338,9 +399,8 @@ namespace Manlaan.Dailies
                         TodayAchieve.Add(a.Id.ToString());
 
                 TodayAchieve.AddRange(UpdateGW2API());
-                /// This doesn't work correctly due to GW2Sharp caching results for some categories for over an hour past reset.  <see cref="UpdateGW2API"/> 
-                /*
-                var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
+                /// This doesn't work correctly due to GW2 API caching results for some categories for an hour.  <see cref="UpdateGW2API"/> 
+                /*var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
                     if (grp != 97) { //dailies - retrieved from apiAchieveDay
                         var apidata = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Categories.GetAsync(grp);
@@ -426,28 +486,24 @@ namespace Manlaan.Dailies
 
             foreach (Daily d in _dailies) {
                 if (!string.IsNullOrEmpty(d.Achievement) && !string.IsNullOrEmpty(d.API)) {
-                    switch (d.API) {
-                        default:
-                            d.IsDaily = string.IsNullOrEmpty(TodayAchieve.Find(x => x.Equals(d.Achievement))) ? false : true;
-                            break;
-                        //Autocompletes
-                        case "dungeons":
-                        case "mapchests":
-                        case "raids":
-                        case "worldbosses":
-                        case "dailycrafting":
-                            Achievement ach = AllAchieves.Find(x => x.Id.Equals(d.Achievement));
-                            bool complete = (ach == null) ? false : ach.Done;
-                            _dailySettings.SetComplete(d.Id, complete);
-                            d.IsComplete = complete;
-                            d.IsDaily = true;
-                            break;
+                    if (_autoCompleteAchievements.Contains(d.API)) { 
+                        Achievement ach = AllAchieves.Find(x => x.Id.Equals(d.Achievement));
+                        bool complete = (ach == null) ? false : ach.Done;
+                        _dailySettings.SetComplete(d.Id, complete);
+                        d.Button.CompleteButton.Checked = complete;
+                        d.MiniButton.CompleteButton.Checked = complete;
+                        d.IsComplete = complete;
+                        d.IsDaily = true;
+                    }
+                    else {
+                        d.IsDaily = string.IsNullOrEmpty(TodayAchieve.Find(x => x.Equals(d.Achievement))) ? false : true;
                     }
                 }
                 else {
                     d.IsDaily = true;
                 }
             }
+
             if (newDaily) {
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 FileStream createStream = File.Create(DirectoriesManager.GetFullDirectoryPath("dailies") + "\\new.json");
@@ -459,7 +515,7 @@ namespace Manlaan.Dailies
             _runningAchieve = false;
         }
         
-        /* Doing this because gw2sharp seems to cache some of the categories for over an hour past reset */
+        /* Doing this because GW2 API caches some of the categories for over an hour past reset */
         private List<string> UpdateGW2API () {
             Timer_APIUpdate.Restart();
 
@@ -471,12 +527,12 @@ namespace Manlaan.Dailies
             };
 
             try {
-                string contents = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8");
+                string contents = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/groups/18DB115A-8637-4290-A636-821362A3C4A8?rand=" + DateTime.Now.Ticks.ToString());
                 GW2API_Category json = JsonSerializer.Deserialize<GW2API_Category>(contents, jsonOptions);
 
                 foreach (int i in json.Categories) {
                     try {
-                        string contents2 = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString());
+                        string contents2 = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString() + "? rand = " + DateTime.Now.Ticks.ToString());
                         GW2API_Group json2 = JsonSerializer.Deserialize<GW2API_Group>(contents2, jsonOptions);
 
                         foreach (int j in json2.Achievements) {
@@ -534,6 +590,7 @@ namespace Manlaan.Dailies
             }
             if (Timer_TimesUpdate.ElapsedMilliseconds > 60000) {   //1 minute
                 await Task.Run(() => _eventWindow.UpdatePanel());
+                await Task.Run(() => _alertWindow.UpdatePanel());
                 await Task.Run(() => UpdateTimes());
             }
             if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
@@ -545,20 +602,30 @@ namespace Manlaan.Dailies
                 _settingMiniLocation.Value = _miniWindow.Location;
             if (_eventWindow.Location != _settingEventLocation.Value)
                 _settingEventLocation.Value = _eventWindow.Location;
+            if (_alertWindow.Location != _settingAlertLocation.Value)
+                _settingAlertLocation.Value = _alertWindow.Location;
         }
 
         /// <inheritdoc />
         protected override void Unload() {
             Overlay.BlishHudWindow.RemoveTab(_moduleTab);
             _setting24HrTime.SettingChanged -= UpdateSettings_bool;
-            _settingMiniSizeH.SettingChanged -= UpdateSettings_string;
-            _settingMiniSizeW.SettingChanged -= UpdateSettings_string;
             _settingDontShowIntro.SettingChanged -= UpdateSettings_bool;
-            _settingEventHours.SettingChanged -= UpdateSettings_string;
+            _settingMiniSizeH.SettingChanged -= UpdateSettings_Mini_string;
+            _settingMiniSizeW.SettingChanged -= UpdateSettings_Mini_string;
+            _settingEventSizeH.SettingChanged -= UpdateSettings_Event_string;
+            _settingEventSizeW.SettingChanged -= UpdateSettings_Event_string;
+            _settingEventHours.SettingChanged -= UpdateSettings_Event_string;
+            _settingAlertSizeW.SettingChanged -= UpdateSettings_Alert_string;
+            _settingAlertSizeH.SettingChanged -= UpdateSettings_Alert_string;
+            _settingAlertNotify.SettingChanged -= UpdateSettings_Alert_string;
+            _settingAlertDrag.SettingChanged -= UpdateSettings_bool;
+            _settingAlertEnabled.SettingChanged -= UpdateSettings_bool;
 
             _mainWindow?.Dispose();
             _miniWindow?.Dispose();
             _eventWindow?.Dispose();
+            _alertWindow?.Dispose();
             _cornerIcon?.Dispose();
             _cornerEventIcon?.Dispose();
 

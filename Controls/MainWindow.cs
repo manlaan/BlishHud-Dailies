@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Blish_HUD.Input;
+using System.Linq;
 
 namespace Manlaan.Dailies.Controls
 {
@@ -16,12 +17,12 @@ namespace Manlaan.Dailies.Controls
 
         #region Load Static
 
-        private static Texture2D _btnBackground, _defaulticon, _resetIcon, _updateIcon;
+        private static Texture2D _btnBackground, _defaultIcon, _resetIcon, _updateIcon;
         private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _fav1Icon, _fav0Icon;
 
         static MainWindow() {
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
-            _defaulticon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
+            _defaultIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
             _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
             _noteIcon = Module.ModuleInstance.ContentsManager.GetTexture("440023.png");
@@ -184,7 +185,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = dailyButton,
             };
 
-            Texture2D buttonIcon = _defaulticon;
+            Texture2D buttonIcon = _defaultIcon;
             if (!string.IsNullOrEmpty(d.Icon)) {
                 try {
                     if (File.Exists(Module.ModuleInstance.DirectoriesManager.GetFullDirectoryPath("dailies") + "\\" + d.Icon))
@@ -193,7 +194,7 @@ namespace Manlaan.Dailies.Controls
                         buttonIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\" + d.Icon);
                 }
                 catch {
-                    buttonIcon = _defaulticon;
+                    buttonIcon = _defaultIcon;
                 }
             }
             Image icon = new Image(buttonIcon) {
@@ -347,55 +348,28 @@ namespace Manlaan.Dailies.Controls
                 Module.ModuleInstance.UpdateDailyPanel();
             };
 
-            bool setAutoComplete = false;
-            switch (d.API) {
-                default:
-                    break;
-                //Autocompletes
-                case "dungeons":
-                case "mapchests":
-                case "raids":
-                case "worldbosses":
-                case "dailycrafting":
-                    if (!string.IsNullOrEmpty(d.Achievement) && !string.IsNullOrEmpty(d.API) && Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression }))
-                        setAutoComplete = true;
-                    break;
-            }
-
-            if (!setAutoComplete) {
-                dailyButton.CompleteButton = new GlowButton() {
-                    Icon = _complete0Icon,
-                    ActiveIcon = _complete1Icon,
-                    BasicTooltipText = "Toggle complete",
-                    ToggleGlow = true,
-                    Checked = d.IsComplete,
-                    Parent = dailyButton,
-                    Location = new Point(dailyButton.Size.X - iconSize.X - 5, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                dailyButton.CompleteButton.Click += delegate {
+            dailyButton.CompleteButton = new GlowButton() {
+                Icon = _complete0Icon,
+                ActiveIcon = _complete1Icon,
+                BasicTooltipText = "Toggle complete",
+                ToggleGlow = true,
+                Checked = d.IsComplete,
+                Parent = dailyButton,
+                Location = new Point(dailyButton.Size.X - iconSize.X - 5, dailyButton.Height - iconSize.Y - 2),
+                Size = iconSize,
+            };
+            dailyButton.CompleteButton.Click += delegate {
+                if (d.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
+                    dailyButton.CompleteButton.Checked = d.IsComplete;
+                }
+                else {
                     Module._dailySettings.SetComplete(d.Id, dailyButton.CompleteButton.Checked);
                     d.IsComplete = dailyButton.CompleteButton.Checked;
                     d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     Module.ModuleInstance.UpdateDailyPanel();
-                };
-            }
-            else {
-                dailyButton.CompleteButton = new GlowButton() {
-                    Icon = _auto0Icon,
-                    ActiveIcon = _auto1Icon,
-                    BasicTooltipText = "Auto",
-                    ToggleGlow = true,
-                    Checked = d.IsComplete,
-                    Parent = dailyButton,
-                    Location = new Point(dailyButton.Size.X - iconSize.X - 5, dailyButton.Height - iconSize.Y - 2),
-                    Size = iconSize,
-                };
-                dailyButton.CompleteButton.Click += delegate {
-                    dailyButton.CompleteButton.Checked = d.IsComplete;
-                };
-            }
+                }
+            };
 
             return dailyButton;
         }
@@ -424,6 +398,25 @@ namespace Manlaan.Dailies.Controls
                     if (d.Button.Visible)
                         d.Button.Visible = false;
                 }
+
+                if (!string.IsNullOrEmpty(d.Achievement) &&
+                                !string.IsNullOrEmpty(d.API) &&
+                                Module._autoCompleteAchievements.Contains(d.API) &&
+                                Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression })) {
+                    if (!d.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
+                        d.Button.CompleteButton.Icon = _auto0Icon;
+                        d.Button.CompleteButton.ActiveIcon = _auto1Icon;
+                        d.Button.CompleteButton.BasicTooltipText = "Auto";
+                    }
+                }
+                else {
+                    if (d.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
+                        d.Button.CompleteButton.Icon = _complete0Icon;
+                        d.Button.CompleteButton.ActiveIcon = _complete1Icon;
+                        d.Button.CompleteButton.BasicTooltipText = "Toggle complete";
+                    }
+                }
+
             }
             _dailyPanel.RecalculateLayout();
             _dailyCount.Text = "Count: " + count.ToString();

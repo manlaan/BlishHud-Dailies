@@ -1,28 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Blish_HUD;
 using Blish_HUD.Controls;
 using Manlaan.Dailies.Models;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Diagnostics;
 using System.IO;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Manlaan.Dailies.Controls
 {
-    public class MiniWindow : WindowBase2
+    class AlertWindow : Panel
     {
-
         #region Load Static
 
-        private static Texture2D _blankBackground, _wndBackground, _btnBackground, _pageIcon, _defaultIcon;
-        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon;
+        private static Texture2D _btnBackground, _defaultIcon, _closeIcon;
+        private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _complete1Icon, _complete0Icon, _auto1Icon, _auto0Icon, _wpIcon;
 
-        static MiniWindow() {
-            _blankBackground = Module.ModuleInstance.ContentsManager.GetTexture("blank.png");
-            _wndBackground = Module.ModuleInstance.ContentsManager.GetTexture("1863949.png");
+        static AlertWindow() {
             _btnBackground = Module.ModuleInstance.ContentsManager.GetTexture("button.png");
-            _pageIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _defaultIcon = Module.ModuleInstance.ContentsManager.GetTexture("icons\\42684.png");
             _wikiIcon = Module.ModuleInstance.ContentsManager.GetTexture("102530.png");
             _timerIcon = Module.ModuleInstance.ContentsManager.GetTexture("496252.png");
@@ -31,74 +28,60 @@ namespace Manlaan.Dailies.Controls
             _complete1Icon = Module.ModuleInstance.ContentsManager.GetTexture("784259.png");
             _complete0Icon = Module.ModuleInstance.ContentsManager.GetTexture("784261.png");
             _wpIcon = Module.ModuleInstance.ContentsManager.GetTexture("156628.png");
+            _closeIcon = Module.ModuleInstance.ContentsManager.GetTexture("button-exit.png");
             _auto1Icon = Module.ModuleInstance.ContentsManager.GetTexture("155061.png");
             _auto0Icon = Module.ModuleInstance.ContentsManager.GetTexture("156708.png");
         }
         #endregion
 
 
-        private Dropdown _selectCategory;
-        private Point WinSize = new Point();
-        private FlowPanel _dailyPanel;
-        private string _dailyCategory = "";
-        private Panel _parentPanel;
-        private bool _running = false;
+        private Panel _dragBox = new Panel();
+        private FlowPanel _alertPanel;
+        private List<Alert> _alerts = new List<Alert>();
+        private bool _dragging = false;
+        private Point _dragStart = Point.Zero;
 
-        public MiniWindow(Point size) : base() {
-            WinSize = size;
-            this.CanClose = false;
-            this.Title = "Dailies";
-            this.Emblem = _pageIcon;
-            this.CanResize = false;
+        public AlertWindow(Point size) : base() {
+            Size = size;
             BuildWindow();
         }
 
         private void BuildWindow() {
-            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y+6), new Rectangle(0, 0, WinSize.X, WinSize.Y+6));
-            _parentPanel = new Panel() {
-                CanScroll = false,
-                Size = new Point(WinSize.X, WinSize.Y),
-                Location = new Point(0, 6),
-                Parent = this,
-            };
-            Image bgimage = new Image(_wndBackground) {
-                Location = new Point(0, 0),
-                Size = _parentPanel.Size,
-                Parent = _parentPanel,
-            };
-
-            _selectCategory = new Dropdown() {
-                Location = new Point(15, 15),
-                Width = _parentPanel.Width - 30,
-                Parent = _parentPanel,
-            };
-            _selectCategory.ValueChanged += SelectCategoryChanged;
-
-            _dailyPanel = new FlowPanel() {
+            _alertPanel = new FlowPanel() {
                 FlowDirection = ControlFlowDirection.LeftToRight,
                 ControlPadding = new Vector2(8, 8),
-                Location = new Point(15, _selectCategory.Bottom + 5),
-                Size = new Point(_parentPanel.Size.X - 20, _parentPanel.Size.Y - _selectCategory.Bottom - 15),
+                Location = new Point(0, 0),
+                Size = this.Size,
                 CanScroll = true,
-                Parent = _parentPanel,
+                Parent = this,
                 ShowBorder = false,
             };
 
-            foreach (Daily d in Module._dailies) {
-                if (d.IsTracked)
-                    d.MiniButton = CreateButton(d);
-            }
-
-            _dailyCategory = "";
+            _dragBox = new Panel() {
+                Parent = this,
+                Location = new Point(0, 0),
+                Size = new Point(20, 20),
+                BackgroundColor = Color.White,
+                ZIndex = 10,
+                Visible = false,
+            };
+            _dragBox.LeftMouseButtonPressed += delegate {
+                _dragging = true;
+                _dragStart = InputService.Input.Mouse.Position;
+            };
+            _dragBox.LeftMouseButtonReleased += delegate {
+                _dragging = false;
+                Module._settingAlertLocation.Value = this.Location;
+            };
         }
 
-        public DailyDetailsButton CreateButton(Daily d) {
+        public DailyDetailsButton CreateButton(Daily d, string start) {
             Point iconSize = new Point(26, 26);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
                 CanScroll = false,
-                Size = new Point(_dailyPanel.Size.X - 20, 73),
-                Parent = _dailyPanel,
+                Size = new Point(_alertPanel.Size.X - 20, 73),
+                Parent = _alertPanel,
             };
 
             Image buttonbackground = new Image(_btnBackground) {
@@ -250,6 +233,23 @@ namespace Manlaan.Dailies.Controls
                 xloc = CopyBtn.Right + 5;
             }
 
+            dailyButton.TrackedButton = new GlowButton() {
+                Icon = _closeIcon,
+                ActiveIcon = _closeIcon,
+                BasicTooltipText = "Close Alert",
+                ToggleGlow = true,
+                Checked = false,
+                Parent = dailyButton,
+                Location = new Point(dailyButton.Size.X - iconSize.X - 5, 0),
+                Size = iconSize,
+            };
+            dailyButton.TrackedButton.Click += delegate {
+                Alert alert = _alerts.Find(x => x.ID.Equals(d.Id + "-" + start));
+                alert.IsActive = false;
+                alert.Button.Hide();
+                _alertPanel.RecalculateLayout();
+            };
+
             dailyButton.CompleteButton = new GlowButton() {
                 Icon = _complete0Icon,
                 ActiveIcon = _complete1Icon,
@@ -270,8 +270,11 @@ namespace Manlaan.Dailies.Controls
                     d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     if (dailyButton.CompleteButton.Checked) {
+                        Alert alert = _alerts.Find(x => x.ID.Equals(d.Id + "-" + start));
+                        alert.IsActive = false;
+                        alert.Button.Hide();
+                        _alertPanel.RecalculateLayout();
                         d.MiniButton.Visible = false;
-                        _dailyPanel.RecalculateLayout();
                     }
                     Module.ModuleInstance.UpdateDailyPanel();
                 }
@@ -280,71 +283,79 @@ namespace Manlaan.Dailies.Controls
             return dailyButton;
         }
 
-        public void UpdatePanel() {
-            if (_running) return;
-
-            _running = true;
-
-            List<Category> categories = Module._categories;
-            foreach (Category cat in categories) {
-                cat.IsActive = false;
-            }
-
-            foreach (Daily d in Module._dailies) {
-                if (Module.InSection(d, "Tracked - Incomplete", "", "")) {
-                    if (d.MiniButton.Parent == null) {
-                        d.MiniButton = CreateButton(d);
-                        d.MiniButton.Visible = false;
-                    }
-                    categories.Find(x => x.Name.Equals(d.Category)).IsActive = true;
-                }
-                if (Module.InSection(d, "Tracked - Incomplete", "", _dailyCategory)) {
-                    if (!d.MiniButton.Visible)
-                        d.MiniButton.Visible = true;
-                }
-                else {
-                    if (d.MiniButton.Visible)
-                        d.MiniButton.Visible = false;
-                }
-
-                if (d.MiniButton.Parent != null) {
-                    if (!string.IsNullOrEmpty(d.Achievement) &&
-                                !string.IsNullOrEmpty(d.API) &&
-                                Module._autoCompleteAchievements.Contains(d.API) && 
-                                Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression })) {
-                        if (!d.MiniButton.CompleteButton.BasicTooltipText.Equals("Auto")) {
-                            d.MiniButton.CompleteButton.Icon = _auto0Icon;
-                            d.MiniButton.CompleteButton.ActiveIcon = _auto1Icon;
-                            d.MiniButton.CompleteButton.BasicTooltipText = "Auto";
-                        }
-                    }
-                    else {
-                        if (d.MiniButton.CompleteButton.BasicTooltipText.Equals("Auto")) {
-                            d.MiniButton.CompleteButton.Icon = _complete0Icon;
-                            d.MiniButton.CompleteButton.ActiveIcon = _complete1Icon;
-                            d.MiniButton.CompleteButton.BasicTooltipText = "Toggle complete";
-                        }
-                    }
-                }
-            }
-            _dailyPanel.RecalculateLayout();
-
-            _selectCategory.ValueChanged -= SelectCategoryChanged;
-            _selectCategory.Items.Clear();
-            _selectCategory.Items.Add("All");
-            foreach (Category cat in categories) {
-                if (cat.IsActive)
-                    _selectCategory.Items.Add(cat.Name);
-            }
-            _selectCategory.SelectedItem = (_dailyCategory.Equals("") ? "All" : _dailyCategory);
-            _selectCategory.ValueChanged += SelectCategoryChanged;
-
-            _running = false;
+        public void AddAlert(Daily d, string start) {
+            _alerts.Add(new Alert() {
+                ID = d.Id + "-" + start,
+                DailyID = d.Id,
+                Button = CreateButton(d, start),
+                IsActive = true,
+                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start),
+                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).AddMinutes(d.TimesDuration),
+                Duration = d.TimesDuration,
+            });
         }
 
-        private void SelectCategoryChanged(object sender = null, ValueChangedEventArgs e = null) {
-            _dailyCategory = (e.CurrentValue.Equals("All") ? "" : e.CurrentValue);
-            UpdatePanel();
+        public void UpdatePanel() {
+            foreach (Daily d in Module._dailies) {
+                if (d.Times != null && d.Times.Length > 0) {
+                    foreach (string s in d.Times) {
+                        Alert alert = _alerts.Find(x => x.ID.Equals(d.Id + "-" + s));
+                        if (DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(-int.Parse(Module._settingAlertNotify.Value)) < DateTime.UtcNow &&
+                                    DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration) > DateTime.UtcNow &&
+                                    d.IsDaily && d.IsTracked) {
+                            if (alert == null) {
+                                AddAlert(d, s);
+                                alert = _alerts.Find(x => x.ID.Equals(d.Id + "-" + s));
+                            }
+                            if (!alert.IsActive || d.IsComplete) {
+                                alert.IsActive = false;
+                                alert.Button.Hide();
+                            }
+                            if (!string.IsNullOrEmpty(d.Achievement) &&
+                                        !string.IsNullOrEmpty(d.API) &&
+                                        Module._autoCompleteAchievements.Contains(d.API) &&
+                                        Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression })) {
+                                if (!alert.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
+                                    alert.Button.CompleteButton.Icon = _auto0Icon;
+                                    alert.Button.CompleteButton.ActiveIcon = _auto1Icon;
+                                    alert.Button.CompleteButton.BasicTooltipText = "Auto";
+                                }
+                            }
+                            else {
+                                if (alert.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
+                                    alert.Button.CompleteButton.Icon = _complete0Icon;
+                                    alert.Button.CompleteButton.ActiveIcon = _complete1Icon;
+                                    alert.Button.CompleteButton.BasicTooltipText = "Toggle complete";
+                                }
+                            }
+                        }
+                        else {
+                            if (alert != null) {
+                                alert.Button.Dispose();
+                                _alerts.Remove(new Alert() { ID = d.Id + "-" + s });
+                            }
+                        }
+                    }
+                }
+            }
+            _alertPanel.RecalculateLayout();
+
+            if (Module._settingAlertDrag.Value) {
+                _dragBox.Visible = true;
+                this.BackgroundTexture = _btnBackground;
+            } else {
+                _dragBox.Visible = false;
+                this.BackgroundTexture = null;
+            }
+        }
+
+        public override void UpdateContainer(GameTime gameTime) {
+            if (_dragging) {
+                var nOffset = Input.Mouse.Position - _dragStart;
+                Location += nOffset;
+
+                _dragStart = Input.Mouse.Position;
+            }
         }
     }
 }
