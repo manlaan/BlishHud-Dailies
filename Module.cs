@@ -40,6 +40,7 @@ namespace Manlaan.Dailies
         private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
         private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
         public static SettingEntry<string> _settingAlertNotify;
+        public static SettingEntry<string> _settingAlertDuration;
         private SettingEntry<string> _settingAlertSizeW, _settingAlertSizeH;
         private SettingEntry<bool> _settingAlertEnabled;
         public static SettingEntry<bool> _settingAlertDrag;
@@ -96,6 +97,7 @@ namespace Manlaan.Dailies
             _settingAlertSizeW = settings.DefineSetting("DailyAlertSizeW", @"280", "Alert Width", "");
             _settingAlertSizeH = settings.DefineSetting("DailyAlertSizeH", @"450", "Alert Height", "");
             _settingAlertNotify = settings.DefineSetting("DailyAlertNotify", @"10", "Alert Notify (min)", "");
+            _settingAlertDuration = settings.DefineSetting("DailyAlertDuration", @"0", "Alert Duration (sec) - 0 for Event Duration", "");
             _settingAlertLocation = settings.DefineSetting("DailyAlertLoc", new Point(100, 100));
             _settingAlertDrag = settings.DefineSetting("DailyAlertDrag", false, "Alert Draging (White Box)", "");
             _settingAlertEnabled = settings.DefineSetting("DailyAlertEnabled", false, "Alert Enabled", "");
@@ -110,6 +112,7 @@ namespace Manlaan.Dailies
             _settingAlertSizeW.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertSizeH.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertNotify.SettingChanged += UpdateSettings_Alert_string;
+            _settingAlertDuration.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertDrag.SettingChanged += UpdateSettings_bool;
             _settingAlertEnabled.SettingChanged += UpdateSettings_bool;
         }
@@ -134,6 +137,13 @@ namespace Manlaan.Dailies
             }
             catch {
                 _settingAlertNotify.Value = "10";
+            }
+            try {
+                if (int.Parse(_settingAlertDuration.Value) < 0)
+                    _settingAlertDuration.Value = "0";
+            }
+            catch {
+                _settingAlertDuration.Value = "0";
             }
             _alertWindow.Dispose();
             _alertWindow = new AlertWindow(new Point(int.Parse(_settingAlertSizeW.Value), int.Parse(_settingAlertSizeH.Value))) {
@@ -619,6 +629,7 @@ namespace Manlaan.Dailies
             _settingAlertSizeW.SettingChanged -= UpdateSettings_Alert_string;
             _settingAlertSizeH.SettingChanged -= UpdateSettings_Alert_string;
             _settingAlertNotify.SettingChanged -= UpdateSettings_Alert_string;
+            _settingAlertDuration.SettingChanged -= UpdateSettings_Alert_string; 
             _settingAlertDrag.SettingChanged -= UpdateSettings_bool;
             _settingAlertEnabled.SettingChanged -= UpdateSettings_bool;
 

@@ -15,28 +15,20 @@ namespace Manlaan.Dailies.Models
 {
     public class Alert : IEquatable<Alert>, IComparable<Alert>
     {
-        public string ID { get; set; }
-        public string Name { get; set; }
+        public string Id { get; set; }
         public bool IsActive { get; set; }
-        public string DailyID { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-        public int Duration { get; set; }
+        public string DailyId { get; set; }
         public DailyDetailsButton Button { get; set; }
 
         public Alert() {
-            ID = "";
-            Name = "";
+            Id = "";
             IsActive = true;
-            DailyID = "";
-            StartTime = new DateTime();
-            Duration = 0;
-            EndTime = new DateTime();
+            DailyId = "";
             Button = new DailyDetailsButton();
         }
 
         public override string ToString() {
-            return Name;
+            return Id;
         }
         public override bool Equals(object obj) {
             if (obj == null) return false;
@@ -46,7 +38,7 @@ namespace Manlaan.Dailies.Models
         }
         public bool Equals(Alert other) {
             if (other == null) return false;
-            return (this.ID.Equals(other.ID));
+            return (this.Id.Equals(other.Id));
         }
         public override int GetHashCode() {
             return 0;
@@ -58,7 +50,7 @@ namespace Manlaan.Dailies.Models
             if (compare == null)
                 return 1;
             else
-                return this.ID.CompareTo(compare.ID);
+                return this.Id.CompareTo(compare.Id);
         }
     }
 }

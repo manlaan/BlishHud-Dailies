@@ -188,7 +188,7 @@ namespace Manlaan.Dailies.Controls
                     foreach (string s in d.Times) {
                         _events.Add(
                             new Event() {
-                                DailyID = d.Id,
+                                DailyId = d.Id,
                                 Name = d.Name,
                                 StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s),
                                 EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration),
@@ -202,7 +202,7 @@ namespace Manlaan.Dailies.Controls
                             );
                         _events.Add(
                             new Event() {
-                                DailyID = d.Id,
+                                DailyId = d.Id,
                                 Name = d.Name,
                                 StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
                                 EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),

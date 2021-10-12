@@ -179,10 +179,7 @@ namespace Manlaan.Dailies.Controls
                 CanScroll = false,
                 Size = new Point((int)(_dailyPanel.Width / 3) - 12, 100),
                 Parent = _dailyPanel,
-            };
-            Image buttonbackground = new Image(_btnBackground) {
-                Size = dailyButton.Size,
-                Parent = dailyButton,
+                BackgroundTexture = _btnBackground
             };
 
             Texture2D buttonIcon = _defaultIcon;
@@ -223,7 +220,7 @@ namespace Manlaan.Dailies.Controls
                 VerticalAlignment = VerticalAlignment.Top,
             };
 
-            Image buttonbackground2 = new Image(_btnBackground) {
+            Image buttonbackground = new Image(_btnBackground) {
                 Size = new Point(dailyButton.Size.X, iconSize.Y + 4),
                 Parent = dailyButton,
                 Location = new Point(0, dailyButton.Height - iconSize.Y - 4),

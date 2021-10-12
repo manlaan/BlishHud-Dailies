@@ -17,7 +17,7 @@ namespace Manlaan.Dailies.Models
         Event : IEquatable<Event>, IComparable<Event>
     {
         public string Name { get; set; }
-        public string DailyID { get; set; }
+        public string DailyId { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int Duration { get; set; }
@@ -29,7 +29,7 @@ namespace Manlaan.Dailies.Models
 
         public Event() {
             Name = "";
-            DailyID = "";
+            DailyId = "";
             StartTime = new DateTime();
             Duration = 0;
             EndTime = new DateTime();
