@@ -17,7 +17,7 @@ namespace Manlaan.Dailies.Controls
 
         #region Load Static
 
-        private static Texture2D _btnBackground, _defaultIcon, _resetIcon, _updateIcon;
+        private static Texture2D _btnBackground, _defaultIcon, _resetIcon, _updateIcon, _searchIcon;
         private static Texture2D _noteIcon, _wikiIcon, _timerIcon, _copyIcon, _auto1Icon, _auto0Icon, _complete1Icon, _complete0Icon, _wpIcon, _fav1Icon, _fav0Icon;
 
         static MainWindow() {
@@ -36,6 +36,7 @@ namespace Manlaan.Dailies.Controls
             _updateIcon = Module.ModuleInstance.ContentsManager.GetTexture("2208348.png");
             _fav1Icon = Module.ModuleInstance.ContentsManager.GetTexture("605019.png");
             _fav0Icon = Module.ModuleInstance.ContentsManager.GetTexture("605021.png");
+            _searchIcon = Module.ModuleInstance.ContentsManager.GetTexture("358375.png");
         }
         #endregion
 
@@ -49,7 +50,7 @@ namespace Manlaan.Dailies.Controls
         private Label _dailyCount;
         private bool _running = false;
 
-        public MainWindow(Point size) : base() {
+        public MainWindow(Point size) {
             WinSize = size;
             BuildWindow();
         }
@@ -61,16 +62,24 @@ namespace Manlaan.Dailies.Controls
             };
             TextBox searchBox = new TextBox() {
                 PlaceholderText = "Search",
-                Width = 150,
+                Width = 120,
                 Location = new Point(Dropdown.Standard.ControlOffset.X, 10),
                 Parent = _parentPanel
             };
             searchBox.TextChanged += delegate (object sender, EventArgs args) {
                 _dailySearch = searchBox.Text;
-                UpdatePanel();
+                UpdatePanelAsync();
             };
+            Image searchIcon = new Image(_searchIcon) {
+                Size = new Point(27, 27),
+                Location = new Point(searchBox.Right, 10),
+                Parent = _parentPanel,
+                BasicTooltipText = "Search",
+            };
+            searchIcon.Click += UpdatePanelAsync;
+
             Dropdown ShowItems = new Dropdown() {
-                Location = new Point(searchBox.Right + 8, 10),
+                Location = new Point(searchIcon.Right + 8, 10),
                 Width = 175,
                 Parent = _parentPanel,
             };
@@ -88,14 +97,14 @@ namespace Manlaan.Dailies.Controls
                 UpdatePanel();
             };
             Image updateIcon = new Image(_updateIcon) {
-                Size = new Point(ShowItems.Height, ShowItems.Height),
+                Size = new Point(27, 27),
                 Location = new Point(ShowItems.Right + 8, 10),
                 Parent = _parentPanel,
                 BasicTooltipText = "Force API update\nAPI data can be 5+ min behind game data",
             };
             updateIcon.Click += UpdateAchievements;
             Image resetIcon = new Image(_resetIcon) {
-                Size = new Point(ShowItems.Height, ShowItems.Height),
+                Size = new Point(27, 27),
                 Location = new Point(_parentPanel.Width - ShowItems.Height, 10),
                 Parent = _parentPanel,
                 BasicTooltipText = "Reset all items to incomplete",
@@ -375,7 +384,6 @@ namespace Manlaan.Dailies.Controls
 
         public void UpdatePanel() {
             if (_running) return;
-
             _running = true;
 
             int count = 0;
@@ -480,6 +488,9 @@ namespace Manlaan.Dailies.Controls
 
         private async void UpdateAchievements(object sender = null, MouseEventArgs e = null) {
             await Task.Run(() => Module.ModuleInstance.UpdateAchievements());
+        }
+        private async void UpdatePanelAsync(object sender = null, MouseEventArgs e = null) {
+            await Task.Run(() => UpdatePanel());
         }
 
     }

@@ -18,6 +18,7 @@ using Manlaan.Dailies.Models;
 using Manlaan.Dailies.Controls;
 using System.Net;
 using Blish_HUD.Gw2WebApi;
+using Blish_HUD.Graphics.UI;
 
 namespace Manlaan.Dailies
 {
@@ -34,15 +35,15 @@ namespace Manlaan.Dailies
 
         public static SettingEntry<DateTime> _settingLastReset;
         //private SettingEntry<string> _settingFestivalStart;
-        private SettingEntry<Point> _settingMiniLocation;
-        private SettingEntry<Point> _settingEventLocation;
+        public static SettingEntry<Point> _settingMiniLocation;
+        public static SettingEntry<Point> _settingEventLocation;
         public static SettingEntry<Point> _settingAlertLocation;
-        private SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
-        private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
+        public static SettingEntry<string> _settingMiniSizeW, _settingMiniSizeH;
+        public static SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
         public static SettingEntry<string> _settingAlertNotify;
         public static SettingEntry<string> _settingAlertDuration;
-        private SettingEntry<string> _settingAlertSizeW;
-        private SettingEntry<bool> _settingAlertEnabled;
+        public static SettingEntry<string> _settingAlertSizeW;
+        public static SettingEntry<bool> _settingAlertEnabled;
         public static SettingEntry<bool> _settingAlertDrag;
         public static SettingEntry<string> _settingEventHours;
         public static SettingEntry<bool> _setting24HrTime;
@@ -90,17 +91,17 @@ namespace Manlaan.Dailies
             _settingMiniLocation = settings.DefineSetting("DailyMiniLoc", new Point(100, 100));
             _settingEventLocation = settings.DefineSetting("DailyEventLoc", new Point(100, 100));
             _settingEventHours = settings.DefineSetting("DailyEventHours", "2", "Event Hours", "");
-            _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"280", "Mini Window Width", "");
+            _settingMiniSizeW = settings.DefineSetting("DailyMiniSizeH", @"265", "Mini Window Width", "");
             _settingMiniSizeH = settings.DefineSetting("DailyMiniSizeW", @"450", "Mini Window Height", "");
             _settingEventSizeW = settings.DefineSetting("DailyEventSizeH", @"600", "Event Window Width", "");
             _settingEventSizeH = settings.DefineSetting("DailyEventSizeW", @"300", "Event Window Height", "");
             _settingDontShowIntro = settings.DefineSetting("DailyDontShowIntro", false, "Don't Show Intro", "");
-            _settingAlertSizeW = settings.DefineSetting("DailyAlertSizeW", @"280", "Alert Width", "");
+            _settingAlertSizeW = settings.DefineSetting("DailyAlertSizeW", @"250", "Alert Width", "");
             _settingAlertNotify = settings.DefineSetting("DailyAlertNotify", @"10", "Alert Notify (min)", "");
             _settingAlertDuration = settings.DefineSetting("DailyAlertDuration", @"0", "Alert Duration (sec) - 0 for Event Duration", "");
             _settingAlertLocation = settings.DefineSetting("DailyAlertLoc", new Point(100, 100));
             _settingAlertDrag = settings.DefineSetting("DailyAlertDrag", false, "Alert Draging (White Box)", "");
-            _settingAlertEnabled = settings.DefineSetting("DailyAlertEnabled", false, "Alert Enabled", "");
+            _settingAlertEnabled = settings.DefineSetting("DailyAlertEnabled", false, " ", "");
 
             _setting24HrTime.SettingChanged += UpdateSettings_bool;
             _settingDontShowIntro.SettingChanged += UpdateSettings_bool;
@@ -115,6 +116,11 @@ namespace Manlaan.Dailies
             _settingAlertDrag.SettingChanged += UpdateSettings_bool;
             _settingAlertEnabled.SettingChanged += UpdateSettings_bool;
         }
+        public override IView GetSettingsView() {
+            return new Dailies.Views.SettingsView();
+            //return new SettingsView( (this.ModuleParameters.SettingsManager.ModuleSettings);
+        }
+
         private void UpdateSettings_Alert_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             try {
                 if (int.Parse(_settingAlertSizeW.Value) < 0)
@@ -360,13 +366,12 @@ namespace Manlaan.Dailies
             _moduleTab = Overlay.BlishHudWindow.AddTab("Dailies", _pageIcon, _mainWindow._parentPanel);
 
             if (!_settingDontShowIntro.Value) {
-                _introWindow = new IntroWindow(new Point(375, 260)) {
+                _introWindow = new IntroWindow() {
                     Location = new Point(200, 200),
                     Parent = GameService.Graphics.SpriteScreen,
                 };
                 _introWindow.Show();
             }
-
 
             // Base handler must be called
             base.OnModuleLoaded(e);
@@ -612,8 +617,8 @@ namespace Manlaan.Dailies
                 await Task.Run(() => _alertWindow.UpdatePanel());
                 await Task.Run(() => UpdateTimes());
             }
-            if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
-                _settingLastReset.Value = DateTime.UtcNow.Date;
+            if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1).AddMinutes(-int.Parse(_settingAlertNotify.Value))) {
+                _settingLastReset.Value = DateTime.UtcNow.AddMinutes(int.Parse(_settingAlertNotify.Value)).Date;
                 _mainWindow.SetAllComplete(false, true);
                 await Task.Run(() => UpdateAchievements());
             }

@@ -42,23 +42,14 @@ namespace Manlaan.Dailies.Controls
         private bool _dragging = false;
         private Point _dragStart = Point.Zero;
 
-        public AlertWindow() : base() {
+        public AlertWindow() {
             FlowDirection = ControlFlowDirection.LeftToRight;
             ControlPadding = new Vector2(8, 8);
             Location = new Point(0, 0);
             CanScroll = true;
             ShowBorder = false;
             HeightSizingMode = SizingMode.AutoSize;
-            BuildWindow();
-        }
-        protected override CaptureType CapturesInput() {
-            if (_dragging)
-                return CaptureType.Mouse;
-            else
-                return CaptureType.Filter;
-        }
 
-        private void BuildWindow() {
             _dragBox = new Panel() {
                 Parent = this,
                 Location = new Point(0, 0),
@@ -76,6 +67,13 @@ namespace Manlaan.Dailies.Controls
                 Module._settingAlertLocation.Value = this.Location;
             };
         }
+        protected override CaptureType CapturesInput() {
+            if (_dragging)
+                return CaptureType.Mouse;
+            else
+                return CaptureType.Filter;
+        }
+
 
         public DailyDetailsButton CreateButton(Daily d, string start) {
             Point iconSize = new Point(26, 26);
@@ -210,6 +208,7 @@ namespace Manlaan.Dailies.Controls
                     Parent = dailyButton,
                     Text = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).ToLocalTime().ToString(timeformat),
                     Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
+                    BasicTooltipText = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).ToLocalTime().ToString(timeformat) + " - " + DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).AddMinutes(d.TimesDuration).ToLocalTime().ToString(timeformat),
                 };
                 xloc = dailyButton.TimeButton.Right + 5;
             }
@@ -250,7 +249,7 @@ namespace Manlaan.Dailies.Controls
                 Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                 alert.IsActive = false;
                 alert.Button.Hide();
-                RecalculateLayout();
+                DoRecalculateLayout();  
             };
 
             dailyButton.CompleteButton = new GlowButton() {
@@ -276,7 +275,7 @@ namespace Manlaan.Dailies.Controls
                         Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                         alert.IsActive = false;
                         alert.Button.Hide();
-                        RecalculateLayout();
+                        DoRecalculateLayout();
                         d.MiniButton.Visible = false;
                     }
                     Module.ModuleInstance.UpdateDailyPanel();
@@ -312,6 +311,7 @@ namespace Manlaan.Dailies.Controls
                             if (alert == null) {
                                 AddAlert(d, s);
                                 alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + s));
+                                DoRecalculateLayout();
                             }
                             if ((startTime < DateTime.UtcNow && endTime > DateTime.UtcNow) || (startTime.AddDays(1) < DateTime.UtcNow && endTime.AddDays(1) > DateTime.UtcNow)) { 
                                 alert.Button.BackgroundTexture = _btnActiveBackground;
@@ -320,6 +320,7 @@ namespace Manlaan.Dailies.Controls
                             if (!alert.IsActive || d.IsComplete) {
                                 alert.IsActive = false;
                                 alert.Button.Hide();
+                                DoRecalculateLayout();
                             }
                             if (!string.IsNullOrEmpty(d.Achievement) &&
                                         !string.IsNullOrEmpty(d.API) &&
@@ -343,29 +344,41 @@ namespace Manlaan.Dailies.Controls
                             if (alert != null) {
                                 alert.Button.Dispose();
                                 _alerts.Remove(new Alert() { Id = d.Id + "-" + s });
+                                DoRecalculateLayout();
                             }
                         }
                     }
                 }
             }
-            //RecalculateLayout();
-
-            if (Module._settingAlertDrag.Value) {
-                _dragBox.Visible = true;
-                this.BackgroundTexture = _btnBackground;
-            } else {
-                _dragBox.Visible = false;
-                this.BackgroundTexture = null;
-            }
         }
 
         public override void UpdateContainer(GameTime gameTime) {
             UpdatePanel();
+            if (Module._settingAlertDrag.Value) {
+                _dragBox.Visible = true;
+                this.BackgroundTexture = _btnBackground;
+            }
+            else {
+                _dragBox.Visible = false;
+                this.BackgroundTexture = null;
+            }
+
             if (_dragging) {
                 var nOffset = Input.Mouse.Position - _dragStart;
                 Location += nOffset;
 
                 _dragStart = Input.Mouse.Position;
+            }
+        }
+        //RecalculateLayout will sometimes crash with a System.Threading.LockRecursionException' in System.Core.dll
+        public void DoRecalculateLayout() {
+            bool complete = false;
+            while (!complete) {
+                try {
+                    RecalculateLayout();
+                    complete = true;
+                }
+                catch { }
             }
         }
     }

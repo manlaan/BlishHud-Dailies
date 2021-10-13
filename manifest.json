@@ -1,11 +1,11 @@
 {
     "name": "Dailies",
-    "version": "0.9.0",
+    "version": "0.9.5",
     "namespace": "Manlaan.Dailies",
     "package": "Dailies.dll",
     "manifest_version": 1,
 
-    "description": "Track your daily completions.",
+    "description": "Track your daily achievements and events.",
     "dependencies": {
         "bh.blishhud": ">=0.11.0"
     },

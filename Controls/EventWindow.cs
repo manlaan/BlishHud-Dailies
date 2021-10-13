@@ -38,7 +38,7 @@ namespace Manlaan.Dailies.Controls
         private List<Category> _eventGroups = new List<Category>();
         private bool _running = false;
 
-        public EventWindow(Point size) : base() {
+        public EventWindow(Point size) {
             _eventSets.Add("Daily");
             _eventSets.Add("Core");
             _eventSets.Add("Heart of Thorns");
@@ -61,17 +61,13 @@ namespace Manlaan.Dailies.Controls
         }
 
         private void BuildWindow() {
-            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y+6), new Rectangle(0, 0, WinSize.X, WinSize.Y+6));
+            ConstructWindow(_blankBackground, new Rectangle(0, 0, WinSize.X, WinSize.Y + 6), new Rectangle(0, 0, WinSize.X, WinSize.Y + 6));
             _parentPanel = new Panel() {
                 CanScroll = false,
-                Size = new Point(WinSize.X, WinSize.Y),
+                Size = WinSize,
                 Location = new Point(0, 6),
                 Parent = this,
-            };
-            Image bgimage = new Image(_wndBackground) {
-                Location = new Point(0, 0),
-                Size = _parentPanel.Size,
-                Parent = _parentPanel,
+                BackgroundTexture = _wndBackground
             };
 
             _selectSet = new Dropdown() {
@@ -334,6 +330,5 @@ namespace Manlaan.Dailies.Controls
             System.Drawing.Color systemColor = System.Drawing.Color.FromName(colorname);
             return new Color(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
         }
-
     }
 }
