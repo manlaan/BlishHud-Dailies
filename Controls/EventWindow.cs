@@ -38,7 +38,6 @@ namespace Manlaan.Dailies.Controls
         private List<Category> _eventGroups = new List<Category>();
         private bool _running = false;
 
-
         public EventWindow(Point size) : base() {
             _eventSets.Add("Daily");
             _eventSets.Add("Core");
@@ -131,9 +130,9 @@ namespace Manlaan.Dailies.Controls
 
         public Panel CreateButton(Panel panel, Event e) {
             float minuteWidth = ((float)_parentPanel.Size.X - 25 - 100 - 15) / (float.Parse(Module._settingEventHours.Value) * 60);
-            float offset = ((e.StartTime.Date.AddMinutes(-15) - DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
+            float offset = ((DateTime.UtcNow.AddMinutes(-15).Date - DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + (RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute * minuteWidth);
             float buttonwidth = (e.Duration) * minuteWidth;
-            float buttonstart = ((e.StartTime.Date-DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (e.StartTime.Hour * 60 * minuteWidth) + ((e.StartTime.Minute) * minuteWidth) + 100;
+            float buttonstart = ((e.StartTime.Date- DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (e.StartTime.Hour * 60 * minuteWidth) + ((e.StartTime.Minute) * minuteWidth) + 100;
             //if (offset > buttonstart) offset = 0;
             buttonstart -= offset;
 
@@ -206,6 +205,20 @@ namespace Manlaan.Dailies.Controls
                                 Name = d.Name,
                                 StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1),
                                 EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1).AddMinutes(d.TimesDuration),
+                                Duration = d.TimesDuration,
+                                Group = d.TimesGroup,
+                                Button = new Panel(),
+                                Color = FindColor(d.TimesColor),
+                                Waypoint = d.Waypoint,
+                                Daily = new Daily() { IsTracked = d.IsTracked, IsComplete = d.IsComplete, Name = d.Name, Category = d.Category, IsDaily = d.IsDaily },
+                            }
+                            );
+                        _events.Add(
+                            new Event() {
+                                DailyId = d.Id,
+                                Name = d.Name,
+                                StartTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(-1),
+                                EndTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(-1).AddMinutes(d.TimesDuration),
                                 Duration = d.TimesDuration,
                                 Group = d.TimesGroup,
                                 Button = new Panel(),
@@ -304,9 +317,8 @@ namespace Manlaan.Dailies.Controls
                 }
             }
 
-            float offset = (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + ((RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute) * minuteWidth);
-            float curtime = ((DateTime.UtcNow.Hour * 60 * minuteWidth) + (DateTime.UtcNow.Minute) * minuteWidth);
-            if (offset > curtime) offset = 0;
+            float offset = ((DateTime.UtcNow.AddMinutes(-15).Date - DateTime.UtcNow.Date).Days * 1440 * minuteWidth) + (DateTime.UtcNow.AddMinutes(-15).Hour * 60 * minuteWidth) + (RoundDown(DateTime.UtcNow.AddMinutes(-15)).Minute * minuteWidth);
+            float curtime = (DateTime.UtcNow.Hour * 60 * minuteWidth) + (DateTime.UtcNow.Minute * minuteWidth);
             float timeloc = 100 + (curtime - offset) + _eventPanel.Location.X;
             _timeMarker.Location = new Point((int)(timeloc), _eventPanel.Top);
             _eventPanel.RecalculateLayout();
@@ -322,5 +334,6 @@ namespace Manlaan.Dailies.Controls
             System.Drawing.Color systemColor = System.Drawing.Color.FromName(colorname);
             return new Color(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
         }
+
     }
 }

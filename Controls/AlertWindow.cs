@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Manlaan.Dailies.Controls
 {
-    class AlertWindow : Panel
+    class AlertWindow : FlowPanel
     {
         #region Load Static
 
@@ -38,27 +38,27 @@ namespace Manlaan.Dailies.Controls
 
 
         private Panel _dragBox = new Panel();
-        private FlowPanel _alertPanel;
         private List<Alert> _alerts = new List<Alert>();
         private bool _dragging = false;
         private Point _dragStart = Point.Zero;
 
-        public AlertWindow(Point size) : base() {
-            Size = size;
+        public AlertWindow() : base() {
+            FlowDirection = ControlFlowDirection.LeftToRight;
+            ControlPadding = new Vector2(8, 8);
+            Location = new Point(0, 0);
+            CanScroll = true;
+            ShowBorder = false;
+            HeightSizingMode = SizingMode.AutoSize;
             BuildWindow();
+        }
+        protected override CaptureType CapturesInput() {
+            if (_dragging)
+                return CaptureType.Mouse;
+            else
+                return CaptureType.Filter;
         }
 
         private void BuildWindow() {
-            _alertPanel = new FlowPanel() {
-                FlowDirection = ControlFlowDirection.LeftToRight,
-                ControlPadding = new Vector2(8, 8),
-                Location = new Point(0, 0),
-                Size = this.Size,
-                CanScroll = true,
-                Parent = this,
-                ShowBorder = false,
-            };
-
             _dragBox = new Panel() {
                 Parent = this,
                 Location = new Point(0, 0),
@@ -82,8 +82,8 @@ namespace Manlaan.Dailies.Controls
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
                 CanScroll = false,
-                Size = new Point(_alertPanel.Size.X - 20, 73),
-                Parent = _alertPanel,
+                Size = new Point(Size.X - 20, 73),
+                Parent = this,
                 BackgroundTexture = _btnDarkBackground,
             };
 
@@ -114,6 +114,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = dailyButton,
                 Text = d.Category,
                 Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
+                BasicTooltipText = d.Name,
             };
             Label Desc = new Label() {
                 Location = new Point(Category.Left, Category.Bottom - 1),
@@ -122,6 +123,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = dailyButton,
                 Text = d.Name,
+                BasicTooltipText = d.Name,
             };
 
             Image buttonbackground2 = new Image(_btnBackground) {
@@ -248,7 +250,7 @@ namespace Manlaan.Dailies.Controls
                 Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                 alert.IsActive = false;
                 alert.Button.Hide();
-                _alertPanel.RecalculateLayout();
+                RecalculateLayout();
             };
 
             dailyButton.CompleteButton = new GlowButton() {
@@ -274,7 +276,7 @@ namespace Manlaan.Dailies.Controls
                         Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                         alert.IsActive = false;
                         alert.Button.Hide();
-                        _alertPanel.RecalculateLayout();
+                        RecalculateLayout();
                         d.MiniButton.Visible = false;
                     }
                     Module.ModuleInstance.UpdateDailyPanel();
@@ -311,7 +313,7 @@ namespace Manlaan.Dailies.Controls
                                 AddAlert(d, s);
                                 alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + s));
                             }
-                            if (startTime < DateTime.UtcNow || startTime.AddDays(1) < DateTime.UtcNow) {
+                            if ((startTime < DateTime.UtcNow && endTime > DateTime.UtcNow) || (startTime.AddDays(1) < DateTime.UtcNow && endTime.AddDays(1) > DateTime.UtcNow)) { 
                                 alert.Button.BackgroundTexture = _btnActiveBackground;
                             }
 
@@ -346,7 +348,7 @@ namespace Manlaan.Dailies.Controls
                     }
                 }
             }
-            _alertPanel.RecalculateLayout();
+            //RecalculateLayout();
 
             if (Module._settingAlertDrag.Value) {
                 _dragBox.Visible = true;

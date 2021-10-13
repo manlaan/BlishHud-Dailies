@@ -41,7 +41,7 @@ namespace Manlaan.Dailies
         private SettingEntry<string> _settingEventSizeW, _settingEventSizeH;
         public static SettingEntry<string> _settingAlertNotify;
         public static SettingEntry<string> _settingAlertDuration;
-        private SettingEntry<string> _settingAlertSizeW, _settingAlertSizeH;
+        private SettingEntry<string> _settingAlertSizeW;
         private SettingEntry<bool> _settingAlertEnabled;
         public static SettingEntry<bool> _settingAlertDrag;
         public static SettingEntry<string> _settingEventHours;
@@ -81,6 +81,7 @@ namespace Manlaan.Dailies
         [ImportingConstructor]
         public Module([Import("ModuleParameters")] ModuleParameters moduleParameters) : base(moduleParameters) { ModuleInstance = this; }
 
+        #region Settings
         protected override void DefineSettings(SettingCollection settings) {
             //_settingFestivalStart = settings.DefineSetting("DailyFestivalStart", @"01/01/2000", "Festival Start Date", "");
             _setting24HrTime = settings.DefineSetting("Daily24HrTime", false, "24 Hour Time", "");
@@ -95,7 +96,6 @@ namespace Manlaan.Dailies
             _settingEventSizeH = settings.DefineSetting("DailyEventSizeW", @"300", "Event Window Height", "");
             _settingDontShowIntro = settings.DefineSetting("DailyDontShowIntro", false, "Don't Show Intro", "");
             _settingAlertSizeW = settings.DefineSetting("DailyAlertSizeW", @"280", "Alert Width", "");
-            _settingAlertSizeH = settings.DefineSetting("DailyAlertSizeH", @"450", "Alert Height", "");
             _settingAlertNotify = settings.DefineSetting("DailyAlertNotify", @"10", "Alert Notify (min)", "");
             _settingAlertDuration = settings.DefineSetting("DailyAlertDuration", @"0", "Alert Duration (sec) - 0 for Event Duration", "");
             _settingAlertLocation = settings.DefineSetting("DailyAlertLoc", new Point(100, 100));
@@ -110,7 +110,6 @@ namespace Manlaan.Dailies
             _settingEventSizeW.SettingChanged += UpdateSettings_Event_string;
             _settingEventHours.SettingChanged += UpdateSettings_Event_string;
             _settingAlertSizeW.SettingChanged += UpdateSettings_Alert_string;
-            _settingAlertSizeH.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertNotify.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertDuration.SettingChanged += UpdateSettings_Alert_string;
             _settingAlertDrag.SettingChanged += UpdateSettings_bool;
@@ -123,13 +122,6 @@ namespace Manlaan.Dailies
             }
             catch {
                 _settingAlertSizeW.Value = "100";
-            }
-            try {
-                if (int.Parse(_settingAlertSizeH.Value) < 0)
-                    _settingAlertSizeH.Value = "100";
-            }
-            catch {
-                _settingAlertSizeH.Value = "100";
             }
             try {
                 if (int.Parse(_settingAlertNotify.Value) < 0)
@@ -146,12 +138,16 @@ namespace Manlaan.Dailies
                 _settingAlertDuration.Value = "0";
             }
             _alertWindow.Dispose();
-            _alertWindow = new AlertWindow(new Point(int.Parse(_settingAlertSizeW.Value), int.Parse(_settingAlertSizeH.Value))) {
+            _alertWindow = new AlertWindow() {
                 Location = _settingAlertLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
+                Size = new Point(int.Parse(_settingAlertSizeW.Value), 0)
             };
             UpdateDailyPanel();
-            _alertWindow.Show();
+            if (_settingAlertEnabled.Value)
+                _alertWindow.Show();
+            else
+                _alertWindow.Hide();
         }
         private void UpdateSettings_Mini_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             try {
@@ -210,7 +206,9 @@ namespace Manlaan.Dailies
             UpdateDailyPanel();
             _alertWindow.Visible = _settingAlertEnabled.Value;
         }
+        #endregion
 
+        #region Startup
         protected override void Initialize() {
             _dailies = new List<Daily>();
             _newdailies = new List<Daily>();
@@ -331,12 +329,11 @@ namespace Manlaan.Dailies
             _eventWindow.UpdatePanel();
 
             _cornerIcon.LoadingMessage = "Preloading Alert Window...";
-            _alertWindow = new AlertWindow(new Point(int.Parse(_settingAlertSizeW.Value), int.Parse(_settingAlertSizeH.Value))) {
+            _alertWindow = new AlertWindow() {
                 Location = _settingAlertLocation.Value,
                 Parent = GameService.Graphics.SpriteScreen,
+                Size = new Point(int.Parse(_settingAlertSizeW.Value), 0)
             };
-            if (_settingAlertEnabled.Value) 
-                _alertWindow.Show();
 
             UpdateAchievements();
             UpdateTimes();
@@ -352,6 +349,11 @@ namespace Manlaan.Dailies
         }
 
         protected override void OnModuleLoaded(EventArgs e) {
+            if (_settingAlertEnabled.Value)
+                _alertWindow.Show();
+            else
+                _alertWindow.Hide();
+
             Timer_AchieveUpdate.Start();
             Timer_TimesUpdate.Start();
             Timer_APIUpdate.Start();
@@ -365,10 +367,11 @@ namespace Manlaan.Dailies
                 _introWindow.Show();
             }
 
+
             // Base handler must be called
             base.OnModuleLoaded(e);
         }
-
+        #endregion
 
         internal async void UpdateDailyPanel() {
             try {
@@ -392,10 +395,11 @@ namespace Manlaan.Dailies
 
             try {
                 var apiAchieveDay = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Daily.GetAsync();
-                foreach (var a in apiAchieveDay.Fractals)
-                    if (a.Level.Max == 80)
-                        TodayAchieve.Add(a.Id.ToString());
                 foreach (var a in apiAchieveDay.Pve)
+                    if (apiAchieveDay.Pve.Count(x => x.Id == a.Id) == 1)  //It appears that if an achievement is listed twice, usually once at a lower level, it is not available as a daily.
+                        if (a.Level.Max == 80)
+                            TodayAchieve.Add(a.Id.ToString());
+                foreach (var a in apiAchieveDay.Fractals)
                     if (a.Level.Max == 80)
                         TodayAchieve.Add(a.Id.ToString());
                 foreach (var a in apiAchieveDay.Pvp)
@@ -409,8 +413,10 @@ namespace Manlaan.Dailies
                         TodayAchieve.Add(a.Id.ToString());
 
                 TodayAchieve.AddRange(UpdateGW2API());
-                /// This doesn't work correctly due to GW2 API caching results for some categories for an hour.  <see cref="UpdateGW2API"/> 
-                /*var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
+                /// This doesn't work correctly due to GW2 API caching results for some categories for an hour.  <see cref="UpdateGW2API"/>  
+                /// https://github.com/blish-hud/Blish-HUD/issues/445
+                /*
+                var apiGroup = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Groups.GetAsync(new Guid("18DB115A-8637-4290-A636-821362A3C4A8"));
                 foreach (int grp in apiGroup.Categories) {
                     if (grp != 97) { //dailies - retrieved from apiAchieveDay
                         var apidata = await Gw2ApiManager.Gw2ApiClient.V2.Achievements.Categories.GetAsync(grp);
@@ -418,7 +424,8 @@ namespace Manlaan.Dailies
                             TodayAchieve.Add(data.ToString());
                         }
                     }
-                }*/
+                }
+                */
 
                 foreach (string ach in TodayAchieve) {
                     Daily daily = _dailies.Find(x => x.Achievement.Equals(ach));
@@ -524,8 +531,9 @@ namespace Manlaan.Dailies
 
             _runningAchieve = false;
         }
-        
-        /* Doing this because GW2 API caches some of the categories for over an hour past reset */
+
+        /// Doing this because GW2 API caches some of the categories for over an hour past reset
+        /// https://github.com/blish-hud/Blish-HUD/issues/445
         private List<string> UpdateGW2API () {
             Timer_APIUpdate.Restart();
 
@@ -541,16 +549,17 @@ namespace Manlaan.Dailies
                 GW2API_Category json = JsonSerializer.Deserialize<GW2API_Category>(contents, jsonOptions);
 
                 foreach (int i in json.Categories) {
-                    try {
-                        string contents2 = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString() + "? rand = " + DateTime.Now.Ticks.ToString());
-                        GW2API_Group json2 = JsonSerializer.Deserialize<GW2API_Group>(contents2, jsonOptions);
+                    if (i != 97) { //dailies - retrieved from apiAchieveDay
+                        try {
+                            string contents2 = new WebClient().DownloadString("https://api.guildwars2.com/v2/achievements/categories/" + i.ToString() + "? rand = " + DateTime.Now.Ticks.ToString());
+                            GW2API_Group json2 = JsonSerializer.Deserialize<GW2API_Group>(contents2, jsonOptions);
 
-                        foreach (int j in json2.Achievements) {
-                            if (j != 97)  //dailies - retrieved from apiAchieveDay
+                            foreach (int j in json2.Achievements) {
                                 achiev.Add(j.ToString());
+                            }
                         }
+                        catch { }
                     }
-                    catch { }
                 }
             }
             catch { }
@@ -627,7 +636,6 @@ namespace Manlaan.Dailies
             _settingEventSizeW.SettingChanged -= UpdateSettings_Event_string;
             _settingEventHours.SettingChanged -= UpdateSettings_Event_string;
             _settingAlertSizeW.SettingChanged -= UpdateSettings_Alert_string;
-            _settingAlertSizeH.SettingChanged -= UpdateSettings_Alert_string;
             _settingAlertNotify.SettingChanged -= UpdateSettings_Alert_string;
             _settingAlertDuration.SettingChanged -= UpdateSettings_Alert_string; 
             _settingAlertDrag.SettingChanged -= UpdateSettings_bool;

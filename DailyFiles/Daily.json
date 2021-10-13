@@ -1871,7 +1871,7 @@
         "achievement": "1938",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Plains of Ashford\nDiessa Plateau\nFields of Ruin\nBlazeridge Steppes\nIron Marches\nFireheart Rise"
     },
     {
         "id": "day_vista_Kryta",
@@ -1884,7 +1884,7 @@
         "achievement": "1839",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Queensdale\nKessex Hills\nGendarran Fields\nHarathi Hinterlands\nBloodtide Coast\nSouthsun Cove"
     },
     {
         "id": "day_vista_Maguuma",
@@ -1897,7 +1897,7 @@
         "achievement": "1931",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Caledon Forest\nMetrica Province\nBrisban Wildlands\nSparkfly Fen\nMount Maelstrom"
     },
     {
         "id": "day_vista_Wastes",
@@ -1910,7 +1910,7 @@
         "achievement": "1937",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Dry Top\nSilverwastes"
     },
     {
         "id": "day_vista_Orr",
@@ -1923,7 +1923,7 @@
         "achievement": "1932",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Straits of Devastation\nMalchor's Leap\nCursed Shore"
     },
     {
         "id": "day_vista_Shiverpeaks",
@@ -1936,7 +1936,7 @@
         "achievement": "1936",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Wayfarer Foothills\nSnowden Drifts\nLornar's Pass\nDredgehaunt Cliffs\nTimberline Falls\nFrostgorge Sound"
     },
     {
         "id": "day_vista_Heart",
@@ -1949,7 +1949,7 @@
         "achievement": "2983",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Verdant Brink\nAuric Basin\nTangled Depths\nDragon's Stand"
     },
     {
         "id": "day_vista_Desert",
@@ -1962,7 +1962,7 @@
         "achievement": "3721",
         "api": "achievements",
         "icon": "866127.png",
-        "note": ""
+        "note": "Crystal Oasis\nDesert Highlands\nElon Riverlands\nDesolation\nDomain of Vabbi"
     },
 
     /* Bosses */

@@ -129,6 +129,7 @@ namespace Manlaan.Dailies.Controls
                 Parent = dailyButton,
                 Text = d.Category,
                 Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size12, ContentService.FontStyle.Italic),
+                BasicTooltipText = d.Name,
             };
             Label Desc = new Label() {
                 Location = new Point(Category.Left, Category.Bottom - 1),
@@ -137,6 +138,7 @@ namespace Manlaan.Dailies.Controls
                 WrapText = false,
                 Parent = dailyButton,
                 Text = d.Name,
+                BasicTooltipText = d.Name,
             };
 
             Image buttonbackground = new Image(_btnBackground) {
