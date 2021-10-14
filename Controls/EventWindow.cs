@@ -145,7 +145,7 @@ namespace Manlaan.Dailies.Controls
             };
 
             string timeformat = "h:mm tt";
-            if (Module._setting24HrTime.Value) timeformat = "H:mm";
+            if (Module._setting24HrTime.Value) timeformat = "HH:mm";
 
             Label EventDesc = new Label() {
                 Size = new Point(EventButton.Size.X - 10, _categoryHeight),
@@ -249,7 +249,7 @@ namespace Manlaan.Dailies.Controls
             PopulateEvents();
 
             string timeformat = "h:mm tt";
-            if (Module._setting24HrTime.Value) timeformat = "H:mm";
+            if (Module._setting24HrTime.Value) timeformat = "HH:mm";
 
             DateTime panelStartTime = RoundDown(DateTime.UtcNow.AddMinutes(-15));
             DateTime panelEndTime = RoundDown(DateTime.UtcNow.AddMinutes(-15).AddMinutes((int.Parse(Module._settingEventHours.Value) * 4) * 15));

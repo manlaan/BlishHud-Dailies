@@ -578,7 +578,7 @@ namespace Manlaan.Dailies
 
             Timer_TimesUpdate.Restart();
             string timeformat = "h:mm tt";
-            if (_setting24HrTime.Value) timeformat = "H:mm";
+            if (_setting24HrTime.Value) timeformat = "HH:mm";
             foreach (Daily day in _dailies) {
                 if (day.Times != null && day.Times.Length > 0) {
                     List<DateTime> times = new List<DateTime>();
@@ -617,8 +617,8 @@ namespace Manlaan.Dailies
                 await Task.Run(() => _alertWindow.UpdatePanel());
                 await Task.Run(() => UpdateTimes());
             }
-            if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1).AddMinutes(-int.Parse(_settingAlertNotify.Value))) {
-                _settingLastReset.Value = DateTime.UtcNow.AddMinutes(int.Parse(_settingAlertNotify.Value)).Date;
+            if (_settingLastReset.Value <= DateTime.UtcNow.Date.AddDays(-1)) {
+                _settingLastReset.Value = DateTime.UtcNow.Date;
                 _mainWindow.SetAllComplete(false, true);
                 await Task.Run(() => UpdateAchievements());
             }

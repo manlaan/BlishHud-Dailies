@@ -7,6 +7,15 @@ namespace Manlaan.Dailies.Views
 {
     class SettingsView : View
     {
+        TextBox settingMiniWindowWidth_Textbox;
+        TextBox settingMiniWindowHeight_Textbox;
+        TextBox settingEventWindowWidth_Textbox;
+        TextBox settingEventWindowHeight_Textbox;
+        TextBox settingEventWindowHours_Textbox;
+        TextBox settingAlertWindowWidth_Textbox;
+        TextBox settingAlertNotify_Textbox;
+        TextBox settingAlertDuration_Textbox;
+
         protected override void Build(Container buildPanel) {
             int labelMainWidth = 100;
             int labelSubWidth = 60;
@@ -37,21 +46,13 @@ namespace Manlaan.Dailies.Views
                 Text = "Width: ",
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            TextBox settingMiniWindowWidth_Textbox = new TextBox() {
+            settingMiniWindowWidth_Textbox = new TextBox() {
                 Location = new Point(settingMiniWindowWidth_Label.Right + 4, settingMiniWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingMiniSizeW.Value,
             };
-            settingMiniWindowWidth_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingMiniWindowWidth_Textbox.Text);
-                    Module._settingMiniSizeW.Value = settingMiniWindowWidth_Textbox.Text;
-                }
-                catch {
-                    settingMiniWindowWidth_Textbox.Text = Module._settingMiniSizeW.Value;
-                }
-            };
+            settingMiniWindowWidth_Textbox.InputFocusChanged += UpdateSettings;
             Label settingMiniWindowHeight_Label = new Label() {
                 Location = new Point(settingMiniWindowWidth_Textbox.Right + 4, settingMiniWindow_Label.Top),
                 Width = labelSubWidth,
@@ -61,21 +62,13 @@ namespace Manlaan.Dailies.Views
                 Text = "Height: ",
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            TextBox settingMiniWindowHeight_Textbox = new TextBox() {
+            settingMiniWindowHeight_Textbox = new TextBox() {
                 Location = new Point(settingMiniWindowHeight_Label.Right + 4, settingMiniWindow_Label.Top- 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingMiniSizeH.Value,
             };
-            settingMiniWindowHeight_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingMiniWindowHeight_Textbox.Text);
-                    Module._settingMiniSizeH.Value = settingMiniWindowHeight_Textbox.Text;
-                }
-                catch {
-                    settingMiniWindowHeight_Textbox.Text = Module._settingMiniSizeH.Value;
-                }
-            };
+            settingMiniWindowHeight_Textbox.InputFocusChanged += UpdateSettings;
 
 
             Label settingEventWindow_Label = new Label() {
@@ -95,21 +88,13 @@ namespace Manlaan.Dailies.Views
                 Text = "Width: ",
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            TextBox settingEventWindowWidth_Textbox = new TextBox() {
+            settingEventWindowWidth_Textbox = new TextBox() {
                 Location = new Point(settingEventWindowWidth_Label.Right + 4, settingEventWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingEventSizeW.Value,
             };
-            settingEventWindowWidth_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingEventWindowWidth_Textbox.Text);
-                    Module._settingEventSizeW.Value = settingEventWindowWidth_Textbox.Text;
-                }
-                catch {
-                    settingEventWindowWidth_Textbox.Text = Module._settingEventSizeW.Value;
-                }
-            };
+            settingEventWindowWidth_Textbox.InputFocusChanged += UpdateSettings;
             Label settingEventWindowHeight_Label = new Label() {
                 Location = new Point(settingEventWindowWidth_Textbox.Right + 4, settingEventWindow_Label.Top),
                 Width = labelSubWidth,
@@ -119,21 +104,13 @@ namespace Manlaan.Dailies.Views
                 Text = "Height: ",
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            TextBox settingEventWindowHeight_Textbox = new TextBox() {
+            settingEventWindowHeight_Textbox = new TextBox() {
                 Location = new Point(settingEventWindowHeight_Label.Right + 4, settingEventWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingEventSizeH.Value,
             };
-            settingEventWindowHeight_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingEventWindowHeight_Textbox.Text);
-                    Module._settingEventSizeH.Value = settingEventWindowHeight_Textbox.Text;
-                }
-                catch {
-                    settingEventWindowHeight_Textbox.Text = Module._settingEventSizeH.Value;
-                }
-            };
+            settingEventWindowHeight_Textbox.InputFocusChanged += UpdateSettings;
             Label settingEventWindowHours_Label = new Label() {
                 Location = new Point(settingEventWindowHeight_Textbox.Right + 4, settingEventWindow_Label.Top),
                 Width = labelSubWidth,
@@ -144,22 +121,14 @@ namespace Manlaan.Dailies.Views
                 HorizontalAlignment = HorizontalAlignment.Right,
                 BasicTooltipText = "Hours to display",
             };
-            TextBox settingEventWindowHours_Textbox = new TextBox() {
+            settingEventWindowHours_Textbox = new TextBox() {
                 Location = new Point(settingEventWindowHours_Label.Right + 4, settingEventWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingEventHours.Value,
                 BasicTooltipText = "Hours to show in Event Window",
             };
-            settingEventWindowHours_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingEventWindowHours_Textbox.Text);
-                    Module._settingEventHours.Value = settingEventWindowHeight_Textbox.Text;
-                }
-                catch {
-                    settingEventWindowHours_Textbox.Text = Module._settingEventHours.Value;
-                }
-            };
+            settingEventWindowHours_Textbox.InputFocusChanged += UpdateSettings;
 
             Label settingAlertWindow_Label = new Label() {
                 Location = new Point(0, settingEventWindow_Label.Bottom + 8),
@@ -185,21 +154,13 @@ namespace Manlaan.Dailies.Views
                 Text = "Width: ",
                 HorizontalAlignment = HorizontalAlignment.Right
             };
-            TextBox settingAlertWindowWidth_Textbox = new TextBox() {
+            settingAlertWindowWidth_Textbox = new TextBox() {
                 Location = new Point(settingAlertWindowWidth_Label.Right + 4, settingAlertWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingAlertSizeW.Value,
             };
-            settingAlertWindowWidth_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingAlertWindowWidth_Textbox.Text);
-                    Module._settingAlertSizeW.Value = settingAlertWindowWidth_Textbox.Text;
-                }
-                catch {
-                    settingAlertWindowWidth_Textbox.Text = Module._settingAlertSizeW.Value;
-                }
-            };
+            settingAlertWindowWidth_Textbox.InputFocusChanged += UpdateSettings;
             Label settingAlertNotify_Label = new Label() {
                 Location = new Point(settingAlertWindowWidth_Textbox.Right + 4, settingAlertWindow_Label.Top),
                 Width = labelSubWidth,
@@ -210,22 +171,14 @@ namespace Manlaan.Dailies.Views
                 HorizontalAlignment = HorizontalAlignment.Right,
                 BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.\nAlso sets how early dailies are reset.",
             };
-            TextBox settingAlertNotify_Textbox = new TextBox() {
+            settingAlertNotify_Textbox = new TextBox() {
                 Location = new Point(settingAlertNotify_Label.Right + 4, settingAlertWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingAlertNotify.Value,
                 BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.\nAlso sets how early dailies are reset.",
             };
-            settingAlertNotify_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingAlertNotify_Textbox.Text);
-                    Module._settingAlertNotify.Value = settingAlertNotify_Textbox.Text;
-                }
-                catch {
-                    settingAlertNotify_Textbox.Text = Module._settingAlertNotify.Value;
-                }
-            };
+            settingAlertNotify_Textbox.InputFocusChanged += UpdateSettings;
             Label settingAlertDuration_Label = new Label() {
                 Location = new Point(settingAlertNotify_Textbox.Right + 4, settingAlertWindow_Label.Top),
                 Width = labelSubWidth,
@@ -236,22 +189,14 @@ namespace Manlaan.Dailies.Views
                 HorizontalAlignment = HorizontalAlignment.Right,
                 BasicTooltipText = "Duration the alert stays visable, in seconds.\n0 shows the alert for the length of event.",
             };
-            TextBox settingAlertDuration_Textbox = new TextBox() {
+            settingAlertDuration_Textbox = new TextBox() {
                 Location = new Point(settingAlertDuration_Label.Right + 4, settingAlertDuration_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingAlertDuration.Value,
                 BasicTooltipText = "Duration the alert stays visable, in seconds.\n0 shows the alert for the length of event.",
             };
-            settingAlertDuration_Textbox.TextChanged += delegate {
-                try {
-                    int.Parse(settingAlertDuration_Textbox.Text);
-                    Module._settingAlertDuration.Value = settingAlertDuration_Textbox.Text;
-                }
-                catch {
-                    settingAlertDuration_Textbox.Text = Module._settingAlertDuration.Value;
-                }
-            };
+            settingAlertDuration_Textbox.InputFocusChanged += UpdateSettings;
             IView settingAlertDrag_View = SettingView.FromType(Module._settingAlertDrag, buildPanel.Width);
             ViewContainer settingAlertDrag_Container = new ViewContainer() {
                 WidthSizingMode = SizingMode.Fill,
@@ -276,6 +221,65 @@ namespace Manlaan.Dailies.Views
                 Parent = parentPanel
             };
             settingDebug_Container.Show(settingDebug_View);
+        }
+
+        private void UpdateSettings(object sender = null, Blish_HUD.ValueEventArgs<bool> e = null) {
+            try {
+                int.Parse(settingMiniWindowWidth_Textbox.Text);
+                Module._settingMiniSizeW.Value = settingMiniWindowWidth_Textbox.Text;
+            }
+            catch {
+                settingMiniWindowWidth_Textbox.Text = Module._settingMiniSizeW.Value;
+            }
+            try {
+                int.Parse(settingMiniWindowHeight_Textbox.Text);
+                Module._settingMiniSizeH.Value = settingMiniWindowHeight_Textbox.Text;
+            }
+            catch {
+                settingMiniWindowHeight_Textbox.Text = Module._settingMiniSizeH.Value;
+            }
+            try {
+                int.Parse(settingEventWindowWidth_Textbox.Text);
+                Module._settingEventSizeW.Value = settingEventWindowWidth_Textbox.Text;
+            }
+            catch {
+                settingEventWindowWidth_Textbox.Text = Module._settingEventSizeW.Value;
+            }
+            try {
+                int.Parse(settingEventWindowHeight_Textbox.Text);
+                Module._settingEventSizeH.Value = settingEventWindowHeight_Textbox.Text;
+            }
+            catch {
+                settingEventWindowHeight_Textbox.Text = Module._settingEventSizeH.Value;
+            }
+            try {
+                int.Parse(settingEventWindowHours_Textbox.Text);
+                Module._settingEventHours.Value = settingEventWindowHours_Textbox.Text;
+            }
+            catch {
+                settingEventWindowHours_Textbox.Text = Module._settingEventHours.Value;
+            }
+            try {
+                int.Parse(settingAlertWindowWidth_Textbox.Text);
+                Module._settingAlertSizeW.Value = settingAlertWindowWidth_Textbox.Text;
+            }
+            catch {
+                settingAlertWindowWidth_Textbox.Text = Module._settingAlertSizeW.Value;
+            }
+            try {
+                int.Parse(settingAlertNotify_Textbox.Text);
+                Module._settingAlertNotify.Value = settingAlertNotify_Textbox.Text;
+            }
+            catch {
+                settingAlertNotify_Textbox.Text = Module._settingAlertNotify.Value;
+            }
+            try {
+                int.Parse(settingAlertDuration_Textbox.Text);
+                Module._settingAlertDuration.Value = settingAlertDuration_Textbox.Text;
+            }
+            catch {
+                settingAlertDuration_Textbox.Text = Module._settingAlertDuration.Value;
+            }
         }
     }
 }

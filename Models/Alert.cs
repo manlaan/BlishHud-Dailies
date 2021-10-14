@@ -18,6 +18,9 @@ namespace Manlaan.Dailies.Models
         public string Id { get; set; }
         public bool IsActive { get; set; }
         public string DailyId { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public int Duration { get; set; }
         public DailyDetailsButton Button { get; set; }
 
         public Alert() {
@@ -25,6 +28,9 @@ namespace Manlaan.Dailies.Models
             IsActive = true;
             DailyId = "";
             Button = new DailyDetailsButton();
+            StartTime = new DateTime();
+            Duration = 0;
+            EndTime = new DateTime();
         }
 
         public override string ToString() {

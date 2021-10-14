@@ -44,7 +44,7 @@ namespace Manlaan.Dailies.Controls
 
         public AlertWindow() {
             FlowDirection = ControlFlowDirection.LeftToRight;
-            ControlPadding = new Vector2(8, 8);
+            ControlPadding = new Vector2(0, 2);
             Location = new Point(0, 0);
             CanScroll = true;
             ShowBorder = false;
@@ -75,7 +75,7 @@ namespace Manlaan.Dailies.Controls
         }
 
 
-        public DailyDetailsButton CreateButton(Daily d, string start) {
+        public DailyDetailsButton CreateButton(Daily d, Alert alert) {
             Point iconSize = new Point(26, 26);
 
             DailyDetailsButton dailyButton = new DailyDetailsButton() {
@@ -197,18 +197,15 @@ namespace Manlaan.Dailies.Controls
                 xloc = WaypointBtn.Right + 5;
             }
             if (d.Times != null && d.Times.Length > 0) {
-                string timeformat = "h:mm tt";
-                if (Module._setting24HrTime.Value) timeformat = "H:mm";
-
                 dailyButton.TimeButton = new Label() {
                     Location = new Point(xloc, dailyButton.Height - iconSize.Y - 2 + 3),
                     Width = 75,
                     AutoSizeHeight = false,
                     WrapText = false,
                     Parent = dailyButton,
-                    Text = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).ToLocalTime().ToString(timeformat),
+                    Text = "",
                     Font = Content.GetFont(ContentService.FontFace.Menomonia, ContentService.FontSize.Size14, ContentService.FontStyle.Regular),
-                    BasicTooltipText = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).ToLocalTime().ToString(timeformat) + " - " + DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + start).AddMinutes(d.TimesDuration).ToLocalTime().ToString(timeformat),
+                    BasicTooltipText = "",
                 };
                 xloc = dailyButton.TimeButton.Right + 5;
             }
@@ -246,10 +243,8 @@ namespace Manlaan.Dailies.Controls
                 Size = iconSize,
             };
             dailyButton.TrackedButton.Click += delegate {
-                Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                 alert.IsActive = false;
-                alert.Button.Hide();
-                DoRecalculateLayout();  
+                UpdatePanel();
             };
 
             dailyButton.CompleteButton = new GlowButton() {
@@ -272,10 +267,8 @@ namespace Manlaan.Dailies.Controls
                     d.Button.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     d.MiniButton.CompleteButton.Checked = dailyButton.CompleteButton.Checked;
                     if (dailyButton.CompleteButton.Checked) {
-                        Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + start));
                         alert.IsActive = false;
-                        alert.Button.Hide();
-                        DoRecalculateLayout();
+                        UpdatePanel();
                         d.MiniButton.Visible = false;
                     }
                     Module.ModuleInstance.UpdateDailyPanel();
@@ -285,46 +278,93 @@ namespace Manlaan.Dailies.Controls
             return dailyButton;
         }
 
-        public void AddAlert(Daily d, string start) {
-            _alerts.Add(new Alert() {
-                Id = d.Id + "-" + start,
-                DailyId = d.Id,
-                Button = CreateButton(d, start),
-                IsActive = true,
-            });
-        }
-
-        public void UpdatePanel() {
+        public void PopulateAlerts() {
             foreach (Daily d in Module._dailies) {
                 if (d.Times != null && d.Times.Length > 0) {
                     foreach (string s in d.Times) {
-                        Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + s));
+                        DateTime start = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s);
+                        DateTime starttomorrow = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddDays(1);
 
-                        DateTime startTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s);
-                        DateTime endTime = DateTime.Parse(DateTime.UtcNow.Date.ToString("MM/dd/yyyy") + " " + s).AddMinutes(d.TimesDuration);
-                        if (int.Parse(Module._settingAlertDuration.Value) > 0)
-                            endTime = startTime.AddMinutes(-int.Parse(Module._settingAlertNotify.Value)).AddSeconds(int.Parse(Module._settingAlertDuration.Value));
+                        Alert alert = _alerts.Find(x => x.Id.Equals(d.Id + '-' + start.Ticks));
+                        if (alert != null) {
+                            if (start.AddMinutes(d.TimesDuration) < DateTime.UtcNow.AddHours(-1) || !d.IsDaily || !d.IsTracked || d.IsComplete) {
+                                if (alert.Button.Parent != null) {
+                                    alert.Button.Dispose();
+                                    RecalculateLayout();
+                                }
+                                _alerts.Remove(new Alert() { Id = d.Id + '-' + start.Ticks });
+                            }
+                        }
+                        else {
+                            if (start.AddMinutes(d.TimesDuration) > DateTime.UtcNow.AddHours(-1) && d.IsDaily && d.IsTracked && !d.IsComplete)
+                                _alerts.Add(
+                                    new Alert() {
+                                        Id = d.Id + '-' + start.Ticks,
+                                        DailyId = d.Id,
+                                        StartTime = start,
+                                        EndTime = start.AddMinutes(d.TimesDuration),
+                                        Duration = d.TimesDuration,
+                                        Button = new DailyDetailsButton(),
+                                    }
+                                    );
+                        }
+                        
+                        alert = _alerts.Find(x => x.Id.Equals(d.Id + '-' + starttomorrow.Ticks));
+                        if (alert != null) {
+                            if (starttomorrow.AddMinutes(d.TimesDuration) < DateTime.UtcNow.AddHours(-1) || !d.IsDaily || !d.IsTracked) {
+                                if (alert.Button.Parent != null) {
+                                    alert.Button.Dispose();
+                                    RecalculateLayout();
+                                }
+                                _alerts.Remove(new Alert() { Id = d.Id + '-' + starttomorrow.Ticks });
+                            }
+                        }
+                        else {
+                            if (starttomorrow.AddMinutes(d.TimesDuration) > DateTime.UtcNow.AddHours(-1) && d.IsDaily && d.IsTracked)
+                                _alerts.Add(
+                                    new Alert() {
+                                        Id = d.Id + '-' + starttomorrow.Ticks,
+                                        DailyId = d.Id,
+                                        StartTime = starttomorrow,
+                                        EndTime = starttomorrow.AddMinutes(d.TimesDuration),
+                                        Duration = d.TimesDuration,
+                                        Button = new DailyDetailsButton(),
+                                    }
+                                    );
+                        }
+                    }
+                }
+            }
+        }
 
-                        if (((startTime.AddMinutes(-int.Parse(Module._settingAlertNotify.Value)) < DateTime.UtcNow && endTime > DateTime.UtcNow) || 
-                                    (startTime.AddDays(1).AddMinutes(-int.Parse(Module._settingAlertNotify.Value)) < DateTime.UtcNow && endTime.AddDays(1) > DateTime.UtcNow)) &&
-                                    d.IsDaily && d.IsTracked) {
-                            if (alert == null) {
-                                AddAlert(d, s);
-                                alert = _alerts.Find(x => x.Id.Equals(d.Id + "-" + s));
+
+        public void UpdatePanel() {
+            PopulateAlerts();
+
+            foreach (Alert alert in _alerts) {
+                if (alert.IsActive) {
+                    DateTime endTime = alert.EndTime;
+                    if (int.Parse(Module._settingAlertDuration.Value) > 0)
+                        endTime = alert.StartTime.AddMinutes(-int.Parse(Module._settingAlertNotify.Value)).AddSeconds(int.Parse(Module._settingAlertDuration.Value));
+                    if (alert.StartTime.AddMinutes(-int.Parse(Module._settingAlertNotify.Value)) < DateTime.UtcNow && endTime > DateTime.UtcNow) {
+                        Daily daily = Module._dailies.Find(x => x.Id.Equals(alert.DailyId));
+                        if (daily != null) {
+                            if (alert.Button.Parent == null) {
+                                alert.Button = CreateButton(daily, alert);
                                 DoRecalculateLayout();
                             }
-                            if ((startTime < DateTime.UtcNow && endTime > DateTime.UtcNow) || (startTime.AddDays(1) < DateTime.UtcNow && endTime.AddDays(1) > DateTime.UtcNow)) { 
+                            if (alert.StartTime < DateTime.UtcNow && endTime > DateTime.UtcNow) {
                                 alert.Button.BackgroundTexture = _btnActiveBackground;
                             }
 
-                            if (!alert.IsActive || d.IsComplete) {
-                                alert.IsActive = false;
-                                alert.Button.Hide();
-                                DoRecalculateLayout();
+                            string timeformat = "h:mm tt";
+                            if (Module._setting24HrTime.Value) timeformat = "HH:mm";
+                            if (alert.Button.TimeButton.Text != alert.StartTime.ToLocalTime().ToString(timeformat)) {
+                                alert.Button.TimeButton.Text = alert.StartTime.ToLocalTime().ToString(timeformat);
+                                alert.Button.TimeButton.BasicTooltipText = alert.StartTime.ToLocalTime().ToString(timeformat) + " - " + alert.EndTime.ToLocalTime().ToString(timeformat);
                             }
-                            if (!string.IsNullOrEmpty(d.Achievement) &&
-                                        !string.IsNullOrEmpty(d.API) &&
-                                        Module._autoCompleteAchievements.Contains(d.API) &&
+
+                            if (!string.IsNullOrEmpty(daily.Achievement) && !string.IsNullOrEmpty(daily.API) && Module._autoCompleteAchievements.Contains(daily.API) &&
                                         Module.ModuleInstance.Gw2ApiManager.HavePermissions(new[] { Gw2Sharp.WebApi.V2.Models.TokenPermission.Account, Gw2Sharp.WebApi.V2.Models.TokenPermission.Progression })) {
                                 if (!alert.Button.CompleteButton.BasicTooltipText.Equals("Auto")) {
                                     alert.Button.CompleteButton.Icon = _auto0Icon;
@@ -340,13 +380,18 @@ namespace Manlaan.Dailies.Controls
                                 }
                             }
                         }
-                        else {
-                            if (alert != null) {
-                                alert.Button.Dispose();
-                                _alerts.Remove(new Alert() { Id = d.Id + "-" + s });
-                                DoRecalculateLayout();
-                            }
+                    }
+                    else {
+                        if (alert.Button.Parent != null) {
+                            alert.Button.Hide();
+                            DoRecalculateLayout();
                         }
+                    }
+                }
+                else {
+                    if (alert.Button.Parent != null) {
+                        alert.Button.Hide();
+                        DoRecalculateLayout();
                     }
                 }
             }
@@ -370,6 +415,7 @@ namespace Manlaan.Dailies.Controls
                 _dragStart = Input.Mouse.Position;
             }
         }
+
         //RecalculateLayout will sometimes crash with a System.Threading.LockRecursionException' in System.Core.dll
         public void DoRecalculateLayout() {
             bool complete = false;
