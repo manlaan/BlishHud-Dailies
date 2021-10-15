@@ -63,7 +63,7 @@ namespace Manlaan.Dailies.Views
                 HorizontalAlignment = HorizontalAlignment.Right
             };
             settingMiniWindowHeight_Textbox = new TextBox() {
-                Location = new Point(settingMiniWindowHeight_Label.Right + 4, settingMiniWindow_Label.Top- 2),
+                Location = new Point(settingMiniWindowHeight_Label.Right + 4, settingMiniWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingMiniSizeH.Value,
@@ -169,14 +169,14 @@ namespace Manlaan.Dailies.Views
                 Parent = parentPanel,
                 Text = "Notify: ",
                 HorizontalAlignment = HorizontalAlignment.Right,
-                BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.\nAlso sets how early dailies are reset.",
+                BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.",
             };
             settingAlertNotify_Textbox = new TextBox() {
                 Location = new Point(settingAlertNotify_Label.Right + 4, settingAlertWindow_Label.Top - 2),
                 Width = textboxWidth,
                 Parent = parentPanel,
                 Text = Module._settingAlertNotify.Value,
-                BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.\nAlso sets how early dailies are reset.",
+                BasicTooltipText = "Amount of time to notify before\nevent starts, in minutes.",
             };
             settingAlertNotify_Textbox.InputFocusChanged += UpdateSettings;
             Label settingAlertDuration_Label = new Label() {

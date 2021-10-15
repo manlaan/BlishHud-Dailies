@@ -57,6 +57,8 @@ namespace Manlaan.Dailies
         private Texture2D _pageIcon, _eventIcon;
         private bool _runningAchieve = false;
         private bool _runningTimes = false;
+        private bool _stateMini = false;
+        private bool _stateEvent = false;
 
         private MainWindow _mainWindow;
         private MiniWindow _miniWindow;
@@ -176,7 +178,8 @@ namespace Manlaan.Dailies
                 Parent = GameService.Graphics.SpriteScreen,
             };
             UpdateDailyPanel();
-            _miniWindow.Show();
+            if (_stateMini)
+                _miniWindow.Show();
         }
         private void UpdateSettings_Event_string(object sender = null, ValueChangedEventArgs<string> e = null) {
             try {
@@ -206,7 +209,8 @@ namespace Manlaan.Dailies
                 Parent = GameService.Graphics.SpriteScreen,
             };
             UpdateDailyPanel();
-            _eventWindow.Show();
+            if (_stateEvent)
+                _eventWindow.Show();
         }
         private void UpdateSettings_bool(object sender = null, ValueChangedEventArgs<bool> e = null) {
             UpdateDailyPanel();
@@ -344,8 +348,26 @@ namespace Manlaan.Dailies
             UpdateAchievements();
             UpdateTimes();
 
-            _cornerIcon.Click += delegate { _miniWindow.ToggleWindow(); };
-            _cornerEventIcon.Click += delegate { _eventWindow.ToggleWindow(); };
+            _cornerIcon.Click += delegate {
+                if (_miniWindow.Visible) {
+                    _miniWindow.Hide();
+                    _stateMini = false;
+                }
+                else {
+                    _miniWindow.Show();
+                    _stateMini = true;
+                }
+            };
+            _cornerEventIcon.Click += delegate {
+                if (_eventWindow.Visible) {
+                    _eventWindow.Hide();
+                    _stateEvent = false;
+                }
+                else {
+                    _eventWindow.Show();
+                    _stateEvent = true;
+                }
+            };
 
             sw.Stop();
             Logger.Debug($"Took {sw.ElapsedMilliseconds} ms to complete loading...");
@@ -609,6 +631,20 @@ namespace Manlaan.Dailies
         }
 
         protected override async void Update(GameTime gameTime) {
+            if (GameService.GameIntegration.Gw2Instance.IsInGame && !GameService.Gw2Mumble.UI.IsMapOpen) {
+                if (_stateMini)
+                    _miniWindow.Show();
+                if (_stateEvent)
+                    _eventWindow.Show();
+                if (_settingAlertEnabled.Value)
+                    _alertWindow.Show();
+            }
+            else {
+                _miniWindow.Hide();
+                _eventWindow.Hide();
+                _alertWindow.Hide();
+            }
+
             if (Timer_APIUpdate.ElapsedMilliseconds > 300000) {   //5 minutes
                 await Task.Run(() => UpdateAchievements());
             }

@@ -62,11 +62,15 @@ namespace Manlaan.Dailies.Controls
             };
             TextBox searchBox = new TextBox() {
                 PlaceholderText = "Search",
-                Width = 120,
+                Width = 127,
                 Location = new Point(Dropdown.Standard.ControlOffset.X, 10),
                 Parent = _parentPanel
             };
-            searchBox.TextChanged += delegate (object sender, EventArgs args) {
+            searchBox.TextChanged += delegate {
+                _dailySearch = searchBox.Text;
+                UpdatePanelAsync();
+            };
+            searchBox.EnterPressed += delegate {
                 _dailySearch = searchBox.Text;
                 UpdatePanelAsync();
             };
@@ -79,7 +83,7 @@ namespace Manlaan.Dailies.Controls
             searchIcon.Click += UpdatePanelAsync;
 
             Dropdown ShowItems = new Dropdown() {
-                Location = new Point(searchIcon.Right + 8, 10),
+                Location = new Point(searchIcon.Right + 5, 10),
                 Width = 175,
                 Parent = _parentPanel,
             };
