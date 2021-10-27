@@ -206,7 +206,7 @@ namespace Manlaan.Dailies.Controls
                                 Button = new Panel(),
                                 Color = FindColor(d.TimesColor),
                                 Waypoint = d.Waypoint,
-                                Daily = new Daily() { IsTracked = d.IsTracked, IsComplete = d.IsComplete, Name = d.Name, Category = d.Category, IsDaily = d.IsDaily },
+                                Daily = new Daily() { IsTracked = d.IsTracked, IsComplete = false, Name = d.Name, Category = d.Category, IsDaily = d.IsDaily },
                             }
                             );
                         _events.Add(
